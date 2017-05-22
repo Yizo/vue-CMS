@@ -1,0 +1,12 @@
+/**
+ * Created by admin on 2017/3/28.
+ */
+
+export const ACTIVEDAY_DAY = 'ACTIVEDAY_DAY';
+
+export const ACTIVEDAY_DAY_DETAILS = 'ACTIVEDAY_DAY_DETAILS';
+
+export const ACTIVEDAY_MONTH = 'ACTIVEDAY_MONTH';
+
+export const ACTIVEDAY_MONTH_DETAILS = 'ACTIVEDAY_MONTH_DETAILS';
+

@@ -1,0 +1,132 @@
+﻿/* reset */
+html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,blockquote,pre,hr,figure,table,caption,th,td,form,fieldset,legend,input,button,textarea,menu{margin:0;padding:0;}
+header,footer,section,article,aside,nav,hgroup,address,figure,figcaption,menu,details{display:block;}
+table{border-collapse:collapse;border-spacing:0;}
+caption,th{text-align:left;font-weight:normal;}
+html,body,fieldset,img,iframe,abbr{border:0;}
+i,cite,em,var,address,dfn{font-style:normal;}
+[hidefocus],summary{outline:0;}
+li{list-style:none;}
+h1,h2,h3,h4,h5,h6,small{font-size:100%;}
+sup,sub{font-size:83%;}
+pre,code,kbd,samp{font-family:inherit;}
+q:before,q:after{content:none;}
+textarea{overflow:auto;resize:none;}
+label,summary{cursor:default;}
+a,button{cursor:pointer;}
+h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
+del,ins,u,s,a,a:hover{text-decoration:none;}
+body,textarea,input,button,select,keygen,legend{font:12px/1.14 arial,\5b8b\4f53;color:#333;outline:0;}
+body{background:#fff;font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;font-size: 14px;}
+a,a:hover{color:#333;}
+.clearfloat:after{display:block;clear:both;content:"";visibility:hidden;height:0}
+.clearfloat{zoom:1}
+.dialog_num{
+  cursor: pointer;
+  background-color: rgb(51, 51, 51);
+  padding: 1px 3px;
+  color: rgb(255, 255, 255);
+}
+.page{
+  text-align: right;
+  margin-top: 20px;
+}
+.el-table .el-table__header-wrapper table th>.cell{
+  text-align: center;
+}
+.el-form-item__content{
+  text-align: left;
+}
+.el-table .cell{
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  color: #333;
+}
+.bj-rot{
+  position: absolute;
+  top:0;
+  right:50px;
+  color: red;
+}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+color: #ccc;
+font-family: "微软雅黑";
+  font-weight:400;
+font-size:14px;
+}
+input:-moz-placeholder, textarea:-moz-placeholder {
+color: #ccc;
+font-family: "微软雅黑";
+font-size:14px;
+  font-weight:400;
+}
+input::-moz-placeholder, textarea::-moz-placeholder {
+color: #ccc;
+font-family: "微软雅黑";
+font-size:14px;
+  font-weight:400;
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+color: #ccc;
+font-family: "微软雅黑";
+font-size:14px;
+  font-weight:400;
+}
+table{
+  table-layout:fixed;
+  empty-cells:show;
+  border-collapse: collapse;
+  margin:0 auto;
+  width: 100%;
+  text-align: center;
+}
+td{
+  height:35px;
+  text-align: center;
+}
+h1,h2,h3{
+  font-size:12px;
+  margin:0;
+  padding:0;
+}
+.table{
+  border:1px solid #eef1f6;
+  color:#666;
+}
+.table th {
+  background-repeat:repeat-x;
+  height:35px;
+  text-align: center;
+}
+.table td,.table th{
+  border:1px solid #eef1f6;
+  padding:0 1em 0;
+}
+.table tr.alter{
+  background-color:#f5fafe;
+}
+@media screen and (max-width: 320px) {
+
+}
+@media screen and (max-width: 480px) {
+
+}
+@media screen and (max-width: 768px) {
+
+}
+@media screen and (max-width: 992px) {
+  .el-dialog--small{
+    width: 70%;
+  }
+  .el-dialog--tiny{
+    width: 40%;
+  }
+
+}
+@media screen and (max-width: 1200px) {
+
+}
+@media screen and (min-width: 1200px) {
+
+}
