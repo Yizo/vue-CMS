@@ -30,19 +30,19 @@
     name: 'channelVersion',
     data () {
       return {
-        value:'渠道',
-        show:true
+        value: '渠道',
+        show: true
       }
     },
-    components: {channels,versions},
+    components: {channels, versions},
     methods: {
       change(val){
-          if(val == '版本'){
-              this.show = false
-          }else{
-            this.show = true
-          }
-          console.log(val)
+        if (val == '版本') {
+          this.show = false
+        } else {
+          this.show = true
+        }
+        console.log(val)
       }
     },
     beforeMount(){

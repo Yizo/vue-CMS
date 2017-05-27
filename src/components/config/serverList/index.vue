@@ -14,45 +14,48 @@
         <el-table-column
           label="线路编号"
           property="id"
-          align="left"
           width="100">
         </el-table-column>
         <el-table-column
           label="服务器类型"
-          property="node_type_name"
-          align="left">
+          property="node_type_name">
         </el-table-column>
         <el-table-column
           label="所属地域"
-          property="region_name"
-          align="left">
+          property="region_name">
         </el-table-column>
         <el-table-column
           label="线路名称"
-          property="name"
-          align="left">
+          property="name">
         </el-table-column>
         <el-table-column
           label="服务器IP"
-          property="url"
-          align="left">
+          property="url">
         </el-table-column>
         <el-table-column
           label="最大连接数"
-          property="max_connections_count"
-          align="left">
+          property="max_connections_count">
         </el-table-column>
         <el-table-column
+          label="代理等级"
+          property="level">
+        </el-table-column>
+        <el-table-column
+          label="国外标识">
+          <template scope="scope">
+            <span>{{scope.row.is_domestic?'国内':'国外'}}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           label="启用"
-          property="is_enabled"
-          align="left">
+          property="is_enabled">
           <template scope="scope">
             <span>{{scope.row.is_enabled?'是':'否'}}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="操作"
-          align="left"
           width="150">
           <template scope="scope">
             <el-button
@@ -80,11 +83,10 @@
     </div>
 
     <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny">
-      <el-form :model="form" label-position="left"  label-width="180px">
+      <el-form :model="form" label-position="left" label-width="150px">
         <el-form-item label="服务器类型">
-          <span class="bj-rot">*</span>
           <template>
-            <el-select v-model="form.node_type_id" placeholder="请选择">
+            <el-select v-model="form.node_type_id" placeholder="请选择"  class="dot_tips">
               <el-option
                 v-for="(item,index) in nodeName2"
                 key="index"
@@ -95,9 +97,8 @@
           </template>
         </el-form-item>
         <el-form-item label="所属地域">
-          <span class="bj-rot">*</span>
           <template>
-            <el-select v-model="form.node_region_id" @visible-change="regionChange()" placeholder="请选择">
+            <el-select v-model="form.node_region_id" @visible-change="regionChange()" placeholder="请选择"  class="dot_tips">
               <el-option
                 v-for="item in areaName2"
                 key="item.id"
@@ -108,30 +109,41 @@
           </template>
         </el-form-item>
         <el-form-item label="线路名称">
-          <span class="bj-rot">*</span>
-          <el-input v-model="form.name" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.name" auto-complete="off"  class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="服务器IP">
-          <span class="bj-rot">*</span>
-          <el-input v-model="form.url" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.url" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="服务器端口">
-          <span class="bj-rot">*</span>
-          <el-input v-model="form.port" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.port" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="服务器密码">
-          <span class="bj-rot">*</span>
-          <el-input v-model="form.password" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.password" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="加密方式">
-          <span class="bj-rot">*</span>
-          <el-input v-model="form.encrypt_method" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.encrypt_method" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="form.description" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.description" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="最大连接数">
-          <el-input v-model="form.max_connections_count" auto-complete="off" style="width:400px"></el-input>
+          <el-input v-model="form.max_connections_count" auto-complete="off" class="dot_tips"></el-input>
+        </el-form-item>
+        <el-form-item label="国外标识">
+          <template scope>
+            <el-radio-group v-model="form.is_domestic">
+              <el-radio label="true">国内</el-radio>
+              <el-radio label="false">国外</el-radio>
+            </el-radio-group>
+          </template>
+        </el-form-item>
+        <el-form-item label="线路级别">
+          <template scope>
+            <el-radio-group v-model="form.level">
+              <el-radio label="1">1</el-radio>
+              <el-radio label="2">2</el-radio>
+            </el-radio-group>
+          </template>
         </el-form-item>
         <el-form-item label="是否启用">
           <template scope>
@@ -155,7 +167,7 @@
 <script>
   import * as API from '../../../api/api';
   import * as JS from '../../../assets/js/js'
-  import {mapGetters,mapActions} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
 
   export default {
     data(){
@@ -165,7 +177,7 @@
         totalSize: 0,
         nodes: [],
         formLabelWidth: '128px',
-        form_id:0,
+        form_id: 0,
         form: {
           node_type_id: '',
           node_region_id: '',
@@ -174,9 +186,11 @@
           port: null,
           password: '',
           encrypt_method: '',
-          description:'',
-          max_connections_count:'',
-          is_enabled:'true'
+          description: '',
+          max_connections_count: '',
+          is_enabled: 'true',
+          is_domestic: 'true',
+          level: '1'
         },
         dialogTitle: '',
         dialogFormVisible: false,
@@ -185,15 +199,15 @@
     },
     computed: {
       ...mapGetters({
-        nodeName2:'nodeTypeNames',
-        areaName2:'areaTypeName',
-        token:'token'
+        nodeName2: 'nodeTypeNames',
+        areaName2: 'areaTypeName',
+        token: 'token'
       })
     },
     methods: {
       ...mapActions({
-        nodeType:'getNodeType',
-        areaType:'getArea'
+        nodeType: 'getNodeType',
+        areaType: 'getArea'
       }),
       handleAdd(){
         this.serverItem = {
@@ -214,9 +228,11 @@
           port: null,
           password: '',
           encrypt_method: '',
-          description:'',
-          max_connections_count:'',
-          is_enabled:'true'
+          description: '',
+          max_connections_count: '',
+          is_enabled: 'true',
+          is_domestic: 'true',
+          level: '1'
         }
       },
       regionChange(){
@@ -234,24 +250,26 @@
           port: row.port,
           password: row.password,
           encrypt_method: row.encrypt_method,
-          description:row.description,
-          max_connections_count:row.max_connections_count,
-          is_enabled:String(row.is_enabled)
+          description: row.description,
+          max_connections_count: row.max_connections_count,
+          is_enabled: String(row.is_enabled),
+          is_domestic: String(row.is_domestic),
+          level: String(row.level),
         };
+        console.log(this.form)
         this.dialogFormVisible = true;
         this.dialogTitle = '修改';
       },
       handleEnabled(index, data){
-        this.updateNodesType({id:data.id,is_enabled:!data.is_enabled}).then(res=>{
-          this.nodes.splice(index,1,res.data.data)
+        this.updateNodesType({id: data.id, is_enabled: !data.is_enabled}).then(res => {
+          this.nodes.splice(index, 1, res.data.data)
         })
       },
       handleSave(){
-
-        if(this.dialogTitle = '添加'){
-          this.addInfo(this.form).then(res=>{
-            console.log(res)
-            if(res.data.success){
+        this.form.level = parseInt(this.form.level)
+        if (this.dialogTitle = '添加') {
+          this.addInfo(this.form).then(res => {
+            if (res.data.success) {
               this.getServerList();
               this.$message({
                 showClose: true,
@@ -262,9 +280,9 @@
             }
           })
         }
-        if(this.dialogTitle = '修改'){
-          this.upDateInfo(this.form_id,this.form).then(res=>{
-            if(res.data.success){
+        if (this.dialogTitle = '修改') {
+          this.upDateInfo(this.form_id, this.form).then(res => {
+            if (res.data.success) {
               this.getServerList();
               this.$message({
                 showClose: true,
@@ -279,7 +297,7 @@
       handleCurrentChange(val){
         this.currentPage = val;
         console.log(val)
-        this.getInfo({page:val,limit:15}).then((res) => {
+        this.getInfo({page: val, limit: 15}).then((res) => {
           const data = res.data.data;
           this.totalSize = data.total_count;
           this.currentPage = data.current_page;
@@ -307,7 +325,7 @@
         })
       },
       getServerList(){
-        this.getServerListPromise({page:1,limit:15}).then((res) => {
+        this.getServerListPromise({page: 1, limit: 15}).then((res) => {
           const data = res.data.data;
           this.totalSize = data.total_count;
           this.currentPage = data.current_page;
@@ -316,19 +334,19 @@
       },
       /*启用或停用*/
       updateNodesType(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-          let address = API.server_list_update.replace(/{id}/g,parm.id);
+          let address = API.server_list_update.replace(/{id}/g, parm.id);
           this.$http({
-            method:'PATCH',
-            url:address,
+            method: 'PATCH',
+            url: address,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
+            params: parm
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -336,17 +354,17 @@
       },
       /*获取列表*/
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.server_list_get,
+            method: 'GET',
+            url: API.server_list_get,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm,
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -354,38 +372,38 @@
       },
       /*新增*/
       addInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'POST',
-            url:API.server_list_add,
+            method: 'POST',
+            url: API.server_list_add,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       /*修改*/
-      upDateInfo(id,parm){
-        return  new Promise( (resolve,reject) => {
+      upDateInfo(id, parm){
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-          let address = API.user_types_updata.replace(/{id}/g,id);
+          let address = API.server_list_update.replace(/{id}/g, id);
           this.$http({
-            method:'PATCH',
-            url:address,
+            method: 'PATCH',
+            url: address,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -393,8 +411,8 @@
       },
     },
     mounted(){
-      this.nodeType({is_enabled:'true'})
-      this.areaType({is_enabled:'true'})
+      this.nodeType({is_enabled: 'true'})
+      this.areaType({is_enabled: 'true'})
     },
     beforeMount(){
       this.getServerList();
@@ -426,11 +444,12 @@
   .el-table th > .cell {
     text-align: left;
   }
-  .el-input__inner{
-    width: 267px;
-  }
-  .el-form-item__label{
+
+  .el-form-item__label {
     text-indent: 30px;
     position: relative;
+  }
+  .el-select{
+    width: 100%;
   }
 </style>

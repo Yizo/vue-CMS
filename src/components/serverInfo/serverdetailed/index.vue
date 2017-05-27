@@ -92,80 +92,80 @@
 
 <script>
   import * as API from '../../../api/api'
-export default{
-    components:{},
+  export default{
+    components: {},
     data(){
-        return {
-          data:[],
-          currentPage:1,
-          totalSize:0,
-          pageSize:15
-        }
+      return {
+        data: [],
+        currentPage: 1,
+        totalSize: 0,
+        pageSize: 15
+      }
     },
-    methods:{
+    methods: {
       isEnabled(data){
-        return data?"分配":"未分配"
+        return data ? "分配" : "未分配"
       },
       tableRowClassName(row, index) {
-        if(row.class == 'b'){
-            return 'b'
-        }else{
-            return 'a'
+        if (row.class == 'b') {
+          return 'b'
+        } else {
+          return 'a'
         }
       },
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.server_details_info,
+            method: 'GET',
+            url: API.server_details_info,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
-       list(array){
-        var xx=array
-        for(var i=0;i<xx.length-1;i++){
-          eval("xx[0].status="+true);
-          if(xx[i].url==xx[i+1].url){
-            eval("xx[i+1].status="+false);
+      list(array){
+        var xx = array
+        for (var i = 0; i < xx.length - 1; i++) {
+          eval("xx[0].status=" + true);
+          if (xx[i].url == xx[i + 1].url) {
+            eval("xx[i+1].status=" + false);
 
-          }else{
-            eval("xx[i+1].status="+true);
+          } else {
+            eval("xx[i+1].status=" + true);
           }
-          if(xx[i]){
+          if (xx[i]) {
           }
         }
 
-        var num=0;
-        var list=[];
-        for(var i=1;i<xx.length;i++){
-          if(xx[i-1].url==xx[i].url){
+        var num = 0;
+        var list = [];
+        for (var i = 1; i < xx.length; i++) {
+          if (xx[i - 1].url == xx[i].url) {
             num++;
-          }else{
+          } else {
             list.push(num)
-            num=0
+            num = 0
           }
         }
 
-        xx[0].class="b"
-        for(var i=1;i<xx.length;i++){
-          xx[i].class="a"
+        xx[0].class = "b"
+        for (var i = 1; i < xx.length; i++) {
+          xx[i].class = "a"
         }
         [1, 2, 1]
-        var mm=0
-        for(var i=0;i<list.length;i++){
-          mm+=(list[i]+1)
-          if((i%2)=="0"){
-            for(var j =mm-(list[i]+1);j<mm;j++){
-              xx[j].class="b"
+        var mm = 0
+        for (var i = 0; i < list.length; i++) {
+          mm += (list[i] + 1)
+          if ((i % 2) == "0") {
+            for (var j = mm - (list[i] + 1); j < mm; j++) {
+              xx[j].class = "b"
             }
           }
         }
@@ -175,7 +175,7 @@ export default{
       /*分页*/
       handleCurrentChange(val) {
         this.currentPage = val;
-        this.getInfo({page:val}).then(res=>{
+        this.getInfo({page: val}).then(res => {
           this.data = this.list(res.data.data.nodes)
           this.totalSize = res.data.data.total_count
           this.currentPage = res.data.data.current_page
@@ -184,40 +184,44 @@ export default{
     },
     mounted(){
 
-      this.getInfo().then(res=>{
-          this.data = this.list(res.data.data.nodes)
-          this.totalSize = res.data.data.total_count
-          this.currentPage = res.data.data.current_page
+      this.getInfo().then(res => {
+        this.data = this.list(res.data.data.nodes)
+        this.totalSize = res.data.data.total_count
+        this.currentPage = res.data.data.current_page
       })
     }
-}
+  }
 </script>
 
 <style scoped>
-  .serverInfo{
+  .serverInfo {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }
-  .el-table .cell{
+
+  .el-table .cell {
     color: #333;
   }
 </style>
 
 <style>
-  #serverdetailed .el-table__body-wrapper .el-table__body tr[class=b]{
+  #serverdetailed .el-table__body-wrapper .el-table__body tr[class=b] {
     background-color: #fff;
   }
-  #serverdetailed .el-table__body-wrapper .el-table__body tr[class=a]{
+
+  #serverdetailed .el-table__body-wrapper .el-table__body tr[class=a] {
     background-color: #F9FAFC;
   }
 </style>

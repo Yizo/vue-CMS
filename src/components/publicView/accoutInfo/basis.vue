@@ -1,6 +1,7 @@
 <template>
   <div>
-    <p style="margin-bottom: 10px;text-align: left">使用总流量<span style="padding: 0 10px;color: red">{{data.total_bytes}}</span></p>
+    <p style="margin-bottom: 10px;text-align: left">使用总流量<span
+      style="padding: 0 10px;color: red">{{data.total_bytes}}</span></p>
     <el-table
       :data="data.connection_logs"
       style="width: 100%">
@@ -42,28 +43,26 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
-        return {
-          pageSize:15
-        }
+      return {
+        pageSize: 15
+      }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        data:'UD_base_info'
+        data: 'UD_base_info'
       }),
     },
-    watch:{
-
-    },
-    methods:{
+    watch: {},
+    methods: {
       ...mapActions({
         UD_base_info: "UD_base_info",
       }),
       handleSizeChange(val){
         var id = window.sessionStorage.getItem('userId')
-        this.UD_base_info({id:id,page:val,limit:this.pageSize})
+        this.UD_base_info({id: id, page: val, limit: this.pageSize})
       },
     },
     mounted(){

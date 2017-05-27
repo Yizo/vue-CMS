@@ -37,29 +37,29 @@
   import * as API from '../../../api/api'
   export default {
     data: () => ({
-      data:[],
-      currentPage:1,
-      pageSize:15,
-      totalSize:0
+      data: [],
+      currentPage: 1,
+      pageSize: 15,
+      totalSize: 0
     }),
     computed: {
       ...mapGetters(['channelData'])
     },
-    watch:{
+    watch: {
       channelData(){
-          return this.channelData
+        return this.channelData
       }
     },
     methods: {
-      ...mapActions(['getChannelData','addChannel','updateChannel','deleteChannel']),
+      ...mapActions(['getChannelData', 'addChannel', 'updateChannel', 'deleteChannel']),
       add(){
         this.$prompt('请输入渠道名', '添加渠道', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           inputPattern: /[^0-9]{2,}/,
           inputErrorMessage: '格式不正确'
-        }).then(({ value }) => {
-          this.addChannel({enum_type:'channel',name:value})
+        }).then(({value}) => {
+          this.addChannel({enum_type: 'channel', name: value})
         })
       },
       update(data){
@@ -68,20 +68,20 @@
           cancelButtonText: '取消',
           inputPattern: /[^0-9]{2,}/,
           inputErrorMessage: '格式不正确',
-          inputValue:data.name
-        }).then(({ value }) => {
-          this.updateChannel({id:data.id,enum_type:'channel',name:value}).then(res=>{
+          inputValue: data.name
+        }).then(({value}) => {
+          this.updateChannel({id: data.id, enum_type: 'channel', name: value}).then(res => {
             this.getInfo();
           })
         })
       },
       del(data){
-        this.$confirm('您将删除渠道'+ data.name +', 是否继续?', '删除渠道', {
+        this.$confirm('您将删除渠道' + data.name + ', 是否继续?', '删除渠道', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.deleteChannel({id:data.id}).then(res=>{
+          this.deleteChannel({id: data.id}).then(res => {
             this.getInfo();
             this.$message({
               type: 'success',
@@ -92,14 +92,14 @@
       },
       //获取信息
       getInfo(){
-        this.getChannelData({enum_type:'channel',limit:this.pageSize})
+        this.getChannelData({enum_type: 'channel', limit: this.pageSize})
       },
       handleCurrentChange(val){
-        this.getChannelData({enum_type:'channel',page:val,limit:this.pageSize})
+        this.getChannelData({enum_type: 'channel', page: val, limit: this.pageSize})
       }
     },
     mounted(){
-        this.getInfo();
+      this.getInfo();
     }
   }
 </script>

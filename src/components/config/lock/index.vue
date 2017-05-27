@@ -37,14 +37,14 @@
       </template>
     </div>
     <!--分页-->
-<!--    <el-pagination
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-size="10"
-      layout="total, prev, pager, next, jumper"
-      :total="totalSize"
-      class="page">
-    </el-pagination>-->
+    <!--    <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="10"
+          layout="total, prev, pager, next, jumper"
+          :total="totalSize"
+          class="page">
+        </el-pagination>-->
   </div>
 </template>
 
@@ -53,26 +53,26 @@
   export default {
     data(){
       return {
-        tableData:[],
+        tableData: [],
         currentPage: 1,
-        totalSize:10
+        totalSize: 10
       }
     },
-    methods:{
+    methods: {
       /*封号日志*/
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.user_status_logs,
+            method: 'GET',
+            url: API.user_status_logs,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -85,34 +85,35 @@
       },
       //时间戳
       Timestamp(row){
-        const now = new Date(row*1000);
-        var year=now.getFullYear();
-        var month=now.getMonth()+1;
-        var date=now.getDate();
-        var hour=now.getHours();
-        var minute=now.getMinutes();
-        var second=now.getSeconds();
+        const now = new Date(row * 1000);
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var date = now.getDate();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
 
-        return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
       },
     },
     mounted(){
-      this.getInfo().then(res=>{
-          this.tableData = res.data.data.logs
+      this.getInfo().then(res => {
+        this.tableData = res.data.data.logs
       })
     }
   }
 </script>
 
 <style scoped>
-  .lock{
+  .lock {
     padding: 10px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
 </style>

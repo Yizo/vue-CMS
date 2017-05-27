@@ -52,53 +52,59 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import * as JS from '../../../assets/js/js'
   export default {
     data(){
-        return {
-            form:{
-                value1:'',
-                value2:''
-            },
-          pageSize:15
-        }
+      return {
+        form: {
+          value1: '',
+          value2: ''
+        },
+        pageSize: 15
+      }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        data:'UD_access_logs'
+        data: 'UD_access_logs'
       })
     },
-    watch:{
+    watch: {
       data(data){
         return data
       }
     },
-    methods:{
+    methods: {
       ...mapActions({
         access: "UD_access_logs",
       }),
       handleSizeChange(val){
         var id = window.sessionStorage.getItem('userId')
-        if(typeof this.form.value1 == "object"){
+        if (typeof this.form.value1 == "object") {
           this.form.value1 = JS.Timestamp(this.form.value1);
         }
-        if(typeof this.form.value2 == "object"){
+        if (typeof this.form.value2 == "object") {
           this.form.value2 = JS.Timestamp(this.form.value2);
         }
-        this.access({id:id,page:val,limit:this.pageSize,start_at:this.form.value1,end_at:this.form.value2}).then(res=>{
+        this.access({
+          id: id,
+          page: val,
+          limit: this.pageSize,
+          start_at: this.form.value1,
+          end_at: this.form.value2
+        }).then(res => {
 
         })
       },
       filter(){
         var id = window.sessionStorage.getItem('userId')
-        if(typeof this.form.value1 == "object"){
+        if (typeof this.form.value1 == "object") {
           this.form.value1 = JS.Timestamp(this.form.value1);
         }
-        if(typeof this.form.value2 == "object"){
+        if (typeof this.form.value2 == "object") {
           this.form.value2 = JS.Timestamp(this.form.value2);
         }
-        this.access({id:id,limit:this.pageSize,start_at:this.form.value1,end_at:this.form.value2}).then(res=>{
+        this.access({id: id, limit: this.pageSize, start_at: this.form.value1, end_at: this.form.value2}).then(res => {
 
         })
       }

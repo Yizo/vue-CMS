@@ -1,7 +1,7 @@
 /**
  * Created by admin on 2017/3/28.
  */
-export const url = 'url路径'
+export const url = 'api'
 /*登录接口:成功则返回token*/
 export const login = url + '/api/manage/v1/auth'
 
@@ -65,20 +65,20 @@ export const pageclick_user_details = url + '/api/manage/v1/user_operation_stats
 
 /*失败信息*/
 /*连接失败*/
-export const connection_failed_logs = url+'/api/manage/v1/connection_failed_logs'
+export const connection_failed_logs = url + '/api/manage/v1/connection_failed_logs'
 /*连接失败详情*/
-export const connection_failed_detail = url+'/api/manage/v1/connection_failed_logs/detail'
+export const connection_failed_detail = url + '/api/manage/v1/connection_failed_logs/detail'
 /*登录失败*/
-export const loginfail = url+'/api/manage/v1/user_signin_failed_logs'
+export const loginfail = url + '/api/manage/v1/user_signin_failed_logs'
 /*登录失败详情*/
-export const loginfail_detail = url+'/api/manage/v1/user_signin_failed_logs/detail'
+export const loginfail_detail = url + '/api/manage/v1/user_signin_failed_logs/detail'
 /*用户未操作*/
-export const unext = url+'/api/manage/v1/user_no_operation_logs'
+export const unext = url + '/api/manage/v1/user_no_operation_logs'
 /*未操作详情*/
 export const unext_detail = url + '/api/manage/v1/user_no_operation_logs/detail'
 
 /*封号日志*/
-export const user_status_logs = url+'/api/manage/v1/user_status_logs'
+export const user_status_logs = url + '/api/manage/v1/user_status_logs'
 
 /*动态服务器IP*/
 export const dynamic_ip = url + '/api/manage/v1/dynamic_servers';
@@ -95,15 +95,15 @@ export const config_channel_list = url + '/api/manage/v1/system_enums';
 /*创建*/
 export const config_channel_add = url + '/api/manage/v1/system_enums';
 /*删除*/
-export const config_channel_delete = url+'/api/manage/v1/system_enums/{id}';
+export const config_channel_delete = url + '/api/manage/v1/system_enums/{id}';
 /*更新*/
-export const config_channel_update = url+'/api/manage/v1/system_enums/{id}';
+export const config_channel_update = url + '/api/manage/v1/system_enums/{id}';
 
 /*服务器类型配置*/
 /*列表-创建*/
 export const server_node_types = url + '/api/manage/v1/node_types';
 /*删除-更新*/
-export const server_node_types_update = url+'/api/manage/v1/node_types/';
+export const server_node_types_update = url + '/api/manage/v1/node_types/';
 
 /*地域配置*/
 /*列表-创建*/
@@ -212,7 +212,7 @@ export const set_meal_update = url + '/api/manage/v1/plans/';
 
 
 /*用户反馈 获取*/
-export const feedback_get = url+'/api/manage/v1/feedbacks';
+export const feedback_get = url + '/api/manage/v1/feedbacks';
 /*用户反馈 更新*/
 export const feedback_update = url + '/api/manage/v1/feedbacks/';
 
@@ -231,22 +231,22 @@ export const online_detail_get = url + '/api/manage/v1/nodes/online_details';
 
 /*参数配置*/
 /*列表-创建*/
-export const  system_settings = url + '/api/manage/v1/system_settings'
+export const system_settings = url + '/api/manage/v1/system_settings'
 /*删除-更新*/
-export const  system_settings_up = url + '/api/manage/v1/system_settings/{id}'
+export const system_settings_up = url + '/api/manage/v1/system_settings/{id}'
 
 /*权限组管理*/
 /*管理权限组管理-列表-创建*/
-export const  admin_roles = url + '/api/manage/v1/admin_roles'
+export const admin_roles = url + '/api/manage/v1/admin_roles'
 /*管理权限组管理-删除-更新*/
-export const  admin_roles_up = url + '/api/manage/v1/admin_roles/{id}'
+export const admin_roles_up = url + '/api/manage/v1/admin_roles/{id}'
 /*管理员操作日志*/
 export const operation_logs = url + '/api/manage/v1/admins/operation_logs'
 
 /*管理员管理*/
 /*管理员管理-列表-创建*/
-export const  admins = url + '/api/manage/v1/admins'
+export const admins = url + '/api/manage/v1/admins'
 /*管理员管理-禁用*/
-export const  admins_disable = url + '/api/manage/v1/admins/{id}/disable'
+export const admins_disable = url + '/api/manage/v1/admins/{id}/disable'
 /*管理员管理-更新*/
-export const  admins_up = url + '/api/manage/v1/admins/{id}'
+export const admins_up = url + '/api/manage/v1/admins/{id}'

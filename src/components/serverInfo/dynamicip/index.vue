@@ -51,7 +51,8 @@
       <el-table :data="dialogData" border>
         <el-table-column property="username" label="账号"></el-table-column>
         <el-table-column label="当前版本信息">
-          <template scope="scope">{{scope.row.username}}_{{scope.row.app_version}}_{{scope.row.app_version_number}}</template>
+          <template scope="scope">{{scope.row.username}}_{{scope.row.app_version}}_{{scope.row.app_version_number}}
+          </template>
         </el-table-column>
         <el-table-column label="时间">
           <template scope="scope">{{scope.row.created_at | Time}}</template>
@@ -85,14 +86,14 @@
     name: 'dynamicipStar',
     data() {
       return {
-        data:[],
+        data: [],
         currentPage: 1,
         pageSize: 15,
         total: 1,
         dialogFormVisible: false,
-        dialogData:[],
-        dlalog_id:0,
-        d_currentPage:1,
+        dialogData: [],
+        dlalog_id: 0,
+        d_currentPage: 1,
         d_total: 1,
       }
     },
@@ -101,45 +102,45 @@
       detail(data){
         this.dlalog_id = data.id;
         this.dialogFormVisible = true;
-        this.getDetail({id:data.id,limit:this.pageSize}).then(res=>{
-            var data = res.data.data;
-            this.dialogData = data.logs;
-            this.d_currentPage = data.current_page;
-            this.d_total = data.total_count
+        this.getDetail({id: data.id, limit: this.pageSize}).then(res => {
+          var data = res.data.data;
+          this.dialogData = data.logs;
+          this.d_currentPage = data.current_page;
+          this.d_total = data.total_count
         })
       },
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dynamic_status,
+            method: 'GET',
+            url: API.dynamic_status,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       getDetail(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-          let address = API.dynamic_status_details.replace(/{id}/g,parm.id);
+          let address = API.dynamic_status_details.replace(/{id}/g, parm.id);
           this.$http({
-            method:'GET',
-            url:address,
+            method: 'GET',
+            url: address,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -147,7 +148,7 @@
       },
       //获取数据
       getDncIpData(val){
-        this.getInfo({page:val,limit:this.pageSize}).then(res=>{
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
           let data = res.data.data;
           this.data = data.dynamic_servers;
           this.currentPage = data.current_page;
@@ -159,7 +160,7 @@
         this.$store.dispatch('getChannelData', {page: this.currentPage, limit: this.limit})
       },
       d_handleCurrentChange(val){
-        this.getDetail({id:this.dlalog_id,page:val,limit:this.pageSize}).then(res=>{
+        this.getDetail({id: this.dlalog_id, page: val, limit: this.pageSize}).then(res => {
           var data = res.data.data;
           this.dialogData = data.logs;
           this.d_currentPage = data.current_page;
@@ -168,7 +169,7 @@
       }
     },
     mounted(){
-        this.getDncIpData(1);
+      this.getDncIpData(1);
     }
   }
 </script>
@@ -194,7 +195,8 @@
     text-align: right;
     margin-top: 15px;
   }
-  .el-table .cell{
+
+  .el-table .cell {
     text-align: center;
   }
 </style>

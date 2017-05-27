@@ -37,27 +37,23 @@
 </template>
 
 <script>
-  import { mapActions,mapGetters }  from 'vuex'
+  import {mapActions, mapGetters}  from 'vuex'
   import * as JS from '../../../assets/js/js'
   export default {
     data(){
-      return {
-
-      }
+      return {}
     },
-    methods:{
-
-    },
-    computed:{
+    methods: {},
+    computed: {
       ...mapGetters(['ff_data']),
       ruc(){
-        return  (Math.round(this.ff_data.recharge_users_count / this.ff_data.users_count * 10000) / 100.00 + "%");
+        return (Math.round(this.ff_data.recharge_users_count / this.ff_data.users_count * 10000) / 100.00 + "%");
       },
       uuc(){
-        return  (Math.round(this.ff_data.unrecharge_users_count / this.ff_data.users_count * 10000) / 100.00 + "%");
+        return (Math.round(this.ff_data.unrecharge_users_count / this.ff_data.users_count * 10000) / 100.00 + "%");
       },
       tra(){
-          return JS.format_number(this.ff_data.total_recharge_amount);
+        return JS.format_number(this.ff_data.total_recharge_amount);
       }
     },
     mounted(){
@@ -67,16 +63,17 @@
 </script>
 
 <style scoped>
-  .warp{
+  .warp {
     padding: 10px;
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #f5f5f5;
+    background-color: #fff;
+    border: 1px solid #f5f5f5;
     box-shadow: 0 0 2px 1px #ddd;
     margin-top: 20px;
   }
-  .header{
+
+  .header {
     height: 40px;
     line-height: 40px;
     font-size: 16px;
@@ -84,7 +81,8 @@
     background-color: #EFF4F9;
     border-bottom: transparent;
   }
-  .header span{
+
+  .header span {
     display: block;
     width: 20%;
     margin-left: 10px;

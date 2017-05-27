@@ -110,39 +110,39 @@
 <script>
   import * as API from '../../../api/api'
   export default{
-    components:{},
+    components: {},
     data(){
       return {
-        select:'date',
-        filter:{
-            start:'',
-            end:''
+        select: 'date',
+        filter: {
+          start: '',
+          end: ''
         },
-        data:[],
-        currentPage:1,
-        total:0,
-        pageSize:15,
+        data: [],
+        currentPage: 1,
+        total: 0,
+        pageSize: 15,
         //访问用户数
-        user:{
-            visable:false,
-            name:'',
-            row_data:{},
-            data:[],
-            currentPage:1,
-            totalSize:0,
+        user: {
+          visable: false,
+          name: '',
+          row_data: {},
+          data: [],
+          currentPage: 1,
+          totalSize: 0,
         },
         //查看地域分析
-        domain:{
-          visable:false,
-          name:'',
-          row_data:{},
-          Region_data:[],
-          Country_data:[]
+        domain: {
+          visable: false,
+          name: '',
+          row_data: {},
+          Region_data: [],
+          Country_data: []
         },
         //饼状图
-        options:{
+        options: {
           title: {
-            text:null
+            text: null
           },
           tooltip: {
             /*            headerFormat: '浏览器访问量占比<br>',
@@ -161,85 +161,83 @@
             type: 'pie',
             name: '占比',
             data: [
-              ['a',10],
-              ['b',20],
-              ['c',30],
-              ['d',40]
+              ['a', 10],
+              ['b', 20],
+              ['c', 30],
+              ['d', 40]
             ]
           }],
-          credits:false
+          credits: false
         },
       }
     },
-    computed:{
-
-    },
-    methods:{
-      percentage(num1,num2){
+    computed: {},
+    methods: {
+      percentage(num1, num2){
 
       },
       //图表数据转为数组
       line(json){
         var arr = [];
-        for(var i = 0;i<json.length;i++){
-          arr.push([json[i]['ip_country']+json[i]['ip_province']+json[i]['ip_city'],parseFloat(json[i].percent)])
+        for (var i = 0; i < json.length; i++) {
+          arr.push([json[i]['ip_country'] + json[i]['ip_province'] + json[i]['ip_city'], parseFloat(json[i].percent)])
         }
         return arr
       },
       //画图
       draw(data){
         this.options.series[0].data = this.line(data);
-        this.$HighCharts.chart('main',this.options);
+        this.$HighCharts.chart('main', this.options);
       },
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dstip_list,
+            method: 'GET',
+            url: API.dstip_list,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       //用户详情
       getUserDetails(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dstip_user_details,
+            method: 'GET',
+            url: API.dstip_user_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       //次数详情
       getCountDetails(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dstip_visit_details,
+            method: 'GET',
+            url: API.dstip_visit_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
@@ -247,18 +245,18 @@
       /*去向IP-地域分析详情*/
       //查看每个国家访问指定域名的人数
       getDomainCountryDetails(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dstip_domain_country_details,
+            method: 'GET',
+            url: API.dstip_domain_country_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
@@ -266,24 +264,24 @@
       /*去向IP-地域分析详情*/
       //查看指定域名的地域、人数、占比
       getDomainRegionDetails(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dstip_domain_region_details,
+            method: 'GET',
+            url: API.dstip_domain_region_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       getData(val){
-        this.getInfo({page:val,limit:this.pageSize}).then(res=>{
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.current_page
           this.total = res.data.data.total_count
@@ -298,13 +296,13 @@
       },
       filtration(){
         let options = {
-          page:1,
-          limit:this.pageSize,
-          start_at:this.filter.start,
-          end_at:this.filter.end,
-          stat_type:this.select
+          page: 1,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select
         }
-        this.getInfo(options).then(res=>{
+        this.getInfo(options).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.current_page
           this.total = res.data.data.total_count
@@ -314,58 +312,22 @@
       user_details(data){
         this.user.row_data = data;
         let options = {
-          domain:this.user.row_data.domain,
-          start_at:this.filter.start,
-          end_at:this.filter.end,
-          stat_type:this.select,
-          page:1,
-          limit:this.pageSize
+          domain: this.user.row_data.domain,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select,
+          page: 1,
+          limit: this.pageSize
         }
-        if(options.start_at&&options.end_at){
-          this.getUserDetails(options).then(res=>{
-          if(res.data.success){
-            this.user.visable = true
-            let data = res.data.data;
-            this.user.data = data.logs
-            this.user.currentPage = data.current_page
-            this.user.totalSize = data.total_count
-          }else{
-            this.$message({
-              showClose: true,
-              message: '查询失败',
-              type: 'warning'
-            });
-          }
-        })
-      }else{
-        this.$message({
-        showClose: true,
-        message: '请先选择起始日期和结束日期',
-        type: 'warning'
-      });
-  }
-
-      },
-      //查看用户详情-分页
-      user_details_PageChange(val){
-        this.user.row_data = data;
-        let options = {
-          domain:this.user.row_data.domain,
-          start_at:this.filter.start,
-          end_at:this.filter.end,
-          stat_type:this.select,
-          page:val,
-          limit:this.pageSize
-        }
-        if(options.start_at&&options.end_at){
-          this.getUserDetails(options).then(res=>{
-            if(res.data.success){
+        if (options.start_at && options.end_at) {
+          this.getUserDetails(options).then(res => {
+            if (res.data.success) {
               this.user.visable = true
               let data = res.data.data;
               this.user.data = data.logs
               this.user.currentPage = data.current_page
               this.user.totalSize = data.total_count
-            }else{
+            } else {
               this.$message({
                 showClose: true,
                 message: '查询失败',
@@ -373,7 +335,43 @@
               });
             }
           })
-        }else{
+        } else {
+          this.$message({
+            showClose: true,
+            message: '请先选择起始日期和结束日期',
+            type: 'warning'
+          });
+        }
+
+      },
+      //查看用户详情-分页
+      user_details_PageChange(val){
+        this.user.row_data = data;
+        let options = {
+          domain: this.user.row_data.domain,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select,
+          page: val,
+          limit: this.pageSize
+        }
+        if (options.start_at && options.end_at) {
+          this.getUserDetails(options).then(res => {
+            if (res.data.success) {
+              this.user.visable = true
+              let data = res.data.data;
+              this.user.data = data.logs
+              this.user.currentPage = data.current_page
+              this.user.totalSize = data.total_count
+            } else {
+              this.$message({
+                showClose: true,
+                message: '查询失败',
+                type: 'warning'
+              });
+            }
+          })
+        } else {
           this.$message({
             showClose: true,
             message: '请先选择起始日期和结束日期',
@@ -385,22 +383,22 @@
       count_details(data){
         this.count.row_data = data;
         let options = {
-          domain:this.count.row_data.domain,
-          start_at:this.filter.start,
-          end_at:this.filter.end,
-          stat_type:this.select,
-          page:1,
-          limit:this.pageSize
+          domain: this.count.row_data.domain,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select,
+          page: 1,
+          limit: this.pageSize
         }
-        if(options.start_at&&options.end_at){
-          this.getCountDetails(options).then(res=>{
-            if(res.data.success){
+        if (options.start_at && options.end_at) {
+          this.getCountDetails(options).then(res => {
+            if (res.data.success) {
               this.count.visable = true
               let data = res.data.data;
               this.count.data = data.logs
               this.count.currentPage = data.current_page
               this.count.totalSize = data.total_count
-            }else{
+            } else {
               this.$message({
                 showClose: true,
                 message: '查询失败',
@@ -408,7 +406,7 @@
               });
             }
           })
-        }else{
+        } else {
           this.$message({
             showClose: true,
             message: '请先选择起始日期和结束日期',
@@ -419,22 +417,22 @@
       //查看访问次数-分页
       count_details_PageChange(val){
         let options = {
-          domain:this.count.row_data.domain,
-          start_at:this.filter.start,
-          end_at:this.filter.end,
-          stat_type:this.select,
-          page:val,
-          limit:this.pageSize
+          domain: this.count.row_data.domain,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select,
+          page: val,
+          limit: this.pageSize
         }
-        if(options.start_at&&options.end_at){
-          this.getCountDetails(options).then(res=>{
-            if(res.data.success){
+        if (options.start_at && options.end_at) {
+          this.getCountDetails(options).then(res => {
+            if (res.data.success) {
               this.count.visable = true
               let data = res.data.data;
               this.count.data = data.logs
               this.count.currentPage = data.current_page
               this.count.totalSize = data.total_count
-            }else{
+            } else {
               this.$message({
                 showClose: true,
                 message: '查询失败',
@@ -442,7 +440,7 @@
               });
             }
           })
-        }else{
+        } else {
           this.$message({
             showClose: true,
             message: '请先选择起始日期和结束日期',
@@ -457,20 +455,20 @@
       domain_details(data){
         this.domain.row_data = data;
         let options = {
-          domain:this.domain.row_data.domain,
-          page:1,
-          limit:this.pageSize
+          domain: this.domain.row_data.domain,
+          page: 1,
+          limit: this.pageSize
         }
-        this.getDomainRegionDetails(options).then(res=>{
-          if(res.data.success){
+        this.getDomainRegionDetails(options).then(res => {
+          if (res.data.success) {
             this.domain.visable = true
             let data = res.data.data;
             this.domain.Country_data = data.logs
             this.draw(data.logs)
-            this.getDomainCountryDetails(options).then(res=>{
-                this.domain.Region_data = res.data.data.logs;
+            this.getDomainCountryDetails(options).then(res => {
+              this.domain.Region_data = res.data.data.logs;
             })
-          }else{
+          } else {
             this.$message({
               showClose: true,
               message: '查询失败',
@@ -487,17 +485,19 @@
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

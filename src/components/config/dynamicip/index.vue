@@ -42,7 +42,7 @@
     </div>
     <!--新增-->
     <el-dialog :title="pageInfo.name" v-model="dialogVisible" size="tiny">
-      <el-form :model="form" label-width="130px">
+      <el-form :model="form" label-width="120px"  label-position="left">
         <el-form-item label="URL">
           <el-input v-model="form.url" auto-complete="off"></el-input>
           </el-input>
@@ -92,27 +92,27 @@
   export default {
     data(){
       return {
-        tableData:[],
+        tableData: [],
         currentPage: 1,
-        totalSize:10,
+        totalSize: 10,
         /*弹窗*/
-        dialogVisible:false,
-        dialogVisible_del:false,
-        is:true,
-        pageInfo:{
-          index:1,
-          data:'',
-          name:''
+        dialogVisible: false,
+        dialogVisible_del: false,
+        is: true,
+        pageInfo: {
+          index: 1,
+          data: '',
+          name: ''
         },
-        form:{
-          url:'',
-          region:'',
-          priority:'',
-          is_enabled:'false'
+        form: {
+          url: '',
+          region: '',
+          priority: '',
+          is_enabled: 'false'
         }
       }
     },
-    methods:{
+    methods: {
       setForm(data){
         var forms = this.form;
         forms.url = data.url;
@@ -122,18 +122,18 @@
       },
       /*获取IP/域名信息*/
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.dynamic_servers,
+            method: 'GET',
+            url: API.dynamic_servers,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -141,56 +141,56 @@
       },
       /*新增IP*/
       addInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'POST',
-            url:API.dynamic_servers,
+            method: 'POST',
+            url: API.dynamic_servers,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       /*删除IP*/
-      delInfo(id,parm){
-        return  new Promise( (resolve,reject) => {
+      delInfo(id, parm){
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'DELETE',
-            url:API.dynamic_servers+'/'+id,
+            method: 'DELETE',
+            url: API.dynamic_servers + '/' + id,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       /*修改IP*/
-      upInfo(id,parm){
-        return  new Promise( (resolve,reject) => {
+      upInfo(id, parm){
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'PATCH',
-            url:API.dynamic_servers+'/'+id,
+            method: 'PATCH',
+            url: API.dynamic_servers + '/' + id,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -204,18 +204,18 @@
       add1(){
         this.dialogVisible = true;
         this.pageInfo.name = '新增IP'
-        for(var i in this.form){
-            this.form[i] = ''
+        for (var i in this.form) {
+          this.form[i] = ''
         }
         this.form.is_enabled = 'false'
         this.is = true
       },
       add(){
-        if(JS.checkEmpty(this.form)){
-          if(JS.isDigit(this.form.priority)){
-            this.addInfo(this.form).then(res=>{
-              if(res.data.success){
-                this.getInfo().then(res=>{
+        if (JS.checkEmpty(this.form)) {
+          if (JS.isDigit(this.form.priority)) {
+            this.addInfo(this.form).then(res => {
+              if (res.data.success) {
+                this.getInfo().then(res => {
                   this.tableData = res.data.data.dynamic_servers
                 })
                 this.dialogVisible = false;
@@ -223,20 +223,20 @@
                   message: '新增成功',
                   type: 'success'
                 });
-              }else{
+              } else {
                 this.$message({
                   message: '格式错误',
                   type: 'error'
                 });
               }
             })
-          }else{
+          } else {
             this.$message({
               message: '格式错误',
               type: 'error'
             });
           }
-        }else{
+        } else {
           this.$message({
             message: '不能为空',
             type: 'warning'
@@ -251,10 +251,10 @@
         this.is = false
       },
       update(){
-        if(JS.checkEmpty(this.form)){
-          this.upInfo(this.pageInfo.data.id,this.form).then(res=>{
-            if(res.data.success){
-              this.getInfo().then(res=>{
+        if (JS.checkEmpty(this.form)) {
+          this.upInfo(this.pageInfo.data.id, this.form).then(res => {
+            if (res.data.success) {
+              this.getInfo().then(res => {
                 this.tableData = res.data.data.dynamic_servers
               })
               this.dialogVisible = false;
@@ -262,14 +262,14 @@
                 message: '修改成功',
                 type: 'success'
               });
-            }else{
+            } else {
               this.$message({
                 message: '格式错误',
                 type: 'error'
               });
             }
           })
-        }else{
+        } else {
           this.$message({
             message: '不能为空',
             type: 'warning'
@@ -282,9 +282,9 @@
         this.pageInfo.data = data;
       },
       del(){
-        this.delInfo(this.pageInfo.data.id,this.form).then(res=>{
-          if(res.data.success){
-            this.getInfo().then(res=>{
+        this.delInfo(this.pageInfo.data.id, this.form).then(res => {
+          if (res.data.success) {
+            this.getInfo().then(res => {
               this.tableData = res.data.data.dynamic_servers
             })
             this.dialogVisible_del = false;
@@ -292,7 +292,7 @@
               message: '删除成功',
               type: 'success'
             });
-          }else{
+          } else {
             this.$message({
               message: '删除失败',
               type: 'error'
@@ -301,17 +301,17 @@
         })
       },
       pushInfo(){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'POST',
-            url:API.dynamic_servers_push,
+            method: 'POST',
+            url: API.dynamic_servers_push,
             headers: {'Authorization': token},
-          }).then(function(res){
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -322,29 +322,29 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'info'
-        }).then(()=>{
-            this.pushInfo().then(res=>{
-                console.log(res)
-              if(res.data.data.result.http_code == 200){
-                this.$message({
-                  type: 'success',
-                  duration:1500,
-                  message: '推送成功!'
-                });
-              }else{
-                this.$message({
-                  type: 'error',
-                  duration:1500,
-                  message: '推送失败!'
-                });
-              }
-            })
+        }).then(() => {
+          this.pushInfo().then(res => {
+            console.log(res)
+            if (res.data.data.result.http_code == 200) {
+              this.$message({
+                type: 'success',
+                duration: 1500,
+                message: '推送成功!'
+              });
+            } else {
+              this.$message({
+                type: 'error',
+                duration: 1500,
+                message: '推送失败!'
+              });
+            }
+          })
         })
       }
 
     },
     mounted(){
-      this.getInfo().then(res=>{
+      this.getInfo().then(res => {
         this.tableData = res.data.data.dynamic_servers
       })
     }
@@ -352,20 +352,23 @@
 </script>
 
 <style scoped>
-  .dynamicip{
+  .dynamicip {
     padding: 10px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 100%;
   }
-  .el-table .cell img{
+
+  .el-table .cell img {
     height: 30px;
     margin-top: 10px;
   }

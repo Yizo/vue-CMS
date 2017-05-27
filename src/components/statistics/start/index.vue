@@ -38,7 +38,7 @@
           </div>
         </el-col>
         <el-col :span="12">
-          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu"style="margin-right: 10px"></i>用户状态统计列表</span>
+          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>用户状态统计列表</span>
           <table class="t1">
             <tbody class="table">
             <tr>
@@ -50,7 +50,7 @@
               <td>{{item.is_enabled}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
                         @click="details(item)">{{item.total}}</span></td>
-              <td >{{item.percent}}</td>
+              <td>{{item.percent}}</td>
             </tr>
             </tbody>
           </table>
@@ -84,212 +84,214 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
-      data(){
-          return {
-            /*筛选*/
-            filter:{
-              versions:'',
-              channels:'',
-            },
-            /*饼状图*/
-            options:{
-              title: {
-                text:null
-              },
-              plotOptions: {
-                pie: {
-                  allowPointSelect: true,
-                  cursor: 'pointer',
-                  dataLabels: {
-                    enabled: true,
-                  }
-                }
-              },
-              series: [{
-                type: 'pie',
-                name: '用户状态',
-                data: [
-                  ['a',10],
-                  ['b',20],
-                  ['c',30],
-                  ['d',40]
-                ]
-              }],
-              credits:false
-            },
-            /*列表*/
-            tableData:[],
-
-            /*弹窗*/
-            dialogTableVisible:false,
-            dialogData:[],
-            pageInfo:{
-              is:'',
-              page:'',
-              device_model:''
-            },
-
-            /*分页*/
-            val:{},
-            currentPage:1,
-            totalSize:0,
-            pageSize:15
-
-          }
-      },
-      computed:{
-        ...mapGetters(['versions']),
-      },
-      methods:{
-
-        //时间戳
-        Timestamp(row){
-
-            if(row){
-              const now = new Date(row*1000);
-              var year=now.getFullYear();
-              var month=now.getMonth()+1;
-              var date=now.getDate();
-              var hour=now.getHours();
-              var minute=now.getMinutes();
-              var second=now.getSeconds();
-
-              return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
-            }else{
-                return false
-            }
-
+    data(){
+      return {
+        /*筛选*/
+        filter: {
+          versions: '',
+          channels: '',
         },
-        //图表数据转为数组
-        line(json){
-          var arr = [];
-          for(var i = 0;i<json.length;i++){
-            if(json[i]['is_enabled'] == true){
-              json[i]['is_enabled'] = '正常'
-            }else{
-              json[i]['is_enabled'] = '封号'
-            }
-            arr.push([json[i]['is_enabled'],parseFloat(json[i].percent)])
-          }
-          return arr
-        },
-
-          /*筛选*/
-        valueChange(){
-            if(this.filter.channels == '全部渠道'){
-              this.filter.channels = ''
-            }
-            if(this.filter.versions == '全部版本'){
-              this.filter.versions = ''
-            }
-
-            this.getInfo({app_version:this.filter.versions,app_channel:this.filter.channels}).then( res => {
-              this.tableData = res.data.data.items;
-              this.options.series[0].data = this.line(res.data.data.items);
-              this.$HighCharts.chart('main',this.options);
-            })
+        /*饼状图*/
+        options: {
+          title: {
+            text: null
           },
-
-          /*列表*/
-          //获取用户状态统计信息
-          getInfo(parm){
-            var p = new Promise( (resolve,reject) => {
-              const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-              this.$http({
-                method:'GET',
-                url:API.status_stat,
-                headers: {'Authorization': token},
-                params:parm
-              }).then(function(res){
-
-                if(res.status == 200){
-                  resolve(res)
-                }else{
-                  reject(res)
-                }
-
-              })
-            })
-            return p;
-          },
-          //过滤用户状态
-          filterStar(data){
-              return data == true ? '正常':'封号';
-          },
-
-          /*弹窗*/
-          /*查看详情*/
-          details(is){
-              this.pageInfo.is = is;
-              var options = {
-                  page:1
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
               }
-              this.getDetails(options);
-          },
-          //获取统计详情
-          getDetails(parm){
-            this.dialogTableVisible = true;
-            let is = this.pageInfo.is;
-
-            if(is){
-              is = 1
-            }else{
-              is = 0
             }
-            const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-            this.$http({
-              method:'GET',
-              url:API.status_stat_details,
-              headers: {'Authorization': token},
-              params:{
-                is_enabled:is,
-                limit:this.pageSize,
-                page:parm.page
-              },
-            }).then(res => {
-              if(res.status == 200){
-                let data = res.data.data
-                this.dialogData = data.users;
-                this.currentPage = data.current_page;
-                this.totalSize = data.total_count
-              }
-            })
+          },
+          series: [{
+            type: 'pie',
+            name: '用户状态',
+            data: [
+              ['a', 10],
+              ['b', 20],
+              ['c', 30],
+              ['d', 40]
+            ]
+          }],
+          credits: false
+        },
+        /*列表*/
+        tableData: [],
+
+        /*弹窗*/
+        dialogTableVisible: false,
+        dialogData: [],
+        pageInfo: {
+          is: '',
+          page: '',
+          device_model: ''
         },
 
-          /*分页*/
-          handleCurrentChange(val){
-            this.currentPage = val;
-            this.getDetails({page:val,limit:this.pageSize})
-          }
+        /*分页*/
+        val: {},
+        currentPage: 1,
+        totalSize: 0,
+        pageSize: 15
+
+      }
+    },
+    computed: {
+      ...mapGetters(['versions']),
+    },
+    methods: {
+
+      //时间戳
+      Timestamp(row){
+
+        if (row) {
+          const now = new Date(row * 1000);
+          var year = now.getFullYear();
+          var month = now.getMonth() + 1;
+          var date = now.getDate();
+          var hour = now.getHours();
+          var minute = now.getMinutes();
+          var second = now.getSeconds();
+
+          return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+        } else {
+          return false
+        }
 
       },
-      mounted(){
-          //绘制图形
-        this.getInfo().then( res => {
+      //图表数据转为数组
+      line(json){
+        var arr = [];
+        for (var i = 0; i < json.length; i++) {
+          if (json[i]['is_enabled'] == true) {
+            json[i]['is_enabled'] = '正常'
+          } else {
+            json[i]['is_enabled'] = '封号'
+          }
+          arr.push([json[i]['is_enabled'], parseFloat(json[i].percent)])
+        }
+        return arr
+      },
+
+      /*筛选*/
+      valueChange(){
+        if (this.filter.channels == '全部渠道') {
+          this.filter.channels = ''
+        }
+        if (this.filter.versions == '全部版本') {
+          this.filter.versions = ''
+        }
+
+        this.getInfo({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
-          this.$HighCharts.chart('main',this.options);
+          this.$HighCharts.chart('main', this.options);
         })
       },
+
+      /*列表*/
+      //获取用户状态统计信息
+      getInfo(parm){
+        var p = new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'GET',
+            url: API.status_stat,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+
+            if (res.status == 200) {
+              resolve(res)
+            } else {
+              reject(res)
+            }
+
+          })
+        })
+        return p;
+      },
+      //过滤用户状态
+      filterStar(data){
+        return data == true ? '正常' : '封号';
+      },
+
+      /*弹窗*/
+      /*查看详情*/
+      details(is){
+        this.pageInfo.is = is;
+        var options = {
+          page: 1
+        }
+        this.getDetails(options);
+      },
+      //获取统计详情
+      getDetails(parm){
+        this.dialogTableVisible = true;
+        let is = this.pageInfo.is;
+
+        if (is) {
+          is = 1
+        } else {
+          is = 0
+        }
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+        this.$http({
+          method: 'GET',
+          url: API.status_stat_details,
+          headers: {'Authorization': token},
+          params: {
+            is_enabled: is,
+            limit: this.pageSize,
+            page: parm.page
+          },
+        }).then(res => {
+          if (res.status == 200) {
+            let data = res.data.data
+            this.dialogData = data.users;
+            this.currentPage = data.current_page;
+            this.totalSize = data.total_count
+          }
+        })
+      },
+
+      /*分页*/
+      handleCurrentChange(val){
+        this.currentPage = val;
+        this.getDetails({page: val, limit: this.pageSize})
+      }
+
+    },
+    mounted(){
+      //绘制图形
+      this.getInfo().then(res => {
+        this.tableData = res.data.data.items;
+        this.options.series[0].data = this.line(res.data.data.items);
+        this.$HighCharts.chart('main', this.options);
+      })
+    },
   }
 </script>
 
 <style scoped>
-  #start{
+  #start {
     padding: 10px;
   }
+
   /*导航*/
-  #userInfo .breadcrumb{
+  #userInfo .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
 </style>

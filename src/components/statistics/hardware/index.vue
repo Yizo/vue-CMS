@@ -34,7 +34,7 @@
           </div>
         </el-col>
         <el-col :span="12">
-          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu"style="margin-right: 10px"></i>硬件统计列表</span>
+          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>硬件统计列表</span>
           <table class="t1">
             <tbody class="table">
             <tr>
@@ -47,8 +47,8 @@
               <td>{{item.device_model}}</td>
               <td>{{item.platform}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                @click="detail(index,item)">{{item.total}}</span></td>
-              <td >{{item.percent}}</td>
+                        @click="detail(index,item)">{{item.total}}</span></td>
+              <td>{{item.percent}}</td>
             </tr>
             </tbody>
           </table>
@@ -84,21 +84,21 @@
   </div>
 </template>
 <script>
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import * as API from '../../../api/api'
   export default {
     data() {
       return {
         //组件数据
-        pageInfo:{
-          index:'',//当前行索引
-          page:'',
-          device_model:''
+        pageInfo: {
+          index: '',//当前行索引
+          page: '',
+          device_model: ''
         },
         //饼状图
-        options:{
+        options: {
           title: {
-            text:null
+            text: null
           },
           plotOptions: {
             pie: {
@@ -113,84 +113,62 @@
             type: 'pie',
             name: '机型占比',
             data: [
-                ['a',10],
-              ['b',20],
-              ['c',30],
-              ['d',40]
+              ['a', 10],
+              ['b', 20],
+              ['c', 30],
+              ['d', 40]
             ]
           }],
-          credits:false
+          credits: false
         },
         //筛选
-        filter:{
-          versions:'',
+        filter: {
+          versions: '',
           channels: '',
         },
         tableData: [],
         //弹窗
         dialogTableVisible: false,
-        dialogData:[],
-        val:{},
-        currentPage:1,
-        totalSize:0,
-        pageSize:15
+        dialogData: [],
+        val: {},
+        currentPage: 1,
+        totalSize: 0,
+        pageSize: 15
       }
     },
-    computed:{
-       ...mapGetters(['versions']),
+    computed: {
+      ...mapGetters(['versions']),
     },
-    methods:{
-       //时间戳
+    methods: {
+      //时间戳
       Timestamp(row){
-        const now = new Date(row*1000);
-        var year=now.getFullYear();
-        var month=now.getMonth()+1;
-        var date=now.getDate();
-        var hour=now.getHours();
-        var minute=now.getMinutes();
-        var second=now.getSeconds();
+        const now = new Date(row * 1000);
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var date = now.getDate();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
 
-        return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
       },
       //获取硬件统计信息
       gethardware(parm){
-          var p = new Promise( (resolve,reject) => {
-            const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-            this.$http({
-              method:'GET',
-              url:API.hardware_stat,
-              headers: {'Authorization': token},
-              params:{
-                app_version:parm.app_version || null,
-                app_channel:parm.app_channel || null,
-              },
-            }).then(function(res){
-
-              if(res.status == 200){
-                  resolve(res)
-              }else{
-                  reject(res)
-              }
-
-            })
-          })
-
-        return p;
-      },
-      //硬件信息详情
-      getDatails(parm){
-        var p = new Promise( (resolve,reject) => {
+        var p = new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.hardware_stat_details,
+            method: 'GET',
+            url: API.hardware_stat,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
+            params: {
+              app_version: parm.app_version || null,
+              app_channel: parm.app_channel || null,
+            },
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
 
@@ -199,32 +177,54 @@
 
         return p;
       },
-      detail(index,val){
-        this.val  = val
+      //硬件信息详情
+      getDatails(parm){
+        var p = new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'GET',
+            url: API.hardware_stat_details,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+
+            if (res.status == 200) {
+              resolve(res)
+            } else {
+              reject(res)
+            }
+
+          })
+        })
+
+        return p;
+      },
+      detail(index, val){
+        this.val = val
         var options = {
-          device_model:val.device_model,
-          platform:val.platform,
-          page:1,
-          limit:this.pageSize
+          device_model: val.device_model,
+          platform: val.platform,
+          page: 1,
+          limit: this.pageSize
         }
         this.dialogTableVisible = true
-        this.getDatails(options).then(res=>{
-            var data = res.data.data;
-            this.dialogData = data.users;
-            this.currentPage = data.current_page;
-            this.totalSize = data.total_count
+        this.getDatails(options).then(res => {
+          var data = res.data.data;
+          this.dialogData = data.users;
+          this.currentPage = data.current_page;
+          this.totalSize = data.total_count
         })
       },
       //硬件详情分页
       handleCurrentChange(val){
         this.currentPage = val;
         var options = {
-          device_model:this.val.device_model,
-          platform:this.val.platform,
-          page:val,
-          limit:this.pageSize
+          device_model: this.val.device_model,
+          platform: this.val.platform,
+          page: val,
+          limit: this.pageSize
         }
-        this.getDatails(options).then(res=>{
+        this.getDatails(options).then(res => {
           var data = res.data.data;
           this.dialogData = data.users;
           this.currentPage = data.current_page;
@@ -234,66 +234,71 @@
       //图表数据转为数组
       line(json){
         var arr = [];
-        for(var i = 0;i<json.length;i++){
-          arr.push([json[i]['device_model'],parseFloat(json[i].percent)])
+        for (var i = 0; i < json.length; i++) {
+          arr.push([json[i]['device_model'], parseFloat(json[i].percent)])
         }
         return arr
       },
       //筛选
       valueChange(val){
 
-         if(this.filter.channels == '全部渠道'){
-             this.filter.channels = ''
-         }
-         if(this.filter.versions == '全部版本'){
-           this.filter.versions = ''
-         }
+        if (this.filter.channels == '全部渠道') {
+          this.filter.channels = ''
+        }
+        if (this.filter.versions == '全部版本') {
+          this.filter.versions = ''
+        }
 
-        this.gethardware({app_version:this.filter.versions,app_channel:this.filter.channels}).then( res => {
+        this.gethardware({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
-          this.$HighCharts.chart('main',this.options);
+          this.$HighCharts.chart('main', this.options);
         })
       }
     },
     mounted(){
       //绘制图形
-      this.gethardware({app_version:null,app_channel:null}).then( res => {
+      this.gethardware({app_version: null, app_channel: null}).then(res => {
         this.tableData = res.data.data.items;
         this.options.series[0].data = this.line(res.data.data.items);
-        this.$HighCharts.chart('main',this.options);
+        this.$HighCharts.chart('main', this.options);
       })
     }
   }
 </script>
 
 <style scope>
-  #hardware{
+  #hardware {
     padding: 10px;
   }
+
   /*导航*/
-  #userInfo .breadcrumb{
+  #userInfo .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
+
   /*弹窗*/
-  .dh2{
+  .dh2 {
     height: 30px;
     line-height: 30px;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: 400;
-    span{
-      font-size: 16px;
-      font-weight: 500;
-    }
+
+  span {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
   }
 </style>
 

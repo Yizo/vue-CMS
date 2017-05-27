@@ -16,37 +16,37 @@
 <script>
   import * as JS from '../../../assets/js/js'
   export default {
-      data(){
-          return {
-            //年月切换
-            radio:'月',
-            value:'',
-          }
-      },
-      methods:{
-        pick(){
-            var a = {year:null, month:null}
-            if(this.radio == '年'){
-                a.year = new Date(this.value).getFullYear()
-            }else{
-                var year = new Date(this.value).getFullYear();
-                var month = new Date(this.value).getMonth()+1
-                a = {year,month}
-            }
-            this.$store.dispatch('setTime',a);
-            this.$emit('change');
-        }
-      },
-      computed:{
-        pickerType(){
-            return this.radio == '年'?'year':'month'
-        }
+    data(){
+      return {
+        //年月切换
+        radio: '月',
+        value: '',
       }
+    },
+    methods: {
+      pick(){
+        var a = {year: null, month: null}
+        if (this.radio == '年') {
+          a.year = new Date(this.value).getFullYear()
+        } else {
+          var year = new Date(this.value).getFullYear();
+          var month = new Date(this.value).getMonth() + 1
+          a = {year, month}
+        }
+        this.$store.dispatch('setTime', a);
+        this.$emit('change');
+      }
+    },
+    computed: {
+      pickerType(){
+        return this.radio == '年' ? 'year' : 'month'
+      }
+    }
   }
 </script>
 
 <style scoped>
-  .filter{
+  .filter {
     text-align: left;
     display: flex;
     align-items: center;

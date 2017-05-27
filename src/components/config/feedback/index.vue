@@ -96,7 +96,8 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.has_read ? 'success' : 'primary'"
-              close-transition>{{scope.row.has_read ? '已读': '未读'}}</el-tag>
+              close-transition>{{scope.row.has_read ? '已读': '未读'}}
+            </el-tag>
           </template>
         </el-table-column>
 
@@ -188,7 +189,7 @@
       ...mapGetters(['versions', 'token'])
     },
     filters: {
-      formatDate:formatDate
+      formatDate: formatDate
     },
     methods: {
       handleDealPromise(){

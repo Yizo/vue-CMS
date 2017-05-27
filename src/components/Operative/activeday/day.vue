@@ -23,7 +23,7 @@
           <el-table-column
             label="日活跃用户">
             <template scope="scope">
-              <span  @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
+              <span @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -48,7 +48,7 @@
           <tr v-if="get_day_detail.logs == ''">
             <th style="padding: 10px 0">暂无数据</th>
           </tr>
-          <tr  v-else v-for="item in get_day_detail.logs">
+          <tr v-else v-for="item in get_day_detail.logs">
             <th>{{item.username}}</th>
           </tr>
           </tbody>
@@ -69,27 +69,27 @@
 </template>
 
 <script>
-  import { mapActions,mapGetters }  from 'vuex'
+  import {mapActions, mapGetters}  from 'vuex'
   export default{
-    data:()=>({
-      pageSize:10,
-      pageSize2:15,
-      dialogVisible:false,
-      detail:{},
+    data: () => ({
+      pageSize: 10,
+      pageSize2: 15,
+      dialogVisible: false,
+      detail: {},
       /*折线图*/
-      options:{
-        title:{
-          text:null
+      options: {
+        title: {
+          text: null
         },
         xAxis: {
-          title:{
-            text:''
+          title: {
+            text: ''
           },
           categories: []
         },
         yAxis: {
-          title:{
-            text:''
+          title: {
+            text: ''
           },
           plotLines: [{
             value: 0,
@@ -101,37 +101,37 @@
           valueSuffix: '次'
         },
         series: [],
-        credits:false
+        credits: false
       },
     }),
-    computed:{
+    computed: {
       ...mapGetters({
-        get_day:'ACTIVEDAY_day_data',
-        get_day_detail:'ACTIVEDAY_day_details_data'
+        get_day: 'ACTIVEDAY_day_data',
+        get_day_detail: 'ACTIVEDAY_day_details_data'
       }),
     },
-    watch:{
+    watch: {
       get_day(){
-          this.draw()
-          return this.get_day
+        this.draw()
+        return this.get_day
       }
     },
-    methods:{
+    methods: {
       ...mapActions({
-        day:'ACTIVEDAY_DAY',
-        day_details:'ACTIVEDAY_DAY_DETAILS'
+        day: 'ACTIVEDAY_DAY',
+        day_details: 'ACTIVEDAY_DAY_DETAILS'
       }),
       //表格数据
       AnalysisJSON(parm) {
         var result = []
-        var keyList = { users_count: '当天活跃用户数量'}
+        var keyList = {users_count: '当天活跃用户数量'}
         var names = ['users_count']
-        for(var i = 0; i < names.length; i++) {
+        for (var i = 0; i < names.length; i++) {
           var data = []
-          for(var j = 0; j < parm.length; j++) {
+          for (var j = 0; j < parm.length; j++) {
             data.push(parm[j][names[i]])
           }
-          var item = { name: keyList[names[i]], data: data }
+          var item = {name: keyList[names[i]], data: data}
           result.push(item)
         }
         return result
@@ -139,7 +139,7 @@
       //设置Y轴
       setXAxis(parm){
         var arry = []
-        for(var i in parm) {
+        for (var i in parm) {
           arry.push(parm[i].stat_date);
         }
         return arry
@@ -150,40 +150,42 @@
         this.options.series = this.AnalysisJSON(this.get_day.logs);
         //设置X轴
         this.options.xAxis.categories = this.setXAxis(this.get_day.logs)
-        this.$HighCharts.chart('main',this.options);
+        this.$HighCharts.chart('main', this.options);
       },
       handleCurrentChange(val){
-        this.day({page:val,limit:this.pageSize})
+        this.day({page: val, limit: this.pageSize})
       },
       handleCurrentChange2(val){
-        this.day_details({page:val,limit:this.pageSize2,stat_date:this.detail.stat_date})
+        this.day_details({page: val, limit: this.pageSize2, stat_date: this.detail.stat_date})
       },
       num(data){
-          this.detail = data
-          this.dialogVisible = true
-          this.day_details({limit:this.pageSize2,stat_date:data.stat_date})
+        this.detail = data
+        this.dialogVisible = true
+        this.day_details({limit: this.pageSize2, stat_date: data.stat_date})
       },
 
     },
     mounted(){
-        this.day({limit:this.pageSize})
-        this.draw();
+      this.day({limit: this.pageSize})
+      this.draw();
     }
   }
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

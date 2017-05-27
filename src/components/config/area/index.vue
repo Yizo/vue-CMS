@@ -33,7 +33,8 @@
             <template scope="scope">
             <span>
                 <el-button size="small" @click="update1(scope.row)">修改</el-button>
-                <el-button size="small" @click="star(scope.row)" :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}">{{isEnable(scope.row.is_enabled)}}</el-button>
+                <el-button size="small" @click="star(scope.row)"
+                           :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}">{{isEnable(scope.row.is_enabled)}}</el-button>
             </span>
             </template>
           </el-table-column>
@@ -42,23 +43,23 @@
     </div>
     <!--新增-->
     <el-dialog title="新增地域" v-model="dialogVisible" size="tiny">
-      <el-form :model="form" label-width="130px">
+      <el-form :model="form" label-width="120px" label-position="left">
         <el-form-item label="服务器类型">
-            <el-select v-model="form.node_type_id" style="width: 100%">
-              <el-option
-                v-for="(item,index) in pageInfo.data"
-                :label="item.name"
-                :value="item.id"
-                :key="index">
-              </el-option>
-            </el-select>
+          <el-select v-model="form.node_type_id" style="width: 100%" class="dot_tips">
+            <el-option
+              v-for="(item,index) in pageInfo.data"
+              :label="item.name"
+              :value="item.id"
+              :key="index">
+            </el-option>
+          </el-select>
           </el-input>
         </el-form-item>
         <el-form-item label="地域名称">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
+          <el-input v-model="form.name" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="国旗图标">
-          <el-input v-model="form.abbr" auto-complete="off" placeholder="填写国家或地区简写代码">
+          <el-input v-model="form.abbr" auto-complete="off" placeholder="填写国家或地区简写代码" class="dot_tips">
           </el-input>
         </el-form-item>
       </el-form>
@@ -71,9 +72,9 @@
     </el-dialog>
     <!--修改-->
     <el-dialog title="修改地域" v-model="dialogVisible_update" size="tiny">
-      <el-form :model="form" label-width="130px">
+      <el-form :model="form" label-width="120px"  label-position="left">
         <el-form-item label="地域编号">
-          <el-input v-model="form2.id" auto-complete="off" :disabled="true" ></el-input>
+          <el-input v-model="form2.id" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="服务器类型">
           <el-select v-model="form2.node_type_id" style="width: 100%">
@@ -118,55 +119,55 @@
   export default {
     data(){
       return {
-        tableData:[],
-        enabled_type:'',//按钮类型
+        tableData: [],
+        enabled_type: '',//按钮类型
         currentPage: 1,
-        totalSize:10,
-        url:API.url,
+        totalSize: 10,
+        url: API.url,
         /*弹窗*/
-        dialogVisible:false,
-        dialogVisible_update:false,
-        pageInfo:{
-            index:1,
-            data:'',//服务器节点类型,
-            up_data:''
+        dialogVisible: false,
+        dialogVisible_update: false,
+        pageInfo: {
+          index: 1,
+          data: '',//服务器节点类型,
+          up_data: ''
         },
-        form:{
-          node_type_id:'',
-          name:'',
-          abbr:''
+        form: {
+          node_type_id: '',
+          name: '',
+          abbr: ''
         },
-        form2:{
-            id:'',
-            node_type_id:'',
-            name:'',
-            abbr:''
+        form2: {
+          id: '',
+          node_type_id: '',
+          name: '',
+          abbr: ''
         },
       }
     },
-    methods:{
+    methods: {
       /*是否启用*/
       isEnable(data){
-        if(data){
-            return '禁用'
-        }else{
-            return '启用'
+        if (data) {
+          return '禁用'
+        } else {
+          return '启用'
         }
       },
       /*获取地域信息*/
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.area_node_regions,
+            method: 'GET',
+            url: API.area_node_regions,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -174,37 +175,37 @@
       },
       /*新增地域*/
       addInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'POST',
-            url:API.area_node_regions,
+            method: 'POST',
+            url: API.area_node_regions,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       /*启用/禁用*/
-      enable(id,parm){
-        return  new Promise( (resolve,reject) => {
+      enable(id, parm){
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'PATCH',
-            url:API.area_update+'/'+id,
+            method: 'PATCH',
+            url: API.area_update + '/' + id,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -212,18 +213,18 @@
       },
       /*修改地域*/
       update_area_node_regions(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'PATCH',
-            url:API.area_update+parm.id,
+            method: 'PATCH',
+            url: API.area_update + parm.id,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -236,16 +237,16 @@
       },
       add1(){
         this.dialogVisible = true;
-        JS.getNodeType({is_enabled:'true'}).then(res=>{
-            this.pageInfo.data = res.data.data.node_types;
+        JS.getNodeType({is_enabled: 'true'}).then(res => {
+          this.pageInfo.data = res.data.data.node_types;
         })
       },
       add(){
-        if(JS.checkEmpty(this.form)){
-            this.form.abbr = this.form.abbr.toLowerCase()
-          this.addInfo(this.form).then(res=>{
-            if(res.data.success){
-              this.getInfo().then(res=>{
+        if (JS.checkEmpty(this.form)) {
+          this.form.abbr = this.form.abbr.toLowerCase()
+          this.addInfo(this.form).then(res => {
+            if (res.data.success) {
+              this.getInfo().then(res => {
                 this.tableData = res.data.data.regions
               })
               this.dialogVisible = false;
@@ -253,14 +254,14 @@
                 message: '新增成功',
                 type: 'success'
               });
-            }else{
+            } else {
               this.$message({
                 message: '格式错误',
                 type: 'error'
               });
             }
           })
-        }else{
+        } else {
           this.$message({
             message: '不能为空',
             type: 'warning'
@@ -273,16 +274,16 @@
         this.form2.name = data.name;
         this.form2.node_type_id = data.node_type_id;
         this.form2.abbr = data.abbr;
-        JS.getNodeType({is_enabled:'true'}).then(res=>{
+        JS.getNodeType({is_enabled: 'true'}).then(res => {
           this.pageInfo.data = res.data.data.node_types;
         })
       },
       update(){
-        if(JS.checkEmpty(this.form2)){
+        if (JS.checkEmpty(this.form2)) {
           this.form.abbr = this.form.abbr.toLowerCase()
-          this.update_area_node_regions(this.form2).then(res=>{
-            if(res.data.success){
-              this.getInfo().then(res=>{
+          this.update_area_node_regions(this.form2).then(res => {
+            if (res.data.success) {
+              this.getInfo().then(res => {
                 this.tableData = res.data.data.regions
               })
               this.dialogVisible_update = false;
@@ -290,14 +291,14 @@
                 message: '修改成功',
                 type: 'success'
               });
-            }else{
+            } else {
               this.$message({
                 message: '格式错误',
                 type: 'error'
               });
             }
           })
-        }else{
+        } else {
           this.$message({
             message: '不能为空',
             type: 'warning'
@@ -305,13 +306,13 @@
         }
       },
       star(data){
-          this.enable(data.id,{id:data.id,is_enabled:!data.is_enabled}).then(res=>{
-            this.tableData.splice(this.tableData.indexOf(data),1,res.data.data)
-          })
+        this.enable(data.id, {id: data.id, is_enabled: !data.is_enabled}).then(res => {
+          this.tableData.splice(this.tableData.indexOf(data), 1, res.data.data)
+        })
       }
     },
     mounted(){
-      this.getInfo().then(res=>{
+      this.getInfo().then(res => {
         this.tableData = res.data.data.regions
       })
     }
@@ -319,30 +320,35 @@
 </script>
 
 <style scoped>
-  .lock{
+  .lock {
     padding: 10px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 100%;
   }
-  .a{
+
+  .a {
     background: #F9C855;
     color: #fff;
     border: #F9C855;
   }
-  .b{
+
+  .b {
     background-color: #42D885;
     border: #42D885;
     color: #fff;
   }
-  .el-table .cell img{
+
+  .el-table .cell img {
     height: 30px;
     margin-top: 10px;
   }

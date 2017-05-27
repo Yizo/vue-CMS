@@ -15,56 +15,57 @@
 </template>
 
 <script>
-import { mapActions,mapGetters }  from 'vuex'
-import payInfo from './payInfo.vue'
-import detail from './detail.vue'
-import filterTime from './filter.vue'
-import smy from './summary.vue'
+  import {mapActions, mapGetters}  from 'vuex'
+  import payInfo from './payInfo.vue'
+  import detail from './detail.vue'
+  import filterTime from './filter.vue'
+  import smy from './summary.vue'
 
-export default {
-    components:{
-      payInfo,detail,filterTime,smy
+  export default {
+    components: {
+      payInfo, detail, filterTime, smy
     },
     data(){
-        return {
-          tableData:[],
-        }
+      return {
+        tableData: [],
+      }
     },
-    computed:{
+    computed: {
       ...mapGetters(['time']),
     },
-    methods:{
+    methods: {
       ...mapActions({
-        pay_details:'PAYINFO_pay_details',
-        coins_details:'PAYINFO_consume_coins_details'
+        pay_details: 'PAYINFO_pay_details',
+        coins_details: 'PAYINFO_consume_coins_details'
       }),
       change(){
         this.pay_details({
-          year:this.time.year,
-          month:this.time.month,
-          limit:15
+          year: this.time.year,
+          month: this.time.month,
+          limit: 15
         })
         this.coins_details({
-          year:this.time.year,
-          month:this.time.month
+          year: this.time.year,
+          month: this.time.month
         });
       }
     },
     mounted(){
 
     }
-}
+  }
 </script>
 
 <style scoped>
-  .payInfo{
+  .payInfo {
     padding: 10px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
 </style>

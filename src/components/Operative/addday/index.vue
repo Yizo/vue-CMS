@@ -52,27 +52,27 @@
 <script>
   import day from './day.vue'
   import month from './month.vue'
-  import { mapActions,mapGetters }  from 'vuex'
+  import {mapActions, mapGetters}  from 'vuex'
   export default{
-    data:()=>({
-      filter:{
-        start:'',
-        end:'',
-        versions:'',
-        channels:''
+    data: () => ({
+      filter: {
+        start: '',
+        end: '',
+        versions: '',
+        channels: ''
       },
-      pageSize:10
+      pageSize: 10
     }),
-    components:{
-      day,month
+    components: {
+      day, month
     },
-    computed:{
+    computed: {
       ...mapGetters(['versions']),
     },
-    methods:{
+    methods: {
       ...mapActions({
-        day:'ADDDAY_DAY',
-        month:'ADDDAY_MONTH'
+        day: 'ADDDAY_DAY',
+        month: 'ADDDAY_MONTH'
       }),
       //筛选
       start_date(val){
@@ -82,19 +82,19 @@
         this.filter.end = val
       },
       filtration(){
-        if(this.filter.channels == '全部渠道'){
+        if (this.filter.channels == '全部渠道') {
           this.filter.channels = ''
         }
-        if(this.filter.versions == '全部版本'){
+        if (this.filter.versions == '全部版本') {
           this.filter.versions = ''
         }
         let options = {
-          page:1,
-          limit:this.pageSize,
-          app_version:this.filter.versions,
-          app_channel:this.filter.channels,
-          start_at:this.filter.start,
-          end_at:this.filter.end
+          page: 1,
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels,
+          start_at: this.filter.start,
+          end_at: this.filter.end
         }
         this.day(options);
         this.month(options);
@@ -106,21 +106,24 @@
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
     display: flex;
   }
-  .warp_col{
+
+  .warp_col {
     width: 50%;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

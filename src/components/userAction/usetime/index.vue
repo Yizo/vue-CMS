@@ -54,56 +54,55 @@
 <script>
   import * as API from '../../../api/api'
   export default{
-    components:{},
+    components: {},
     data(){
       return {
-        filter:{
-          start:'',
-          end:''
+        filter: {
+          start: '',
+          end: ''
         },
-        data:[]
+        data: []
       }
     },
-    computed:{
-
-    },
-    methods:{
+    computed: {},
+    methods: {
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.server_details_info,
+            method: 'GET',
+            url: API.server_details_info,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
     },
     mounted(){
-/*      this.getInfo().then(res=>{
-        this.data = res.data.data.nodes
-        console.log(res)
-      })*/
+      /*      this.getInfo().then(res=>{
+       this.data = res.data.data.nodes
+       console.log(res)
+       })*/
     }
   }
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
 </style>

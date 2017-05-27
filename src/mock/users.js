@@ -1,3 +1,0 @@
-import Mock from 'mocha'
-
-

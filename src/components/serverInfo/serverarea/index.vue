@@ -38,45 +38,43 @@
 <script>
   import * as API from '../../../api/api'
   export default {
-    props:{
-      id:{
-        type:Number
+    props: {
+      id: {
+        type: Number
       }
     },
     data(){
       return {
-        data:[]
+        data: []
       }
     },
-    methods:{
+    methods: {
       getInfo(parm){
         let id = window.sessionStorage.getItem('userId');
-        let address = API.u_transaction_logs.replace(/{id}/g,id);
-        return  new Promise( (resolve,reject) => {
+        let address = API.u_transaction_logs.replace(/{id}/g, id);
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:address,
+            method: 'GET',
+            url: address,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       }
     },
     mounted(){
-      this.getInfo().then(res=>{
+      this.getInfo().then(res => {
         console.log(res)
       })
     },
-    methods:{
-
-    },
+    methods: {},
     mounted(){
 
     }

@@ -7,7 +7,7 @@
     </el-breadcrumb>
     <div class="loginIp-wrapper">
       <el-table
-        :default-sort = "{prop: 'created_at'}"
+        :default-sort="{prop: 'created_at'}"
         :data="data"
         @sort-change="sort"
         style="width: 100%">
@@ -51,52 +51,52 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
-//  import
+  import {mapGetters, mapActions} from 'vuex'
+  //  import
   export default{
     data(){
       return {
-        data:[],
-        currentPage:1,
-        pageSize:15,
-        total:0,
-        order_by:'desc'
+        data: [],
+        currentPage: 1,
+        pageSize: 15,
+        total: 0,
+        order_by: 'desc'
       }
     },
     methods: {
       //获取信息
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.loginip,
+            method: 'GET',
+            url: API.loginip,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       handleCurrentChange(val){
-        this.getInfo({page:val,limit:15}).then(res=>{
+        this.getInfo({page: val, limit: 15}).then(res => {
           this.data = res.data.data.logs;
           this.currentPage = res.data.data.current_page;
           this.total = res.data.data.total_count;
         })
       },
       sort(column){
-          if(column.order == "descending"){
-            this.order_by = 'desc'
-          }else{
-            this.order_by = 'asc'
-          }
-        this.getInfo({page:this.currentPage,limit:15,order_by:this.order_by}).then(res=>{
+        if (column.order == "descending") {
+          this.order_by = 'desc'
+        } else {
+          this.order_by = 'asc'
+        }
+        this.getInfo({page: this.currentPage, limit: 15, order_by: this.order_by}).then(res => {
           this.data = res.data.data.logs;
           this.currentPage = res.data.data.current_page;
           this.total = res.data.data.total_count;
@@ -106,33 +106,36 @@
 
     },
     mounted(){
-        this.getInfo({limit:15}).then(res=>{
-            this.data = res.data.data.logs;
-            this.currentPage = res.data.data.current_page;
-            this.total = res.data.data.total_count;
-        })
+      this.getInfo({limit: 15}).then(res => {
+        this.data = res.data.data.logs;
+        this.currentPage = res.data.data.current_page;
+        this.total = res.data.data.total_count;
+      })
     }
   }
 </script>
 
 <style scoped>
-  #loginIp{
+  #loginIp {
     padding: 10px;
     overflow: auto;
   }
+
   /*导航*/
-  #loginIp .breadcrumb{
+  #loginIp .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .loginIp-wrapper{
+
+  .loginIp-wrapper {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px
   }
-  .page{
+
+  .page {
     margin-top: 20px;
     text-align: right;
   }

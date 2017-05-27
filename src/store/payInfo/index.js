@@ -2,18 +2,18 @@
  * Created by admin on 2017/3/28.
  */
 
-import getters from './getters'
-import mutations from './mutations'
-import actions from './actions'
+import getters from "./getters";
+import mutations from "./mutations";
+import actions from "./actions";
 
 const state = {
-    time:{
-      year:'',
-      month:''
-    },
-    ff_data:[],//付费数据
-    pay_details_data:[],//详情数据
-    summary_data:[],//汇总数据
+  time: {
+    year: '',
+    month: ''
+  },
+  ff_data: [],//付费数据
+  pay_details_data: [],//详情数据
+  summary_data: [],//汇总数据
 }
 
 export default {

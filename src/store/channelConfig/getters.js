@@ -6,10 +6,10 @@ export default {
   channelData: function (state) {
     return state.channelData;
   },
-  addChannelItem:function(state){
+  addChannelItem: function (state) {
     return state.addChannelItem
   },
-  saveChannelSave:function(state){
+  saveChannelSave: function (state) {
     return state.saveChannelSuccess;
   },
 }

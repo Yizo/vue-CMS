@@ -21,7 +21,7 @@
 <script>
   import {formatDate} from '../../../utils/filters'
   import * as API from '../../../api/api'
-  import {mapGetters,mapActions} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
 
 
   export default{

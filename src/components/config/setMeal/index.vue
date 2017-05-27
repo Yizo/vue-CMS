@@ -284,7 +284,7 @@
           this.currentPage = data.current_page;
           this.totalPages = data.total_pages * this.pageSize;
           this.plans = [...data.plans];
-        }).catch((res)=>{
+        }).catch((res) => {
           this.$message({
             message: '网络异常',
             type: 'warning'

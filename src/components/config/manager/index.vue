@@ -45,42 +45,42 @@
   export default {
     data(){
       return {
-        data:[],
-        pageSize:15,
-        currentPage:1,
-        totalSize:0,
+        data: [],
+        pageSize: 15,
+        currentPage: 1,
+        totalSize: 0,
       }
     },
-    methods:{
+    methods: {
       /*封号日志*/
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.operation_logs,
+            method: 'GET',
+            url: API.operation_logs,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
         })
       },
       getData(val){
-          this.getInfo({page:val,limit:this.pageSize}).then(res=>{
-              let data = res.data.data;
-              this.data = data.logs;
-              this.currentPage = data.current_page
-              this.totalSize = data.total_count;
-          })
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+          let data = res.data.data;
+          this.data = data.logs;
+          this.currentPage = data.current_page
+          this.totalSize = data.total_count;
+        })
       },
       handleSizeChange(val){
-          this.getData(val)
+        this.getData(val)
       }
     },
     mounted(){
@@ -90,17 +90,19 @@
 </script>
 
 <style scoped>
-  .lock{
+  .lock {
     padding: 10px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

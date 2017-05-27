@@ -10,3 +10,12 @@
 [0518/180712.903:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.110\chrome_elf.dll
 [0519/174704.430:ERROR:process_reader_win.cc(233)] ReadMemory at 0x5a90048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
 [0519/174704.431:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.110\chrome_elf.dll
+[0525/201504.697:ERROR:process_reader_win.cc(233)] ReadMemory at 0x5bb0048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0525/201504.697:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.110\chrome_elf.dll
+[0525/201504.697:ERROR:process_reader_win.cc(233)] ReadMemory at 0x5940048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0525/201504.697:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.110\chrome_elf.dll
+[0527/165117.371:ERROR:process_reader_win.cc(233)] ReadMemory at 0x5a00048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0527/165117.372:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.110\chrome_elf.dll
+[0527/165117.409:ERROR:process_reader_win.cc(233)] ReadMemory at 0xcf3000 of 53248 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0527/165117.409:ERROR:crash_report_exception_handler.cc(111)] WriteEverything failed
+[0527/165117.410:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess: 已尝试访问正在退出的过程。  (0xc000010a)

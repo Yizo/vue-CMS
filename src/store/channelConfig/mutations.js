@@ -2,7 +2,7 @@
  * Created by isec on 2017/4/14.
  */
 
-import * as type from './types'
+import * as type from "./types";
 
 export default {
   [type.GET_CHANNEL_DATA](state, res){

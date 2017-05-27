@@ -23,7 +23,8 @@
       <el-row :gutter="20" v-for="(item,index) in profile.user_node_types" :key="index">
         <el-col :span="10">
           <el-form-item :label="item.node_type_name">
-            <el-date-picker type="datetime" placeholder="选择日期" v-model="item.expired_at" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="datetime" placeholder="选择日期" v-model="item.expired_at"
+                            style="width: 100%;"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -49,7 +50,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item  style="text-align: left">
+      <el-form-item style="text-align: left">
         <el-button type="primary" @click="onSubmit">修改</el-button>
       </el-form-item>
     </el-form>
@@ -58,50 +59,50 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
       return {
-        form:{
-          id:0,
-          username:'',
-          password:'',
-          current_coins:0,
-          user_group_id:0,
-          is_enabled:0,
-          user_node_types:[]
+        form: {
+          id: 0,
+          username: '',
+          password: '',
+          current_coins: 0,
+          user_group_id: 0,
+          is_enabled: 0,
+          user_node_types: []
         },
-        group:[]
+        group: []
       }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        profile:'UD_profile'
+        profile: 'UD_profile'
       }),
     },
-    watch:{
+    watch: {
       profile(data){
-          return data
+        return data
       }
     },
-    methods:{
+    methods: {
       ...mapActions({
-        update:'UD_up_profile'
+        update: 'UD_up_profile'
       }),
       /*获取账号等级信息*/
       GradeInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.user_types_get,
+            method: 'GET',
+            url: API.user_types_get,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -109,18 +110,18 @@
       },
       getForm(data){
         let arry = [];
-         let form = {
-          id:window.sessionStorage.getItem('userId'),
-          username:data.user.username,
-          password:data.user.password,
-           current_coins:data.user.current_coins,
-           user_group_id:data.user.user_group_id,
-           is_enabled:data.user.is_enabled,
-           user_node_types:[]
+        let form = {
+          id: window.sessionStorage.getItem('userId'),
+          username: data.user.username,
+          password: data.user.password,
+          current_coins: data.user.current_coins,
+          user_group_id: data.user.user_group_id,
+          is_enabled: data.user.is_enabled,
+          user_node_types: []
         }
 
-        for(var i in data.user_node_types){
-             arry.push({id:data.user_node_types[i].id,expired_at:data.user_node_types[i].expired_at})
+        for (var i in data.user_node_types) {
+          arry.push({id: data.user_node_types[i].id, expired_at: data.user_node_types[i].expired_at})
         }
 
         form.user_node_types = JSON.stringify(arry)
@@ -128,60 +129,60 @@
       },
       Times(data){
         const now = new Date(data);
-        var year=now.getFullYear();
-        var month=now.getMonth()+1;
-        var date=now.getDate();
-        var hour=now.getHours();
-        var minute=now.getMinutes();
-        var second=now.getSeconds();
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var date = now.getDate();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
 
-        if(month<9){
-          month = '0'+month
+        if (month < 9) {
+          month = '0' + month
         }
-        if(date<9){
-          date = '0'+date
+        if (date < 9) {
+          date = '0' + date
         }
-        if(hour<9){
-          hour = '0'+hour
+        if (hour < 9) {
+          hour = '0' + hour
         }
-        if(minute<9){
-          minute = '0'+minute
+        if (minute < 9) {
+          minute = '0' + minute
         }
-        if(second<9){
-          second = '0'+second
+        if (second < 9) {
+          second = '0' + second
         }
-        return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
       },
       onSubmit(){
 
         let options = this.getForm(this.profile);
-        for(let key in options.user_node_types){
-            if(typeof options.user_node_types[key].expired_at === "object"){
-              options.user_node_types[key].expired_at = this.Times(options.user_node_types[key].expired_at)
-            }
+        for (let key in options.user_node_types) {
+          if (typeof options.user_node_types[key].expired_at === "object") {
+            options.user_node_types[key].expired_at = this.Times(options.user_node_types[key].expired_at)
+          }
         }
 
-        this.update(options).then(res=>{
-           if(res.status == 200){
-             this.$message({
-               message: '修改成功',
-               type: 'success',
-               duration:2000
-             });
-           }else{
-             this.$message({
-               message: '修改失败',
-               type: 'error',
-               duration:2000
-             });
-           }
+        this.update(options).then(res => {
+          if (res.status == 200) {
+            this.$message({
+              message: '修改成功',
+              type: 'success',
+              duration: 2000
+            });
+          } else {
+            this.$message({
+              message: '修改失败',
+              type: 'error',
+              duration: 2000
+            });
+          }
         })
       }
     },
     beforeMount(){
-        this.GradeInfo().then(res=>{
-            this.group = res.data.data.user_groups
-        })
+      this.GradeInfo().then(res => {
+        this.group = res.data.data.user_groups
+      })
     }
   }
 </script>

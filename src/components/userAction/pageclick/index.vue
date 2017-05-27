@@ -70,7 +70,8 @@
           <template scope="scope">{{scope.row.created_at | Time}}</template>
         </el-table-column>
         <el-table-column label="版本信息">
-          <template scope="scope">{{scope.row.ip_country}}_{{scope.row.ip_province}}_{{scope.row.ip_city}}</template>
+          <template scope="scope">{{scope.row.app_channel}}_{{scope.row.app_version}}_{{scope.row.app_version_number}}
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -92,7 +93,7 @@
         <tr v-if="dialog2.data == ''">
           <th style="padding: 10px 0">暂无数据</th>
         </tr>
-        <tr  v-else v-for="item in dialog2.data">
+        <tr v-else v-for="item in dialog2.data">
           <th>{{item.username}}</th>
         </tr>
         </tbody>
@@ -112,37 +113,37 @@
 <script>
   import * as API from '../../../api/api'
   export default{
-    components:{},
-    props:{
-      contList:{
-        type:Boolean,
-        default:true
+    components: {},
+    props: {
+      contList: {
+        type: Boolean,
+        default: true
       }
     },
     data(){
       return {
-        filter:{
-          start:'',
-          end:''
+        filter: {
+          start: '',
+          end: ''
         },
-        data:[],
-        date_list:[],
-        logs:[],
-        pageSize:15,
+        data: [],
+        date_list: [],
+        logs: [],
+        pageSize: 15,
         /*折线图*/
-        options:{
-          title:{
-            text:null
+        options: {
+          title: {
+            text: null
           },
           xAxis: {
-            title:{
-              text:''
+            title: {
+              text: ''
             },
             categories: []
           },
           yAxis: {
-            title:{
-              text:''
+            title: {
+              text: ''
             },
             plotLines: [{
               value: 0,
@@ -154,84 +155,84 @@
             valueSuffix: '次'
           },
           series: [],
-          credits:false
+          credits: false
         },
-        d_currentPage:1,
-        d_pageSize:15,
-        d_totalSize:0,
-        curentInfo:{},//分页信息
-        dialog:{
-          visable:false,
-          name:'点击次数',
-          data:[],
+        d_currentPage: 1,
+        d_pageSize: 15,
+        d_totalSize: 0,
+        curentInfo: {},//分页信息
+        dialog: {
+          visable: false,
+          name: '点击次数',
+          data: [],
         },
-        dialog2:{
-          visable:false,
-          name:'点击人数',
-          data:[]
+        dialog2: {
+          visable: false,
+          name: '点击人数',
+          data: []
         }
       }
     },
-    watch:{
+    watch: {
       data(){
         this.draw()
       }
     },
-    methods:{
+    methods: {
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.pageclick_list,
+            method: 'GET',
+            url: API.pageclick_list,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       get_visit_details(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.pageclick_visit_details,
+            method: 'GET',
+            url: API.pageclick_visit_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       get_user_details(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.pageclick_user_details,
+            method: 'GET',
+            url: API.pageclick_user_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       getData(options){
-        return new Promise( (resolve,reject) => {
-          this.getInfo(options).then(res=>{
+        return new Promise((resolve, reject) => {
+          this.getInfo(options).then(res => {
             let data = res.data.data
             this.data = data.interfaces
             this.logs = data.logs
@@ -244,24 +245,24 @@
       clickRate(data){
         let a = data.visits_count
         let b = data.users_count;
-        if(a===0||b===0){
+        if (a === 0 || b === 0) {
           return '0'
-        }else{
-          return (Math.round((a / b) * 10 )/10);
+        } else {
+          return (Math.round((a / b) * 10) / 10);
         }
       },
       //表格数据
       AnalysisJSON(parm) {
         var result = []
-        for(var i in parm){
-            result.push({name:i,data:parm[i]})
+        for (var i in parm) {
+          result.push({name: i, data: parm[i]})
         }
         return result
       },
       //设置Y轴
       setXAxis(parm){
         var arry = []
-        for(var i in parm) {
+        for (var i in parm) {
           arry.push(parm[i]);
         }
         return arry
@@ -272,7 +273,7 @@
         this.options.series = this.AnalysisJSON(this.logs);
         //设置X轴
         this.options.xAxis.categories = this.date_list
-        this.$HighCharts.chart('main',this.options);
+        this.$HighCharts.chart('main', this.options);
       },
       //筛选
       start_date(val){
@@ -283,32 +284,32 @@
       },
       filtration(){
         let options = {
-          page:1,
-          limit:this.pageSize,
-          start_at:this.filter.start,
-          end_at:this.filter.end
+          page: 1,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
         }
         this.getData(options);
       },
       //点击次数详情
       visits_detail(data){
-          let is = this.filter.start && this.filter.end
-        if(is){
+        let is = this.filter.start && this.filter.end
+        if (is) {
           this.curentInfo = data
           let options = {
-            page:1,
-            limit:this.d_pageSize,
-            start_at:this.filter.start,
-            end_at:this.filter.end,
-            interface_id:data.interface_id
+            page: 1,
+            limit: this.d_pageSize,
+            start_at: this.filter.start,
+            end_at: this.filter.end,
+            interface_id: data.interface_id
           }
           this.dialog.visable = true
-          this.get_visit_details(options).then(res=>{
+          this.get_visit_details(options).then(res => {
             this.dialog.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
             this.d_totalSize = res.data.data.total_count
           })
-        }else{
+        } else {
           this.$message({
             message: '请选择开始,结束日期',
             type: 'warning'
@@ -317,13 +318,13 @@
       },
       d_handleSizeChange1(val){
         let options = {
-          page:val,
-          limit:this.d_pageSize,
-          start_at:this.filter.start || null,
-          end_at:this.filter.end || null,
-          interface_id:this.curentInfo.interface_id
+          page: val,
+          limit: this.d_pageSize,
+          start_at: this.filter.start || null,
+          end_at: this.filter.end || null,
+          interface_id: this.curentInfo.interface_id
         }
-        this.get_visit_details(options).then(res=>{
+        this.get_visit_details(options).then(res => {
           this.dialog.data = res.data.data.logs
           this.d_currentPage = res.data.data.current_page
           this.d_totalSize = res.data.data.total_count
@@ -332,22 +333,22 @@
       //点击人数详情
       users_detail(data){
         let is = this.filter.start && this.filter.end
-        if(is){
+        if (is) {
           this.curentInfo = data
           let options = {
-            page:1,
-            limit:this.d_pageSize,
-            start_at:this.filter.start || null,
-            end_at:this.filter.end || null,
-            interface_id:data.interface_id
+            page: 1,
+            limit: this.d_pageSize,
+            start_at: this.filter.start || null,
+            end_at: this.filter.end || null,
+            interface_id: data.interface_id
           }
           this.dialog2.visable = true
-          this.get_user_details(options).then(res=>{
+          this.get_user_details(options).then(res => {
             this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
             this.d_totalSize = res.data.data.total_count
           })
-        }else{
+        } else {
           this.$message({
             message: '请选择开始,结束日期',
             type: 'warning'
@@ -357,13 +358,13 @@
       },
       d_handleSizeChange2(val){
         let options = {
-          page:val,
-          limit:this.d_pageSize,
-          start_at:this.filter.start,
-          end_at:this.filter.end,
-          interface_id:this.curentInfo.interface_id
+          page: val,
+          limit: this.d_pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          interface_id: this.curentInfo.interface_id
         }
-        this.get_user_details(options).then(res=>{
+        this.get_user_details(options).then(res => {
           this.dialog2.data = res.data.data.logs
           this.d_currentPage = res.data.data.current_page
           this.d_totalSize = res.data.data.total_count
@@ -372,26 +373,28 @@
 
     },
     mounted(){
-        this.getData().then(res=>{
-          this.draw()
-        })
+      this.getData().then(res => {
+        this.draw()
+      })
 
     }
   }
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

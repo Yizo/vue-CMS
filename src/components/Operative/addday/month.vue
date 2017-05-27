@@ -26,7 +26,7 @@
           <el-table-column
             label="月新增用户">
             <template scope="scope">
-              <span  @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
+              <span @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -77,29 +77,29 @@
 </template>
 
 <script>
-  import { mapActions,mapGetters }  from 'vuex'
+  import {mapActions, mapGetters}  from 'vuex'
   export default{
-    data:()=>({
-      pageSize:10,
-      pageSize2:15,
-      dialogVisible:false,
-      detail:{
-        stat_month:''
+    data: () => ({
+      pageSize: 10,
+      pageSize2: 15,
+      dialogVisible: false,
+      detail: {
+        stat_month: ''
       },
       /*折线图*/
-      options:{
-        title:{
-          text:null
+      options: {
+        title: {
+          text: null
         },
         xAxis: {
-          title:{
-            text:''
+          title: {
+            text: ''
           },
           categories: []
         },
         yAxis: {
-          title:{
-            text:''
+          title: {
+            text: ''
           },
           plotLines: [{
             value: 0,
@@ -111,37 +111,37 @@
           valueSuffix: '次'
         },
         series: [],
-        credits:false
+        credits: false
       },
     }),
-    watch:{
+    watch: {
       get_month(){
         this.draw()
         return this.get_month
       }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        get_month:'month_data',
-        get_month_detail:'month_details_data'
+        get_month: 'month_data',
+        get_month_detail: 'month_details_data'
       }),
     },
-    methods:{
+    methods: {
       ...mapActions({
-        month:'ADDDAY_MONTH',
-        month_details:'ADDDAY_MONTH_DETAILS'
+        month: 'ADDDAY_MONTH',
+        month_details: 'ADDDAY_MONTH_DETAILS'
       }),
       //表格数据
       AnalysisJSON(parm) {
         var result = []
-        var keyList = { users_count: '月增数量'}
+        var keyList = {users_count: '月增数量'}
         var names = ['users_count']
-        for(var i = 0; i < names.length; i++) {
+        for (var i = 0; i < names.length; i++) {
           var data = []
-          for(var j = 0; j < parm.length; j++) {
+          for (var j = 0; j < parm.length; j++) {
             data.push(parm[j][names[i]])
           }
-          var item = { name: keyList[names[i]], data: data }
+          var item = {name: keyList[names[i]], data: data}
           result.push(item)
         }
         return result
@@ -149,22 +149,22 @@
       //设置Y轴
       setXAxis(parm){
         var arry = []
-        for(var i in parm) {
-          arry.push(parm[i].stat_year+"-"+parm[i].stat_month);
+        for (var i in parm) {
+          arry.push(parm[i].stat_year + "-" + parm[i].stat_month);
         }
         return arry
       },
       handleCurrentChange(val){
-        this.month({page:val,limit:this.pageSize})
+        this.month({page: val, limit: this.pageSize})
       },
       handleCurrentChange2(val){
-        this.month_details({page:val,limit:this.pageSize2,stat_month:this.detail.stat_month})
+        this.month_details({page: val, limit: this.pageSize2, stat_month: this.detail.stat_month})
       },
       num(data){
-        var date = String(data.stat_year +"-"+  data.stat_month);
+        var date = String(data.stat_year + "-" + data.stat_month);
         this.detail.stat_month = date;
         this.dialogVisible = true
-        this.month_details({limit:this.pageSize2,stat_month:date})
+        this.month_details({limit: this.pageSize2, stat_month: date})
       },
       //绘图
       draw(){
@@ -172,28 +172,30 @@
         this.options.series = this.AnalysisJSON(this.get_month.logs);
         //设置X轴
         this.options.xAxis.categories = this.setXAxis(this.get_month.logs)
-        this.$HighCharts.chart('main2',this.options);
+        this.$HighCharts.chart('main2', this.options);
       }
     },
     mounted(){
-      this.month({limit:this.pageSize})
+      this.month({limit: this.pageSize})
       this.draw()
     }
   }
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

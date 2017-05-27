@@ -71,7 +71,7 @@
       <region-area :region-id="region_id" v-on:changePage2="changePage2"></region-area>
     </el-dialog>
     <el-dialog title="详情" v-model="dialogVisible3">
-      <person-line-infos :region-id="region_id" :node-id="node_id"  v-on:changePage3="changePage3"></person-line-infos>
+      <person-line-infos :region-id="region_id" :node-id="node_id" v-on:changePage3="changePage3"></person-line-infos>
     </el-dialog>
   </div>
 </template>
@@ -88,7 +88,7 @@
   export default {
     data(){
       return {
-        number:0, //总在线人数
+        number: 0, //总在线人数
         currentPage: 1,
         limit: 25,
         pageSize: 25,
@@ -112,8 +112,8 @@
       //服务器在线人数总和
       connectionsCount(data){
         let number = 0;
-        for(let i in data){
-            number += parseInt(data[i].region_connections_count)
+        for (let i in data) {
+          number += parseInt(data[i].region_connections_count)
         }
         return number
       },

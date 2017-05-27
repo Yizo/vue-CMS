@@ -49,7 +49,7 @@
       <!--表格-->
       <el-row>
         <el-col :span="24">
-          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu"style="margin-right: 10px"></i>分享类型统计列表</span>
+          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>分享类型统计列表</span>
           <table class="t1">
             <tbody class="table">
             <tr>
@@ -62,9 +62,9 @@
               <td>{{item.share_type}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
                         @click="details_users(index)">{{item.total_users}}</span></td>
-              <td ><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                         @click="details_times(index)">{{item.total_times}}</span></td>
-              <td >{{item.per_average_share}}</td>
+              <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
+                        @click="details_times(index)">{{item.total_times}}</span></td>
+              <td>{{item.per_average_share}}</td>
             </tr>
             </tbody>
           </table>
@@ -80,7 +80,7 @@
           <el-table-column property="share_count" label="分享次数">
             <template scope="scope">
               <span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                @click="details_users_times({user_id:scope.row.user_id})">{{ scope.row.share_count}}</span>
+                    @click="details_users_times({user_id:scope.row.user_id})">{{ scope.row.share_count}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -126,19 +126,19 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
       return {
         /*筛选*/
-        filter:{
-          versions:'',
-          channels:'',
+        filter: {
+          versions: '',
+          channels: '',
         },
         /*饼状图*/
-        options:{
+        options: {
           title: {
-            text:null
+            text: null
           },
           plotOptions: {
             pie: {
@@ -153,17 +153,17 @@
             type: 'pie',
             name: '分享人数',
             data: [
-              ['a',10],
-              ['b',20],
-              ['c',30],
-              ['d',40]
+              ['a', 10],
+              ['b', 20],
+              ['c', 30],
+              ['d', 40]
             ]
           }],
-          credits:false
+          credits: false
         },
-        options2:{
+        options2: {
           title: {
-            text:null
+            text: null
           },
           plotOptions: {
             pie: {
@@ -178,53 +178,53 @@
             type: 'pie',
             name: '分享次数',
             data: [
-              ['a',10],
-              ['b',20],
-              ['c',30],
-              ['d',40]
+              ['a', 10],
+              ['b', 20],
+              ['c', 30],
+              ['d', 40]
             ]
           }],
-          credits:false
+          credits: false
         },
         /*列表*/
-        tableData:[],
+        tableData: [],
 
         /*弹窗*/
-        dialogTableVisible_sn:false,
-        dialogTableVisible_nv:false,
-        dialogData_sn:[],//分享人数数据
-        dialogData_nv:[],//分享次数数据
-        pageInfo:{
-          index:'',
-          page:'',
-          device_model:''
+        dialogTableVisible_sn: false,
+        dialogTableVisible_nv: false,
+        dialogData_sn: [],//分享人数数据
+        dialogData_nv: [],//分享次数数据
+        pageInfo: {
+          index: '',
+          page: '',
+          device_model: ''
         },
 
         /*分页*/
-        currentPage:1,
-        total:1
+        currentPage: 1,
+        total: 1
 
       }
     },
-    computed:{
+    computed: {
       ...mapGetters(['versions'])
     },
-    methods:{
+    methods: {
 
       //时间戳
       Timestamp(row){
 
-        if(row){
-          const now = new Date(row*1000);
-          var year=now.getFullYear();
-          var month=now.getMonth()+1;
-          var date=now.getDate();
-          var hour=now.getHours();
-          var minute=now.getMinutes();
-          var second=now.getSeconds();
+        if (row) {
+          const now = new Date(row * 1000);
+          var year = now.getFullYear();
+          var month = now.getMonth() + 1;
+          var date = now.getDate();
+          var hour = now.getHours();
+          var minute = now.getMinutes();
+          var second = now.getSeconds();
 
-          return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
-        }else{
+          return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+        } else {
           return false
         }
 
@@ -232,15 +232,15 @@
       //图表数据转为数组
       line(json){
         var arr = [];
-        for(var i = 0;i<json.length;i++){
-          arr.push([json[i]['share_type'],parseFloat(json[i].total_users)])
+        for (var i = 0; i < json.length; i++) {
+          arr.push([json[i]['share_type'], parseFloat(json[i].total_users)])
         }
         return arr
       },
       line2(json){
         var arr = [];
-        for(var i = 0;i<json.length;i++){
-          arr.push([json[i]['share_type'],parseFloat(json[i].total_times)])
+        for (var i = 0; i < json.length; i++) {
+          arr.push([json[i]['share_type'], parseFloat(json[i].total_times)])
         }
         return arr
       },
@@ -248,37 +248,37 @@
       /*筛选*/
       valueChange(val){
 
-        if(this.filter.channels == '全部渠道'){
+        if (this.filter.channels == '全部渠道') {
           this.filter.channels = ''
         }
-        if(this.filter.versions == '全部版本'){
+        if (this.filter.versions == '全部版本') {
           this.filter.versions = ''
         }
 
-        this.getInfo({app_version:this.filter.versions,app_channel:this.filter.channels}).then( res => {
+        this.getInfo({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
           this.options2.series[0].data = this.line2(res.data.data.items);
-          this.$HighCharts.chart('main',this.options);
-          this.$HighCharts.chart('main2',this.options2);
+          this.$HighCharts.chart('main', this.options);
+          this.$HighCharts.chart('main2', this.options2);
         })
       },
 
       /*列表*/
       //分享类型统计信息
       getInfo(parm){
-        var p = new Promise( (resolve,reject) => {
+        var p = new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.share_stat,
+            method: 'GET',
+            url: API.share_stat,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
+            params: parm
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
 
@@ -293,10 +293,10 @@
         this.dialogTableVisible_sn = true;
         this.pageInfo.index = index;
         var options = {
-          page:1,
-          type:index
+          page: 1,
+          type: index
         }
-        this.getDetails_users(options).then(res=>{
+        this.getDetails_users(options).then(res => {
           this.total = res.data.data.total_pages;
           this.dialogData_sn = res.data.data.logs;
 
@@ -306,30 +306,30 @@
       details_users_times(parm){
         this.dialogTableVisible_nv = true;
         var options = {
-          page:1,
-          type:this.pageInfo.index,
-          user_id:parm.user_id
+          page: 1,
+          type: this.pageInfo.index,
+          user_id: parm.user_id
         }
-        this.getDetails_times(options).then(res=>{
+        this.getDetails_times(options).then(res => {
           this.total = res.data.data.total_pages;
           this.dialogData_nv = res.data.data.logs;
         });
       },
       //分享人数详情
       getDetails_users(parm){
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.share_users_stat_details,
+            method: 'GET',
+            url: API.share_users_stat_details,
             headers: {'Authorization': token},
-            params:parm,
+            params: parm,
           }).then(res => {
-            if(res.status == 200){
-                resolve(res)
+            if (res.status == 200) {
+              resolve(res)
             }
           }).catch(err => {
-              reject(err)
+            reject(err)
           })
         })
       },
@@ -339,30 +339,30 @@
         this.pageInfo.index = index;
         console.log(index)
         var options = {
-          page:1
+          page: 1
         }
-        this.getDetails_times(options).then(res=>{
+        this.getDetails_times(options).then(res => {
           this.total = res.data.data.total_pages;
           this.dialogData_sn = res.data.data.logs;
-        }).catch(err=>{
-            console.log(err)
+        }).catch(err => {
+          console.log(err)
         })
       },
       //分享次数详情
       getDetails_times(parm){
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.share_count_stat_details,
+            method: 'GET',
+            url: API.share_count_stat_details,
             headers: {'Authorization': token},
-            params:{
-              type:this.pageInfo.index,
-              limit:10,
-              page:parm.page
+            params: {
+              type: this.pageInfo.index,
+              limit: 10,
+              page: parm.page
             },
           }).then(res => {
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
             }
           }).catch(err => {
@@ -374,53 +374,58 @@
       //分享人数详情分页
       handleCurrentChange_sn(val){
         this.currentPage = val;
-        this.getDetails_users({page:val})
+        this.getDetails_users({page: val})
       },
       //分享次数详情分页
       handleCurrentChange_nv(val){
         this.currentPage = val;
-        this.getDetails_times({page:val})
+        this.getDetails_times({page: val})
       }
 
     },
     mounted(){
       //绘制图形
-      this.getInfo().then( res => {
+      this.getInfo().then(res => {
         this.tableData = res.data.data.items;
         this.options.series[0].data = this.line(res.data.data.items);
         this.options2.series[0].data = this.line2(res.data.data.items);
-        this.$HighCharts.chart('main',this.options);
-        this.$HighCharts.chart('main2',this.options2);
+        this.$HighCharts.chart('main', this.options);
+        this.$HighCharts.chart('main2', this.options2);
       })
     },
   }
 </script>
 
 <style scope>
-  #start{
+  #start {
     padding: 10px;
   }
+
   /*导航*/
-  #userInfo .breadcrumb{
+  #userInfo .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .dh2{
+
+  .dh2 {
     height: 30px;
     line-height: 30px;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: 400;
-  span{
+
+  span {
     font-size: 16px;
     font-weight: 500;
   }
+
   }
 </style>

@@ -14,24 +14,24 @@
 </template>
 
 <script>
-export default {
-  computed:{
-    username(){
+  export default {
+    computed: {
+      username(){
 
-    }
-  },
-  methods:{
-    handleClick(){
+      }
+    },
+    methods: {
+      handleClick(){
 
-    }
-  },
-}
+      }
+    },
+  }
 </script>
 
 <style lang="less" scoped>
-  #content{
+  #content {
     width: 100%;
     height: 500px;
-    background: rgba(0,0,0,0.1);
+    background: rgba(0, 0, 0, 0.1);
   }
 </style>

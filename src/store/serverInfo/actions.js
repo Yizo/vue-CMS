@@ -2,8 +2,8 @@
  * Created by isec on 2017/4/15.
  */
 
-import * as API from '../../api/api'
-import axios from 'axios'
+import * as API from "../../api/api";
+import axios from "axios";
 
 export default {
   getDncIpData(store, params){
@@ -61,7 +61,7 @@ export default {
       console.log(err)
     })
   },
-  getPersonDetails(store,params){
+  getPersonDetails(store, params){
     const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
     axios({
       method: 'GET',
@@ -74,7 +74,7 @@ export default {
       console.log(err)
     })
   },
-  getRegionDetails(store,params){
+  getRegionDetails(store, params){
     const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
     axios({
       method: 'GET',
@@ -87,7 +87,7 @@ export default {
       console.log(err)
     })
   },
-  getRegionLineDetails(store,params){
+  getRegionLineDetails(store, params){
     const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
     axios({
       method: 'GET',

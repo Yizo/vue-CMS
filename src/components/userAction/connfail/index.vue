@@ -41,7 +41,7 @@
       <!--表格-->
       <el-row>
         <el-col :span="24">
-          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu"style="margin-right: 10px"></i>连接失败次数</span>
+          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>连接失败次数</span>
           <table class="t1">
             <tbody class="table">
             <tr>
@@ -54,11 +54,12 @@
             <tr v-for="(item,index) in tableData">
               <td>{{item.stat_date}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                        @click="details_users({index:1,stat_at:item.stat_date})">{{item.connection_failed_total}}</span></td>
-              <td ><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                         @click="details_users({index:2,stat_at:item.stat_date})">{{item.crash_total}}</span></td>
-              <td ><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                         @click="details_users({index:3,stat_at:item.stat_date})">{{item.unconnected_total}}</span></td>
+                        @click="details_users({index:1,stat_at:item.stat_date})">{{item.connection_failed_total}}</span>
+              </td>
+              <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
+                        @click="details_users({index:2,stat_at:item.stat_date})">{{item.crash_total}}</span></td>
+              <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
+                        @click="details_users({index:3,stat_at:item.stat_date})">{{item.unconnected_total}}</span></td>
               <td>{{item.total}}</td>
             </tr>
             </tbody>
@@ -142,31 +143,31 @@
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
       return {
         /*筛选*/
-        filter:{
-          status:'',
-          time:'',
-          start:'',
-          end:''
+        filter: {
+          status: '',
+          time: '',
+          start: '',
+          end: ''
         },
         /*折线图*/
-        options:{
-          title:{
-            text:null
+        options: {
+          title: {
+            text: null
           },
           xAxis: {
-            title:{
-              text:'失败日期'
+            title: {
+              text: '失败日期'
             },
             categories: []
           },
           yAxis: {
-            title:{
-                text:'用户未连接次数'
+            title: {
+              text: '用户未连接次数'
             },
             plotLines: [{
               value: 0,
@@ -178,55 +179,60 @@
             valueSuffix: '次'
           },
           series: [],
-          credits:false
+          credits: false
         },
         /*列表*/
-        tableData:'',
+        tableData: '',
 
         /*弹窗*/
-        dialogTableVisible:false,
-        dialogTableVisible1:false,
-        dialogData:'',//弹窗数据
-        pageInfo:{
-          index:'',
-          page:'',
-          device_model:''
+        dialogTableVisible: false,
+        dialogTableVisible1: false,
+        dialogData: '',//弹窗数据
+        pageInfo: {
+          index: '',
+          page: '',
+          device_model: ''
         },
 
         /*分页*/
-        currentPage:1,
-        pageSize:10,
-        total:1
+        currentPage: 1,
+        pageSize: 10,
+        total: 1
 
       }
     },
-    computed:{
+    computed: {
       ...mapGetters(['versions'])
     },
-    methods:{
+    methods: {
       //时间戳
       Timestamp(row){
-        const now = new Date(row*1000);
-        var year=now.getFullYear();
-        var month=now.getMonth()+1;
-        var date=now.getDate();
-        var hour=now.getHours();
-        var minute=now.getMinutes();
-        var second=now.getSeconds();
+        const now = new Date(row * 1000);
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var date = now.getDate();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
 
-        return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
       },
       //表格数据
       AnalysisJSON(parm) {
         var result = []
-        var keyList = { connection_failed_total: '服务器连接失败次数', crash_total: '软件崩溃', unconnected_total: '未联网', total: '总失败次数' }
+        var keyList = {
+          connection_failed_total: '服务器连接失败次数',
+          crash_total: '软件崩溃',
+          unconnected_total: '未联网',
+          total: '总失败次数'
+        }
         var names = ['connection_failed_total', 'crash_total', 'unconnected_total', 'total']
-        for(var i = 0; i < names.length; i++) {
+        for (var i = 0; i < names.length; i++) {
           var data = []
-          for(var j = 0; j < parm.length; j++) {
+          for (var j = 0; j < parm.length; j++) {
             data.push(parm[j][names[i]])
           }
-          var item = { name: keyList[names[i]], data: data }
+          var item = {name: keyList[names[i]], data: data}
           result.push(item)
         }
 
@@ -234,71 +240,71 @@
       },
       //设置Y轴
       setXAxis(parm){
-          var arry = []
-          for(var i in parm) {
-            arry.push(parm[i].stat_date);
-          }
-          return arry
+        var arry = []
+        for (var i in parm) {
+          arry.push(parm[i].stat_date);
+        }
+        return arry
       },
       /*筛选菜单*/
       filtration(){
         let a = JSON.stringify(JS.Timestamp(this.filter.start));
         let b = JSON.stringify(JS.Timestamp(this.filter.end));
         var options = {
-          page:1,
-          is_enabled:this.filter.status === null?null:this.filter.status,
-          date_type:this.filter.time === null?null:this.filter.time,
-          start_at:this.filter.start?a:null,
-          end_at:this.filter.end?b:null,
-          limit:10
+          page: 1,
+          is_enabled: this.filter.status === null ? null : this.filter.status,
+          date_type: this.filter.time === null ? null : this.filter.time,
+          start_at: this.filter.start ? a : null,
+          end_at: this.filter.end ? b : null,
+          limit: 10
         }
 
-        this.getInfo(options).then(res=>{
+        this.getInfo(options).then(res => {
           this.tableData = res.data.data.logs;
           //设置数据
           this.options.series = this.AnalysisJSON(this.tableData);
           //设置X轴
           this.options.xAxis.categories = this.setXAxis(this.tableData)
-          this.$HighCharts.chart('main',this.options);
+          this.$HighCharts.chart('main', this.options);
         });
       },
 
       details_users(parm){
-        if(parm.index == 1){
+        if (parm.index == 1) {
           this.dialogTableVisible = true;
           this.pageInfo.device_model = '服务器连接失败'
-        }else if(parm.index == 2){
+        } else if (parm.index == 2) {
           this.dialogTableVisible1 = true;
           this.pageInfo.device_model = '软件崩溃'
-        }else{
+        } else {
           this.dialogTableVisible1 = true;
           this.pageInfo.device_model = '未联网'
         }
         var options = {
-            type:parm.index,
-            stat_at:parm.stat_at,
-            page:1,
-            limit:10
+          type: parm.index,
+          stat_at: parm.stat_at,
+          page: 1,
+          limit: 10
         }
 
-        this.errInfo(options).then(res=>{
-            this.dialogData = res.data.data.logs;
+        this.errInfo(options).then(res => {
+          this.dialogData = res.data.data.logs;
         })
       },
       /*连接失败信息*/
       getInfo(parm){
-       return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.connection_failed_logs,
+            method: 'GET',
+            url: API.connection_failed_logs,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -306,18 +312,18 @@
       },
       /*连接失败详情*/
       errInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.connection_failed_detail,
+            method: 'GET',
+            url: API.connection_failed_detail,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -331,61 +337,70 @@
     },
     mounted(){
 
-      this.getInfo({page:1,limit:10}).then( res => {
-          this.tableData = res.data.data.logs;
-          this.currentPage = res.data.data.current_page
-          this.total = res.data.data.total_count;
-          //设置数据
-          this.options.series = this.AnalysisJSON(this.tableData);
-          //设置X轴
-          this.options.xAxis.categories = this.setXAxis(this.tableData)
-          this.$HighCharts.chart('main',this.options);
+      this.getInfo({page: 1, limit: 10}).then(res => {
+        this.tableData = res.data.data.logs;
+        this.currentPage = res.data.data.current_page
+        this.total = res.data.data.total_count;
+        //设置数据
+        this.options.series = this.AnalysisJSON(this.tableData);
+        //设置X轴
+        this.options.xAxis.categories = this.setXAxis(this.tableData)
+        this.$HighCharts.chart('main', this.options);
       })
     },
   }
 </script>
 
 <style scoped>
-  #start{
+  #start {
     padding: 10px;
   }
+
   /*导航*/
-  #userInfo .breadcrumb{
+  #userInfo .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .dh2{
+
+  .dh2 {
     height: 30px;
     line-height: 30px;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: 400;
-  span{
+
+  span {
     font-size: 16px;
     font-weight: 500;
   }
+
   }
-  .filter{
+  .filter {
     text-align: left;
     margin-top: 20px;
   }
-  .f{
+
+  .f {
     display: inline-block;
   }
-  .is-leaf .cell{
+
+  .is-leaf .cell {
     text-align: center;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }
+
   .el-table .cell {
     word-break: break-all;
     line-height: 24px;

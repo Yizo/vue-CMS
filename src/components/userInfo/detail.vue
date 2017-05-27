@@ -12,7 +12,7 @@
 
 <script>
   export default {
-    props:['dialogVisible'],
+    props: ['dialogVisible'],
     data() {
       return {
         dialogVisible: false

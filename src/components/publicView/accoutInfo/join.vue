@@ -32,7 +32,8 @@
         <template scope="scope">
           <el-tag
             :type="scope.row.status_title === '成功' ? 'primary' : 'success'"
-            close-transition>{{scope.row.status_title}}</el-tag>
+            close-transition>{{scope.row.status_title}}
+          </el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -50,25 +51,25 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapActions,mapGetters }  from 'vuex'
+  import {mapActions, mapGetters}  from 'vuex'
   export default {
     data(){
       return {
-        pageSize:15
+        pageSize: 15
       }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        data:'UD_connection_logs'
+        data: 'UD_connection_logs'
       })
     },
-    methods:{
+    methods: {
       ...mapActions({
         UD_connection_logs: "UD_connection_logs",
       }),
       handleSizeChange(val){
         var id = window.sessionStorage.getItem('userId')
-        this.UD_connection_logs({id:id,page:val,limit:this.pageSize})
+        this.UD_connection_logs({id: id, page: val, limit: this.pageSize})
       },
     },
     mounted(){

@@ -12,7 +12,8 @@
       <el-table-column
         label="充值金额">
         <template scope="scope">
-          <span class="tip" @click="recharge_amount({name:'充值金额',data:scope.row})">{{scope.row.total_recharge_amount}}</span>
+          <span class="tip"
+                @click="recharge_amount({name:'充值金额',data:scope.row})">{{scope.row.total_recharge_amount}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -24,7 +25,8 @@
       <el-table-column
         label="充值人数">
         <template scope="scope">
-          <span class="tip" @click="recharge_users({name:'充值人数',data:scope.row})">{{scope.row.recharge_users_count}}</span>
+          <span class="tip"
+                @click="recharge_users({name:'充值人数',data:scope.row})">{{scope.row.recharge_users_count}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -96,66 +98,66 @@
 </template>
 
 <script>
-  import { mapActions,mapGetters }  from 'vuex'
+  import {mapActions, mapGetters}  from 'vuex'
   import * as JS from '../../../assets/js/js'
   import * as API from '../../../api/api'
   export default {
     data(){
       return {
-        dialogVisible:false,
-        dialogVisible2:false,
-        dalogInfo:{
-           name:'',
-           data:{}
+        dialogVisible: false,
+        dialogVisible2: false,
+        dalogInfo: {
+          name: '',
+          data: {}
         },
-        dalogData:[],
-        dalogData2:[],
-        currentInfo:{},//分页信息
-        currentPage:1,
-        totalSize:0,
-        pageSize:15
+        dalogData: [],
+        dalogData2: [],
+        currentInfo: {},//分页信息
+        currentPage: 1,
+        totalSize: 0,
+        pageSize: 15
       }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        pd_data:'pay_details_data',
-        time:'time'
+        pd_data: 'pay_details_data',
+        time: 'time'
       })
     },
-    methods:{
+    methods: {
       ...mapActions(['PAYINFO_pay_details']),
       //消费钻石请求
       tccd(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.t_consume_coins_details,
+            method: 'GET',
+            url: API.t_consume_coins_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       //充值人数请求-充值金额请求
       trad(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.t_recharge_amount_details,
+            method: 'GET',
+            url: API.t_recharge_amount_details,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
@@ -166,11 +168,11 @@
         this.dalogInfo = data
         this.currentInfo = data
         let options = {
-            page:1,
-            limit:this.pageSize,
-            date:data.data.stat_date
+          page: 1,
+          limit: this.pageSize,
+          date: data.data.stat_date
         }
-        this.trad(options).then(res=>{
+        this.trad(options).then(res => {
           let data = res.data.data
           this.dalogData = data.logs;
           this.currentPage = data.current_page
@@ -183,11 +185,11 @@
         this.dalogInfo = data
         this.currentInfo = data
         let options = {
-          page:1,
-          limit:this.pageSize,
-          date:data.data.stat_date
+          page: 1,
+          limit: this.pageSize,
+          date: data.data.stat_date
         }
-        this.trad(options).then(res=>{
+        this.trad(options).then(res => {
           let data = res.data.data
           this.dalogData = data.logs;
           this.currentPage = data.current_page
@@ -200,11 +202,11 @@
         this.dalogInfo = data
         this.currentInfo = data
         let options = {
-          page:1,
-          limit:this.pageSize,
-          date:data.data.stat_date
+          page: 1,
+          limit: this.pageSize,
+          date: data.data.stat_date
         }
-        this.tccd(options).then(res=>{
+        this.tccd(options).then(res => {
           let data = res.data.data
           this.dalogData2 = data.logs;
           this.currentPage = data.current_page
@@ -212,28 +214,28 @@
         })
       },
       Timestamp(row){
-        const now = new Date(row*1000);
-        var year=now.getFullYear();
-        var month=now.getMonth()+1;
-        var date=now.getDate();
+        const now = new Date(row * 1000);
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var date = now.getDate();
 
-        if(month<9){
-          month = '0'+month
+        if (month < 9) {
+          month = '0' + month
         }
-        if(date<9){
-          date = '0'+date
+        if (date < 9) {
+          date = '0' + date
         }
 
-        return year+"-"+month+"-"+date;
+        return year + "-" + month + "-" + date;
       },
       //消费钻石分页
       consumeCurrent(val){
         let options = {
-          page:val,
-          limit:this.pageSize,
-          date:this.currentInfo.data.stat_date
+          page: val,
+          limit: this.pageSize,
+          date: this.currentInfo.data.stat_date
         }
-        this.tccd(options).then(res=>{
+        this.tccd(options).then(res => {
           let data = res.data.data
           this.dalogData2 = data.logs;
           this.currentPage = data.current_page
@@ -242,26 +244,26 @@
       },
       //充值人数,充值金额分页
       handleCurrentChange(val){
-        if(this.currentInfo.name == '充值人数'){
+        if (this.currentInfo.name == '充值人数') {
           let options = {
-            page:val,
-            limit:this.pageSize,
-            date:this.currentInfo.data.stat_date
+            page: val,
+            limit: this.pageSize,
+            date: this.currentInfo.data.stat_date
           }
-          this.tccd(options).then(res=>{
+          this.tccd(options).then(res => {
             let data = res.data.data
             this.dalogData = data.logs;
             this.currentPage = data.current_page
             this.totalSize = data.total_count
           })
         }
-        if(this.currentInfo.name == '充值金额'){
+        if (this.currentInfo.name == '充值金额') {
           let options = {
-            page:val,
-            limit:this.pageSize,
-            date:this.currentInfo.data.stat_date
+            page: val,
+            limit: this.pageSize,
+            date: this.currentInfo.data.stat_date
           }
-          this.trad(options).then(res=>{
+          this.trad(options).then(res => {
             let data = res.data.data
             this.dalogData = data.logs;
             this.currentPage = data.current_page
@@ -271,13 +273,13 @@
       },
       //列表分页
       listPaging(val){
-          let options = {
-            page:val,
-            limit:this.pageSize,
-            year: this.time.year || null,
-            month: this.time.month || null,
-          }
-          this.PAYINFO_pay_details(options)
+        let options = {
+          page: val,
+          limit: this.pageSize,
+          year: this.time.year || null,
+          month: this.time.month || null,
+        }
+        this.PAYINFO_pay_details(options)
       }
     },
     mounted(){
@@ -287,33 +289,37 @@
 </script>
 
 <style scoped>
-  .warp{
+  .warp {
     padding: 10px;
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #f5f5f5;
+    background-color: #fff;
+    border: 1px solid #f5f5f5;
     box-shadow: 0 0 2px 1px #ddd;
     margin-top: 20px;
   }
-  .header{
+
+  .header {
     height: 40px;
     line-height: 40px;
     font-size: 16px;
     border-bottom: transparent;
   }
-  .header span{
+
+  .header span {
     display: block;
     width: 20%;
     margin-left: 10px;
   }
-  .tip{
+
+  .tip {
     cursor: pointer;
     background-color: #333;
     padding: 1px 3px;
     color: #fff
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

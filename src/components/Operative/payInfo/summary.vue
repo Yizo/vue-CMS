@@ -64,7 +64,7 @@
   import * as JS from '../../../assets/js/js'
   import payInfo from './payInfo.vue'
   export default {
-    components:{
+    components: {
       payInfo
     },
     data(){
@@ -99,7 +99,7 @@
     computed: {
       ...mapGetters({
         s_data: 'summary_data',
-        pdData:'pay_details_data',
+        pdData: 'pay_details_data',
         time: 'time'
       })
     },
@@ -127,11 +127,11 @@
         return arry
       },
     },
-    watch:{
-      pdData:function(newData){
+    watch: {
+      pdData: function (newData) {
         this.options.series = [...this.AnalysisJSON(newData.data.logs)]
         this.options.xAxis.categories = [...this.setXAxis(newData.data.logs)]
-        this.$HighCharts.chart('main',this.options)
+        this.$HighCharts.chart('main', this.options)
       },
     },
     beforeMount(){
@@ -139,12 +139,12 @@
         this.$store.dispatch('PAYINFO_pay_details', {
           year: this.time.year || null,
           month: this.time.month || null,
-          limit:15,
-          page:1
-        }).then(res=>{
+          limit: 15,
+          page: 1
+        }).then(res => {
           this.options.series = [...this.AnalysisJSON(res.data.data.logs)]
           this.options.xAxis.categories = [...this.setXAxis(res.data.data.logs)]
-          this.$HighCharts.chart('main',this.options)
+          this.$HighCharts.chart('main', this.options)
         });
       });
     }

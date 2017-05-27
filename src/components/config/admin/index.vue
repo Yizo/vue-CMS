@@ -36,7 +36,8 @@
             <template scope="scope">
               <el-tag
                 :type="scope.row.is_enabled ? 'success' : 'primary'"
-                close-transition>{{scope.row.is_enabled ? '是': '否'}}</el-tag>
+                close-transition>{{scope.row.is_enabled ? '是': '否'}}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -61,16 +62,17 @@
     </el-pagination>
     <!--新增管理员-->
     <el-dialog title="新增管理员" v-model="add.visable" size="tiny">
-      <el-form :model="add.form" :rules="add_rules" :ref="add.form" label-position="left"  label-width="180px" class="demo-ruleForm">
-          <el-form-item label="管理员用户名" prop="username">
-            <el-input v-model="add.form.username" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="管理员密码" prop="password">
-            <el-input v-model="add.form.password"></el-input>
-          </el-form-item>
-          <el-form-item label="管理员确认密码" prop="password_confirmation">
-            <el-input v-model="add.form.password_confirmation"></el-input>
-          </el-form-item>
+      <el-form :model="add.form" :rules="add_rules" :ref="add.form" label-position="left" label-width="180px"
+               class="demo-ruleForm">
+        <el-form-item label="管理员用户名" prop="username">
+          <el-input v-model="add.form.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员密码" prop="password">
+          <el-input v-model="add.form.password"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员确认密码" prop="password_confirmation">
+          <el-input v-model="add.form.password_confirmation"></el-input>
+        </el-form-item>
         <el-form-item label="管理员权限组" prop="role_id">
           <el-select v-model="add.form.role_id" placeholder="请选择">
             <el-option
@@ -89,7 +91,7 @@
     </el-dialog>
     <!--修改权限组-->
     <el-dialog title="修改权限组" v-model="up_role.visable" size="tiny">
-      <el-form label-position="left"  label-width="150px" class="demo-ruleForm">
+      <el-form label-position="left" label-width="150px" class="demo-ruleForm">
         <el-form-item label="管理员用户名" prop="username">
           <el-input v-model="up_role.username" auto-complete="off" disabled style="width:217px"></el-input>
         </el-form-item>
@@ -118,156 +120,156 @@
   export default {
     data(){
       return {
-        data:[],
-        pageSize:15,
-        currentPage:1,
-        totalSize:0,
-        roles:[],
+        data: [],
+        pageSize: 15,
+        currentPage: 1,
+        totalSize: 0,
+        roles: [],
         //新增校验
-        add_rules:{
+        add_rules: {
           username: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' },
+            {required: true, message: '用户名不能为空', trigger: 'blur'},
             {min: 5, message: '用户名长度至少为5', trigger: 'blur'}
           ],
           password: [
-            { required: true, message: '密码不能为空', trigger: 'blur' },
+            {required: true, message: '密码不能为空', trigger: 'blur'},
             {min: 6, message: '密码长度至少为6', trigger: 'blur'}
           ],
           password_confirmation: [
-            { required: true, message: '确认密码不能为空', trigger: 'blur' },
+            {required: true, message: '确认密码不能为空', trigger: 'blur'},
             {min: 5, message: '确认密码长度至少为5', trigger: 'blur'}
           ],
           role_id: [
-            { type: 'number',required: true, message: '权限组不能为空', trigger: 'blur' },
+            {type: 'number', required: true, message: '权限组不能为空', trigger: 'blur'},
           ]
         },
-        add:{
-          visable:false,
-          form:{
-            username:'',
-            password:'',
-            password_confirmation:'',
-            role_id:null
+        add: {
+          visable: false,
+          form: {
+            username: '',
+            password: '',
+            password_confirmation: '',
+            role_id: null
           },
         },
         //修改权限组
-        up_role:{
-          index:0,
-          visable:false,
-          username:'',
-          id:0,
-          role_id:null
+        up_role: {
+          index: 0,
+          visable: false,
+          username: '',
+          id: 0,
+          role_id: null
         },
       }
     },
-    computed:{
+    computed: {
       formName(){
-          return this.add.form
+        return this.add.form
       }
     },
-    methods:{
+    methods: {
       /*管理员管理-列表*/
       admin_list(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           axios({
-            method:'GET',
-            url:API.admins,
+            method: 'GET',
+            url: API.admins,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       /*管理员管理-禁用*/
       admin_disable(parm){
-        let address = API.admins_disable.replace(/{id}/g,parm.id);
-        return  new Promise( (resolve,reject) => {
+        let address = API.admins_disable.replace(/{id}/g, parm.id);
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           axios({
-            method:'POST',
-            url:address,
+            method: 'POST',
+            url: address,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       /*管理员管理-创建*/
       admin_create(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           axios({
-            method:'POST',
-            url:API.admins,
+            method: 'POST',
+            url: API.admins,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       /*管理员管理-更新*/
       admin_up(parm){
-        let address = API.admins_up.replace(/{id}/g,parm.id);
-        return  new Promise( (resolve,reject) => {
+        let address = API.admins_up.replace(/{id}/g, parm.id);
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           axios({
-            method:'PATCH',
-            url:address,
+            method: 'PATCH',
+            url: address,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       /*管理权限组管理-列表*/
       roles_list(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           axios({
-            method:'GET',
-            url:API.admin_roles,
+            method: 'GET',
+            url: API.admin_roles,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       getData(val){
-        return  new Promise( (resolve,reject) => {
-          this.admin_list({page:val,limit:this.pageSize}).then(res=>{
+        return new Promise((resolve, reject) => {
+          this.admin_list({page: val, limit: this.pageSize}).then(res => {
             let data = res.data.data;
             this.data = data.admins;
             this.currentPage = data.current_page
             this.totalSize = data.total_count;
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -279,14 +281,14 @@
       //新增
       addAdmin(){
         this.add.visable = true;
-        for(var i in this.add.form){
-            if(i == 'role_id'){
-              this.add.form[i] = 0
-            }else{
-              this.add.form[i] = ''
-            }
+        for (var i in this.add.form) {
+          if (i == 'role_id') {
+            this.add.form[i] = 0
+          } else {
+            this.add.form[i] = ''
+          }
         }
-        if(this.$refs[this.formName]){
+        if (this.$refs[this.formName]) {
           this.$refs[this.formName].resetFields();
         }
       },
@@ -294,12 +296,12 @@
       handleSave(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.admin_create(this.add.form).then(res=>{
-              if(res.data.success){
-                    this.add.visable = false;
-                    this.data.push(res.data.data)
-                    this.totalSize = this.totalSize + 1
-              }else{
+            this.admin_create(this.add.form).then(res => {
+              if (res.data.success) {
+                this.add.visable = false;
+                this.data.push(res.data.data)
+                this.totalSize = this.totalSize + 1
+              } else {
                 this.$message({
                   type: 'error',
                   message: '添加失败'
@@ -313,19 +315,19 @@
       },
       //删除
       del(data){
-        this.$confirm('您将删除账号'+data.username+', 是否继续?', '提示', {
+        this.$confirm('您将删除账号' + data.username + ', 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.admin_disable({id:data.id}).then(res=>{
-            if(res.data.success){
+          this.admin_disable({id: data.id}).then(res => {
+            if (res.data.success) {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
               });
               this.data[this.data.indexOf(data)].is_enabled = false;
-            }else{
+            } else {
               this.$message({
                 type: 'error',
                 message: '删除失败'
@@ -341,20 +343,20 @@
       },
       //修改密码
       upPass(data){
-        this.$prompt('您将修改账号'+data.username+'的密码', '提示', {
+        this.$prompt('您将修改账号' + data.username + '的密码', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           inputPattern: /[A-Za-z0-9]{6,}/,
           inputErrorMessage: '格式不正确',
-        }).then(({ value }) => {
-          this.admin_up({id:data.id,new_password:value}).then(res=>{
-            if(res.data.success){
+        }).then(({value}) => {
+          this.admin_up({id: data.id, new_password: value}).then(res => {
+            if (res.data.success) {
               this.$message({
                 type: 'success',
                 message: '修改成功!'
               });
-              this.data.splice(this.data.indexOf(data),1,res.data.data)
-            }else{
+              this.data.splice(this.data.indexOf(data), 1, res.data.data)
+            } else {
               this.$message({
                 type: 'error',
                 message: '修改失败'
@@ -372,15 +374,15 @@
         this.index = this.data.indexOf(data)
       },
       upRoleSave(){
-        this.admin_up({id:this.up_role.id,role_id:this.up_role.role_id}).then(res=>{
-          if(res.data.success){
+        this.admin_up({id: this.up_role.id, role_id: this.up_role.role_id}).then(res => {
+          if (res.data.success) {
             this.$message({
               type: 'success',
               message: '修改成功!'
             });
             this.up_role.visable = false;
-            this.data.splice(this.index,1,res.data.data)
-          }else{
+            this.data.splice(this.index, 1, res.data.data)
+          } else {
             this.$message({
               type: 'error',
               message: '修改失败'
@@ -390,24 +392,25 @@
       }
     },
     mounted(){
-       this.getData(1).then(res=>{
-           this.roles_list().then(res=>{
-               this.roles = res.data.data.roles;
-           })
-       })
+      this.getData(1).then(res => {
+        this.roles_list().then(res => {
+          this.roles = res.data.data.roles;
+        })
+      })
     }
   }
 </script>
 
 <style scoped>
-  .lock{
+  .lock {
     padding: 10px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
 </style>

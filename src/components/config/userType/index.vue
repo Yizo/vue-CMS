@@ -31,11 +31,11 @@
               size="small"
               @click="handleEdit(scope.$index, scope.row)">修改
             </el-button>
-<!--            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除
-            </el-button>-->
+            <!--            <el-button
+                          size="small"
+                          type="danger"
+                          @click="handleDelete(scope.$index, scope.row)">删除
+                        </el-button>-->
             <el-button size="small" :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="star(scope.row)">
               {{scope.row.is_enabled?'禁用':'启用'}}
             </el-button>
@@ -44,7 +44,7 @@
       </el-table>
     </div>
     <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny">
-      <el-form :model="form"  label-position="left" label-width="140px">
+      <el-form :model="form" label-position="left" label-width="140px">
         <el-form-item label="级别">
           <el-input v-model="form.level" auto-complete="off"></el-input>
         </el-form-item>
@@ -80,10 +80,10 @@
         dialogTitle: '',
         dialogFormVisible: false,
         form: {
-          level:null,
+          level: null,
           name: '',
           need_coins: null,
-          is_enabled:"false"
+          is_enabled: "false"
         }
       }
     },
@@ -92,50 +92,50 @@
       ...mapGetters(['token'])
     },
     methods: {
-      handleEdit(index,data){
+      handleEdit(index, data){
         this.form = data;
         this.form.is_enabled = String(data.is_enabled)
-        this.dialogTitle  = '修改';
+        this.dialogTitle = '修改';
         this.dialogFormVisible = true;
       },
       handleDelete(){
 
       },
       handleAdd(){
-        this.dialogTitle  = '添加';
+        this.dialogTitle = '添加';
         this.dialogFormVisible = true;
-        this.form = {level:null,name: '',need_coins: null,is_enabled:"false"}
+        this.form = {level: null, name: '', need_coins: null, is_enabled: "false"}
       },
       handleSave(){
         var is = false;
-        for(var i in this.form){
-            if(this.form[i]){
-                is = true
-            }else{
-                is = false
-                break;
-            }
+        for (var i in this.form) {
+          if (this.form[i]) {
+            is = true
+          } else {
+            is = false
+            break;
+          }
         }
-        if(this.dialogTitle == '添加'){
-          if(is){
-            this.addUserType(this.form).then(res=>{
+        if (this.dialogTitle == '添加') {
+          if (is) {
+            this.addUserType(this.form).then(res => {
               this.user_groups.push(res.data.data);
               this.dialogFormVisible = false;
             })
-          }else{
+          } else {
             this.$message({
               showClose: true,
               message: '请输入完整',
               type: 'warning'
             });
           }
-        }else{
-          if(is){
-             this.updateUserType(this.form).then(res=>{
-               this.user_groups.splice(this.user_groups.indexOf(this.form),1,res.data.data);
-               this.dialogFormVisible = false;
-             })
-          }else{
+        } else {
+          if (is) {
+            this.updateUserType(this.form).then(res => {
+              this.user_groups.splice(this.user_groups.indexOf(this.form), 1, res.data.data);
+              this.dialogFormVisible = false;
+            })
+          } else {
             this.$message({
               showClose: true,
               message: '请输入完整',
@@ -149,24 +149,24 @@
       },
       //启用或禁用
       star(data){
-        this.updateUserType({id:data.id,is_enabled:!data.is_enabled}).then(res=>{
-          this.user_groups.splice(this.user_groups.indexOf(data),1,res.data.data)
+        this.updateUserType({id: data.id, is_enabled: !data.is_enabled}).then(res => {
+          this.user_groups.splice(this.user_groups.indexOf(data), 1, res.data.data)
         })
       },
       /*添加用户类型*/
       addUserType(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'POST',
-            url:API.user_types_get,
+            method: 'POST',
+            url: API.user_types_get,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
+            params: parm
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -174,19 +174,19 @@
       },
       /*修改用户类型*/
       updateUserType(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-          let address = API.user_types_updata.replace(/{id}/g,parm.id);
+          let address = API.user_types_updata.replace(/{id}/g, parm.id);
           this.$http({
-            method:'PATCH',
-            url:address,
+            method: 'PATCH',
+            url: address,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
+            params: parm
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -219,16 +219,19 @@
   #configUserType {
     padding: 10px;
   }
-  .a{
+
+  .a {
     background: #F9C855;
     color: #fff;
     border: #F9C855;
   }
-  .b{
+
+  .b {
     background-color: #42D885;
     border: #42D885;
     color: #fff;
   }
+
   .ut-wrapper {
     text-align: left;
     padding: 10px;

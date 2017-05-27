@@ -30,25 +30,25 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
       return {
-        pageSize:15
+        pageSize: 15
       }
     },
-    methods:{
+    methods: {
       ...mapActions({
         devices: "UD_devices",
       }),
       handleSizeChange(val){
         var id = window.sessionStorage.getItem('userId')
-        this.devices({id:id,page:val,limit:this.pageSize})
+        this.devices({id: id, page: val, limit: this.pageSize})
       },
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        data:'UD_devices'
+        data: 'UD_devices'
       })
     },
     mounted(){

@@ -40,36 +40,36 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
       return {
-          time:'',
-          pageSize:15
+        time: '',
+        pageSize: 15
       }
     },
-    computed:{
+    computed: {
       ...mapGetters({
-        data:'UD_operation_logs',
-        current:'UD_current'
+        data: 'UD_operation_logs',
+        current: 'UD_current'
       })
     },
-    methods:{
+    methods: {
       ...mapActions({
         UD_operation_logs: "UD_operation_logs",
       }),
       start_date(val){
-         this.time = val
+        this.time = val
       },
       guolv(){
         var id = window.sessionStorage.getItem('userId')
-        this.UD_operation_logs({id:id,date:this.time}).then(res=>{
-           // this.$store.commit('u_operation_logs')
-          this.$store.commit('u_current',{current:1,pageSize:15})
+        this.UD_operation_logs({id: id, date: this.time}).then(res => {
+          // this.$store.commit('u_operation_logs')
+          this.$store.commit('u_current', {current: 1, pageSize: 15})
         })
       },
       handleSizeChange(val){
-        this.$store.commit('u_current',{current:val,pageSize:15})
+        this.$store.commit('u_current', {current: val, pageSize: 15})
       },
     },
     mounted(){

@@ -33,7 +33,7 @@
           </div>
         </el-col>
         <el-col :span="12">
-          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu"style="margin-right: 10px"></i>运营商统计列表</span>
+          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>运营商统计列表</span>
           <table class="t1">
             <tbody class="table">
             <tr>
@@ -45,7 +45,7 @@
               <td>{{item.operator}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
                         @click="detail(index,item)">{{item.total}}</span></td>
-              <td >{{item.percent}}</td>
+              <td>{{item.percent}}</td>
             </tr>
             </tbody>
           </table>
@@ -81,27 +81,27 @@
 </template>
 
 <script>
-  import { mapGetters,mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import * as API from '../../../api/api'
   export default {
     data() {
       return {
         //组件数据
-        pageInfo:{
-          index:'',//当前行索引
-          page:'',
-          operator:''
+        pageInfo: {
+          index: '',//当前行索引
+          page: '',
+          operator: ''
         },
         value: '',
         //筛选
-        filter:{
-          versions:'',
+        filter: {
+          versions: '',
           channels: '',
         },
         //饼状图
-        options:{
+        options: {
           title: {
-            text:null
+            text: null
           },
           tooltip: {
             /*            headerFormat: '浏览器访问量占比<br>',
@@ -120,63 +120,63 @@
             type: 'pie',
             name: '机型占比',
             data: [
-              ['a',10],
-              ['b',20],
-              ['c',30],
-              ['d',40]
+              ['a', 10],
+              ['b', 20],
+              ['c', 30],
+              ['d', 40]
             ]
           }],
-          credits:false
+          credits: false
         },
         //表格数据
         tableData: [],
         //弹窗
         dialogTableVisible: false,
-        dialogData:[],
-        val:{},
-        currentPage:1,
-        totalSize:0,
-        pageSize:15
+        dialogData: [],
+        val: {},
+        currentPage: 1,
+        totalSize: 0,
+        pageSize: 15
       }
     },
-    computed:{
+    computed: {
       ...mapGetters(['versions']),
     },
-    methods:{
+    methods: {
       //时间戳
       Timestamp(row){
-        const now = new Date(row*1000);
-        var year=now.getFullYear();
-        var month=now.getMonth()+1;
-        var date=now.getDate();
-        var hour=now.getHours();
-        var minute=now.getMinutes();
-        var second=now.getSeconds();
+        const now = new Date(row * 1000);
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+        var date = now.getDate();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
 
-        return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second;
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
       },
-       //筛选
+      //筛选
       filter(row){
         console.log(row)
       },
 
       //获取运营商信息
       gethardware(parm){
-        var p = new Promise( (resolve,reject) => {
+        var p = new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.operator_stat,
+            method: 'GET',
+            url: API.operator_stat,
             headers: {'Authorization': token},
-            params:{
-              app_version:parm.app_version || null,
-              app_channel:parm.app_channel || null,
+            params: {
+              app_version: parm.app_version || null,
+              app_channel: parm.app_channel || null,
             },
-          }).then(function(res){
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
 
@@ -186,18 +186,18 @@
       },
       //获取运营商详情
       getDatails(parm){
-        var p = new Promise( (resolve,reject) => {
+        var p = new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.operator_stat_details,
+            method: 'GET',
+            url: API.operator_stat_details,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
 
@@ -206,15 +206,15 @@
         return p;
       },
       //运营商信息详情
-      detail(index,val){
-          this.val = val;
+      detail(index, val){
+        this.val = val;
         var options = {
-          operator:val.operator,
-          page:1,
-          limit:this.pageSize
+          operator: val.operator,
+          page: 1,
+          limit: this.pageSize
         }
         this.dialogTableVisible = true
-        this.getDatails(options).then(res=>{
+        this.getDatails(options).then(res => {
           var data = res.data.data;
           this.dialogData = data.users;
           this.currentPage = data.current_page;
@@ -224,34 +224,34 @@
       //图表数据转为数组
       line(json){
         var arr = [];
-        for(var i = 0;i<json.length;i++){
-          arr.push([json[i]['operator'],parseFloat(json[i].percent)])
+        for (var i = 0; i < json.length; i++) {
+          arr.push([json[i]['operator'], parseFloat(json[i].percent)])
         }
         return arr
       },
       getJSON(parm){
-          var promise = new Promise( (resolve, reject) => {
-            const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-              this.$http({
-                method:parm.method || 'GET',
-                url:parm.url,
-                headers: {'Authorization': token},
-                params:parm.params
-              }).then( res => {
-                 resolve(res)
-              })
+        var promise = new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: parm.method || 'GET',
+            url: parm.url,
+            headers: {'Authorization': token},
+            params: parm.params
+          }).then(res => {
+            resolve(res)
           })
+        })
 
-          return promise
+        return promise
       },
       //分页
       handleCurrentChange(val){
         var options = {
-          operator:this.val.operator,
-          page:val,
-          limit:this.pageSize
+          operator: this.val.operator,
+          page: val,
+          limit: this.pageSize
         }
-        this.getDatails(options).then(res=>{
+        this.getDatails(options).then(res => {
           var data = res.data.data;
           this.dialogData = data.users;
           this.currentPage = data.current_page;
@@ -261,60 +261,66 @@
       //筛选
       valueChange(val){
 
-        if(this.filter.channels == '全部渠道'){
+        if (this.filter.channels == '全部渠道') {
           this.filter.channels = ''
         }
-        if(this.filter.versions == '全部版本'){
+        if (this.filter.versions == '全部版本') {
           this.filter.versions = ''
         }
 
-        this.gethardware({app_version:this.filter.versions,app_channel:this.filter.channels}).then( res => {
+        this.gethardware({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
-          this.$HighCharts.chart('main',this.options);
+          this.$HighCharts.chart('main', this.options);
         })
       }
     },
     mounted(){
-      this.gethardware({app_version:null,app_channel:null}).then( res => {
+      this.gethardware({app_version: null, app_channel: null}).then(res => {
         this.tableData = res.data.data.items;
         this.options.series[0].data = this.line(res.data.data.items);
-        this.$HighCharts.chart('main',this.options);
+        this.$HighCharts.chart('main', this.options);
       })
     }
   }
 </script>
 
 <style scoped>
-  #hardware{
+  #hardware {
     padding: 10px;
   }
+
   /*导航*/
-  #userInfo .breadcrumb{
+  #userInfo .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .el-table_1_column_4 .cell{
+
+  .el-table_1_column_4 .cell {
     cursor: pointer;
   }
+
   /*弹窗*/
-  .dh2{
+  .dh2 {
     height: 30px;
     line-height: 30px;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: 400;
-  span{
+
+  span {
     font-size: 16px;
     font-weight: 500;
   }
+
   }
 </style>
 

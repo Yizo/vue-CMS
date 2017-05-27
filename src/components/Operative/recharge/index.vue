@@ -73,7 +73,8 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.has_read ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_completed ? '成功': '失败'}}</el-tag>
+              close-transition>{{scope.row.is_completed ? '成功': '失败'}}
+            </el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -93,15 +94,15 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { formatDate } from '../../../utils/filters'
+  import {formatDate} from '../../../utils/filters'
   import {mapGetters} from 'vuex'
 
   export default{
     data(){
       return {
-        filter:{
-          start:'',
-          end:''
+        filter: {
+          start: '',
+          end: ''
         },
         data: [],
         currentPage: 1,
@@ -111,18 +112,18 @@
     },
     methods: {
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.recharge_list_get,
+            method: 'GET',
+            url: API.recharge_list_get,
             headers: {'Authorization': token},
-            params:parm,
-          }).then(function(res){
+            params: parm,
+          }).then(function (res) {
 
-            if(res.status == 200){
+            if (res.status == 200) {
               resolve(res)
-            }else{
+            } else {
               reject(res)
             }
           })
@@ -137,12 +138,12 @@
       },
       filtration(){
         let options = {
-          page:1,
-          limit:this.pageSize,
-          start_at:this.filter.start,
-          end_at:this.filter.end
+          page: 1,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
         }
-        this.getInfo(options).then(res=>{
+        this.getInfo(options).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.current_page
           this.total = res.data.data.total_count
@@ -150,16 +151,16 @@
       },
       //分页action
       handleSizeChange(val){
-        this.getInfo({page:val,limit:this.pageSize}).then(res=>{
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
           this.data = res.data.data.logs;
           this.total = res.data.data.total_count
         })
       },
     },
     mounted(){
-      this.getInfo({limit:this.pageSize}).then(res=>{
-          this.data = res.data.data.logs;
-          this.total = res.data.data.total_count;
+      this.getInfo({limit: this.pageSize}).then(res => {
+        this.data = res.data.data.logs;
+        this.total = res.data.data.total_count;
       })
     }
   }
@@ -193,7 +194,8 @@
   .el-table th > .cell {
     text-align: left;
   }
-  .filter{
+
+  .filter {
     text-align: left;
     margin-top: 20px;
   }

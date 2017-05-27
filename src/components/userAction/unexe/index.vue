@@ -32,7 +32,7 @@
         </el-col>
       </el-row>
       <template>
-        <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu"style="margin-right: 10px"></i>每日用户未连接次数</span>
+        <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>每日用户未连接次数</span>
         <el-table
           :data="data"
           style="width: 100%">
@@ -43,7 +43,8 @@
           <el-table-column
             label="次数">
             <template scope="scope">
-              <span class="dialog_num" @click="detail({stat_at:scope.row.stat_date})">{{scope.row.no_operations_count}}</span>
+<span class="dialog_num"
+      @click="detail({stat_at:scope.row.stat_date})">{{scope.row.no_operations_count}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -107,38 +108,38 @@
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
   export default{
-    components:{},
+    components: {},
     data(){
       return {
-        filter:{
-          start:'',
-          end:''
+        filter: {
+          start: '',
+          end: ''
         },
-        data:[],
-        currentPage:1,
-        total:0,
-        pageSize:15,
+        data: [],
+        currentPage: 1,
+        total: 0,
+        pageSize: 15,
         /*弹窗*/
-        dialog:false,
-        parm:{},//当前分页参数
-        title_name:'',
-        dialogData:[],
-        d_currentPage:1,
-        d_total:0,
+        dialog: false,
+        parm: {},//当前分页参数
+        title_name: '',
+        dialogData: [],
+        d_currentPage: 1,
+        d_total: 0,
         /*折线图*/
-        options:{
-          title:{
-            text:null
+        options: {
+          title: {
+            text: null
           },
           xAxis: {
-            title:{
-              text:'连接时间'
+            title: {
+              text: '连接时间'
             },
             categories: []
           },
           yAxis: {
-            title:{
-              text:'用户未连接次数'
+            title: {
+              text: '用户未连接次数'
             },
             plotLines: [{
               value: 0,
@@ -150,68 +151,66 @@
             valueSuffix: '次'
           },
           series: [],
-          credits:false
+          credits: false
         },
       }
     },
-    computed:{
-
-    },
-    methods:{
+    computed: {},
+    methods: {
       getInfo(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.unext,
+            method: 'GET',
+            url: API.unext,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
       /*详情*/
       getDetail(parm){
-        return  new Promise( (resolve,reject) => {
+        return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
-            method:'GET',
-            url:API.unext_detail,
+            method: 'GET',
+            url: API.unext_detail,
             headers: {'Authorization': token},
-            params:parm
-          }).then(function(res){
-            if(res.status == 200){
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
               resolve(res)
             }
-          }).catch(function(err){
+          }).catch(function (err) {
             reject(err)
           })
         })
       },
-      //表格数据
+//表格数据
       AnalysisJSON(parm) {
         var result = []
-        var keyList = { no_operations_count: '用户未连接次数'}
+        var keyList = {no_operations_count: '用户未连接次数'}
         var names = ['no_operations_count']
-        for(var i = 0; i < names.length; i++) {
+        for (var i = 0; i < names.length; i++) {
           var data = []
-          for(var j = 0; j < parm.length; j++) {
+          for (var j = 0; j < parm.length; j++) {
             data.push(parm[j][names[i]])
           }
-          var item = { name: keyList[names[i]], data: data }
+          var item = {name: keyList[names[i]], data: data}
           result.push(item)
         }
         return result
       },
-      //设置Y轴
+//设置Y轴
       setXAxis(parm){
         var arry = []
-        for(var i in parm) {
+        for (var i in parm) {
           arry.push(parm[i].stat_date);
         }
         return arry
@@ -224,39 +223,39 @@
       },
       filtration(){
         let options = {
-          page:1,
-          limit:this.pageSize,
-          start_at:this.filter.start,
-          end_at:this.filter.end
+          page: 1,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
         }
-        this.getInfo(options).then(res=>{
+        this.getInfo(options).then(res => {
           this.data = res.data.data.logs
           this.total = res.data.data.total_count;
-          //设置数据
+//设置数据
           this.options.series = this.AnalysisJSON(this.data);
-          //设置X轴
+//设置X轴
           this.options.xAxis.categories = this.setXAxis(this.data)
-          this.$HighCharts.chart('main',this.options);
+          this.$HighCharts.chart('main', this.options);
         })
       },
       detail(parm){
         this.parm = parm
         this.dialog = true
         this.d_currentPage = 1
-        this.getDetail({stat_at:parm.stat_at,page:1,limit:10}).then(res=>{
+        this.getDetail({stat_at: parm.stat_at, page: 1, limit: 10}).then(res => {
           this.dialogData = res.data.data.logs;
           this.d_total = res.data.data.total_count;
         })
       },
       handleCurrentChange(val){
-        this.getInfo({page:val,limit:10}).then(res=>{
+        this.getInfo({page: val, limit: 10}).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.curren_page
           this.total = res.data.data.total_count;
         })
       },
       d_handleCurrentChange(val){
-        this.getDetail({stat_at:this.parm.stat_at,page:val,limit:10}).then(res=>{
+        this.getDetail({stat_at: this.parm.stat_at, page: val, limit: 10}).then(res => {
           this.dialogData = res.data.data.logs;
           this.d_currentPage = res.data.data.curren_page
           this.d_total = res.data.data.total_count;
@@ -264,32 +263,34 @@
       }
     },
     mounted(){
-       this.getInfo({limit:10}).then(res=>{
+      this.getInfo({limit: 10}).then(res => {
         this.data = res.data.data.nodes
-         this.data = res.data.data.logs
-         this.total = res.data.data.total_count;
-         //设置数据
-         this.options.series = this.AnalysisJSON(this.data);
-         //设置X轴
-         this.options.xAxis.categories = this.setXAxis(this.data)
-         this.$HighCharts.chart('main',this.options);
-       })
+        this.data = res.data.data.logs
+        this.total = res.data.data.total_count;
+//设置数据
+        this.options.series = this.AnalysisJSON(this.data);
+//设置X轴
+        this.options.xAxis.categories = this.setXAxis(this.data)
+        this.$HighCharts.chart('main', this.options);
+      })
     }
   }
 </script>
 
 <style scoped>
-  .dstip{
+  .dstip {
     padding: 10px;
   }
-  .warp{
+
+  .warp {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .page{
+
+  .page {
     text-align: right;
     margin-top: 20px;
   }

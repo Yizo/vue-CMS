@@ -43,7 +43,7 @@
               <td>{{item.date}}</td>
               <td>{{item.name}}</td>
               <td>{{item.address}}</td>
-              <td >{{item.bi}}</td>
+              <td>{{item.bi}}</td>
             </tr>
             </tbody>
           </table>
@@ -87,80 +87,90 @@
           date: '2016-05-02',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄',
-          bi:'12.2%'
+          bi: '12.2%'
         }, {
           date: '2016-05-04',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1517 弄',
-          bi:'12.2%'
+          bi: '12.2%'
         }, {
           date: '2016-05-01',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1519 弄',
-          bi:'12.2%'
+          bi: '12.2%'
         }, {
           date: '2016-05-03',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1516 弄',
-          bi:'12.2%'
+          bi: '12.2%'
         }],
         dialogTableVisible: false,
       }
     },
-    methods:{
+    methods: {
       showdialog(){
-          alert(1)
+        alert(1)
       }
     }
   }
 </script>
 
 <style scoped>
-  #hardware{
+  #hardware {
     padding: 10px;
   }
+
   /*导航*/
-  #userInfo .breadcrumb{
+  #userInfo .breadcrumb {
     height: 30px;
     line-height: 30px;
   }
-  .warp_filter{
+
+  .warp_filter {
     text-align: left;
     padding: 10px;
-    background-color:#fff;
-    border:1px solid #D3DCE6;
+    background-color: #fff;
+    border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .el-table_1_column_4 .cell{
+
+  .el-table_1_column_4 .cell {
     cursor: pointer;
   }
-  table{
-    table-layout:fixed;
-    empty-cells:show;
+
+  table {
+    table-layout: fixed;
+    empty-cells: show;
     border-collapse: collapse;
-    margin:0 auto;
+    margin: 0 auto;
   }
-  td{
-    height:30px;
+
+  td {
+    height: 30px;
   }
-  h1,h2,h3{
-    font-size:12px;
-    margin:0;
-    padding:0;
+
+  h1, h2, h3 {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
   }
-  .table{
-    border:1px solid #cad9ea;
-    color:#666;
+
+  .table {
+    border: 1px solid #cad9ea;
+    color: #666;
   }
+
   .table th {
-    background-repeat:repeat-x;
-    height:30px;
+    background-repeat: repeat-x;
+    height: 30px;
   }
-  .table td,.table th{
-    border:1px solid #cad9ea;
-    padding:0 1em 0;
+
+  .table td, .table th {
+    border: 1px solid #cad9ea;
+    padding: 0 1em 0;
   }
-  .table tr.alter{
-    background-color:#f5fafe;
+
+  .table tr.alter {
+    background-color: #f5fafe;
   }
 </style>
