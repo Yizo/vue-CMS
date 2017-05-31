@@ -42,7 +42,7 @@
     </div>
     <!--新增-->
     <el-dialog :title="pageInfo.name" v-model="dialogVisible" size="tiny">
-      <el-form :model="form" label-width="120px"  label-position="left">
+      <el-form :model="form" label-width="120px" label-position="left">
         <el-form-item label="URL">
           <el-input v-model="form.url" auto-complete="off"></el-input>
           </el-input>

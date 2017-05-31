@@ -38,38 +38,42 @@
     <div class="warp_list">
       <!--工具条-->
       <div class="filter">
-        <el-row>
-          <div class="f">
+        <el-row :gutter="20">
+          <el-col :span="8">
             <span class="title">版本筛选</span>
             <el-select v-model="filter.version" placeholder="请选择">
               <el-option v-for="(item,index) in versions.app_versions" :label="item.name" :value="item.name"
                          :key="index">
               </el-option>
             </el-select>
-          </div>
-          <div class="f">
+          </el-col>
+          <el-col :span="8">
             <span class="title">渠道筛选</span>
             <el-select v-model="filter.channel" placeholder="请选择">
               <el-option v-for="(item,index) in versions.app_channels" :label="item.name" :value="item.name"
                          :key="index">
               </el-option>
             </el-select>
-          </div>
-          <div class="f" style="margin-right: 15px">
+          </el-col>
+          <el-col :span="8">
             <span class="title">用户状态筛选</span>
             <el-select v-model="filter.str" placeholder="请选择">
               <el-option v-for="(item,index) in options1" :label="item.label" :value="item.value" :key="index">
               </el-option>
             </el-select>
-          </div>
-          <div class="f">
+          </el-col>
+
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="8">
             <span class="title">时间筛选</span>
             <el-select v-model="filter.time" placeholder="请选择">
               <el-option v-for="(item,index) in options2" :label="item.label" :value="item.value" :key="index">
               </el-option>
             </el-select>
-          </div>
-          <div style="display: inline-block">
+          </el-col>
+          <el-col :span="8">
+            <span class="title">日期筛选</span>
             <el-date-picker
               v-model="filter.start"
               type="date"
@@ -82,15 +86,17 @@
               placeholder="结束日期"
               @change="end_date">
             </el-date-picker>
-          </div>
-          <el-button style="margin-left: 40px" @click="filtration">筛选</el-button>
+          </el-col>
+          <el-col :span="8" style="text-align: left">
+            <el-input v-model="ser" placeholder="请输入账号" style="width:200px"></el-input>
+            <el-button icon="search" @click
+              ="search">搜索
+            </el-button>
+          </el-col>
         </el-row>
         <!--搜索-->
         <el-row>
-          <el-input v-model="ser" placeholder="请输入账号" style="width:200px"></el-input>
-          <el-button icon="search" @click
-            ="search">搜索
-          </el-button>
+          <el-button @click="filtration">筛选</el-button>
         </el-row>
       </div>
       <!--列表-->
@@ -406,7 +412,6 @@
   .filter {
 
   .f {
-    width: 250px;
     display: inline-block;
     line-height: 50px;
   }
@@ -444,6 +449,9 @@
 
   .el-dialog--small {
     width: 60%;
+  }
+  .el-row{
+    padding: 5px 0;
   }
 </style>
 

@@ -107,14 +107,11 @@
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
+  import { mapGetters } from 'vuex'
   export default{
     components: {},
     data(){
       return {
-        filter: {
-          start: '',
-          end: ''
-        },
         data: [],
         currentPage: 1,
         total: 0,
@@ -155,7 +152,12 @@
         },
       }
     },
-    computed: {},
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+        return this.initDate
+      }
+    },
     methods: {
       getInfo(parm){
         return new Promise((resolve, reject) => {
@@ -242,20 +244,20 @@
         this.parm = parm
         this.dialog = true
         this.d_currentPage = 1
-        this.getDetail({stat_at: parm.stat_at, page: 1, limit: 10}).then(res => {
+        this.getDetail({stat_at: parm.stat_at, page: 1, limit: this.pageSize}).then(res => {
           this.dialogData = res.data.data.logs;
           this.d_total = res.data.data.total_count;
         })
       },
       handleCurrentChange(val){
-        this.getInfo({page: val, limit: 10}).then(res => {
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.curren_page
           this.total = res.data.data.total_count;
         })
       },
       d_handleCurrentChange(val){
-        this.getDetail({stat_at: this.parm.stat_at, page: val, limit: 10}).then(res => {
+        this.getDetail({stat_at: this.parm.stat_at, page: val, limit: this.pageSize}).then(res => {
           this.dialogData = res.data.data.logs;
           this.d_currentPage = res.data.data.curren_page
           this.d_total = res.data.data.total_count;
@@ -263,7 +265,7 @@
       }
     },
     mounted(){
-      this.getInfo({limit: 10}).then(res => {
+      this.getInfo({limit: this.pageSize}).then(res => {
         this.data = res.data.data.nodes
         this.data = res.data.data.logs
         this.total = res.data.data.total_count;

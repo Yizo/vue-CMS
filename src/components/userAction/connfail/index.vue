@@ -147,13 +147,6 @@
   export default {
     data(){
       return {
-        /*筛选*/
-        filter: {
-          status: '',
-          time: '',
-          start: '',
-          end: ''
-        },
         /*折线图*/
         options: {
           title: {
@@ -182,12 +175,12 @@
           credits: false
         },
         /*列表*/
-        tableData: '',
+        tableData: [],
 
         /*弹窗*/
         dialogTableVisible: false,
         dialogTableVisible1: false,
-        dialogData: '',//弹窗数据
+        dialogData: [],//弹窗数据
         pageInfo: {
           index: '',
           page: '',
@@ -202,7 +195,10 @@
       }
     },
     computed: {
-      ...mapGetters(['versions'])
+      ...mapGetters(['versions','initDate']),
+      filter(){
+        return this.initDate
+      }
     },
     methods: {
       //时间戳

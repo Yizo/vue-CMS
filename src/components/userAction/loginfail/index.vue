@@ -112,14 +112,11 @@
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
+  import { mapGetters } from 'vuex'
   export default{
     components: {},
     data(){
       return {
-        filter: {
-          start: '',
-          end: ''
-        },
         data: [],
         currentPage: 1,
         total: 0,
@@ -160,7 +157,12 @@
         },
       }
     },
-    computed: {},
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+        return this.initDate
+      }
+    },
     methods: {
       start_date(val){
         this.filter.start = val

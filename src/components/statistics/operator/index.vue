@@ -322,5 +322,11 @@
   }
 
   }
+  .el-select{
+    width: 200px;
+  }
+  .el-input{
+    width: 200px;
+  }
 </style>
 

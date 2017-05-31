@@ -10,13 +10,13 @@
         <el-date-picker
           v-model="filter.start"
           type="month"
-          placeholder="开始日期"
+          placeholder="开始年月"
           @change="start_date">
         </el-date-picker>
         <el-date-picker
           v-model="filter.end"
           type="month"
-          placeholder="结束日期"
+          placeholder="结束年月"
           @change="end_date">
         </el-date-picker>
         <el-select v-model="filter.versions" placeholder="版本筛选">
@@ -67,7 +67,7 @@
       day, month
     },
     computed: {
-      ...mapGetters(['versions']),
+      ...mapGetters(['versions', 'date','initDate']),
     },
     methods: {
       ...mapActions({
@@ -101,6 +101,8 @@
       }
     },
     mounted(){
+        this.filter.start = this.initDate.start;
+        this.filter.end = this.initDate.end
     }
   }
 </script>
@@ -126,5 +128,11 @@
   .page {
     text-align: right;
     margin-top: 20px;
+  }
+  .el-select{
+    width: 200px;
+  }
+  .el-input{
+    width: 200px;
   }
 </style>

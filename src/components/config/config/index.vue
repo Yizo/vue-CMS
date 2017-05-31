@@ -306,9 +306,11 @@
     text-align: right;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 100%;
   }
+
   .el-form-item__content {
     text-align: left;
   }

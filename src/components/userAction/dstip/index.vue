@@ -109,15 +109,12 @@
 
 <script>
   import * as API from '../../../api/api'
+  import { mapGetters } from 'vuex'
   export default{
     components: {},
     data(){
       return {
         select: 'date',
-        filter: {
-          start: '',
-          end: ''
-        },
         data: [],
         currentPage: 1,
         total: 0,
@@ -171,7 +168,12 @@
         },
       }
     },
-    computed: {},
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+          return this.initDate
+      }
+    },
     methods: {
       percentage(num1, num2){
 
@@ -449,7 +451,18 @@
         }
       },
       handleCurrentChange(val){
-        this.getData(val)
+        let options = {
+          page: val,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select
+        }
+        this.getInfo(options).then(res => {
+          this.data = res.data.data.logs
+          this.currentPage = res.data.data.current_page
+          this.total = res.data.data.total_count
+        })
       },
       //查看地域分析详情
       domain_details(data){
@@ -500,6 +513,12 @@
   .page {
     text-align: right;
     margin-top: 20px;
+  }
+  .el-select{
+    width: 200px;
+  }
+  .el-input{
+    width: 200px;
   }
 </style>
 

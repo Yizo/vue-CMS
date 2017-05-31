@@ -112,6 +112,7 @@
 
 <script>
   import * as API from '../../../api/api'
+  import { mapGetters } from 'vuex'
   export default{
     components: {},
     props: {
@@ -122,10 +123,6 @@
     },
     data(){
       return {
-        filter: {
-          start: '',
-          end: ''
-        },
         data: [],
         date_list: [],
         logs: [],
@@ -176,6 +173,12 @@
     watch: {
       data(){
         this.draw()
+      }
+    },
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+        return this.initDate
       }
     },
     methods: {

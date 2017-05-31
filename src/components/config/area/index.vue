@@ -72,7 +72,7 @@
     </el-dialog>
     <!--修改-->
     <el-dialog title="修改地域" v-model="dialogVisible_update" size="tiny">
-      <el-form :model="form" label-width="120px"  label-position="left">
+      <el-form :model="form" label-width="120px" label-position="left">
         <el-form-item label="地域编号">
           <el-input v-model="form2.id" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>

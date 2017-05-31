@@ -6,8 +6,8 @@
       <el-breadcrumb-item>渠道版本配置</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <div class="warp" style="text-align: left;margin-top: 20px">
-      <el-select v-model="value" placeholder="请选择" @change="change">
+    <div class="warp" style="text-align: left;margin-top: 20px;">
+      <el-select v-model="value" placeholder="请选择" @change="change" style="width: 200px">
         <el-option label="渠道" value="渠道" selected></el-option>
         <el-option label="版本" value="版本"></el-option>
       </el-select>
@@ -69,5 +69,8 @@
 
   .el-form-item__content {
     text-align: left;
+  }
+  .el-select{
+    width: 200px;
   }
 </style>

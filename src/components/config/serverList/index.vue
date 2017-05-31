@@ -86,7 +86,7 @@
       <el-form :model="form" label-position="left" label-width="150px">
         <el-form-item label="服务器类型">
           <template>
-            <el-select v-model="form.node_type_id" placeholder="请选择"  class="dot_tips">
+            <el-select v-model="form.node_type_id" placeholder="请选择" class="dot_tips">
               <el-option
                 v-for="(item,index) in nodeName2"
                 key="index"
@@ -98,7 +98,8 @@
         </el-form-item>
         <el-form-item label="所属地域">
           <template>
-            <el-select v-model="form.node_region_id" @visible-change="regionChange()" placeholder="请选择"  class="dot_tips">
+            <el-select v-model="form.node_region_id" @visible-change="regionChange()" placeholder="请选择"
+                       class="dot_tips">
               <el-option
                 v-for="item in areaName2"
                 key="item.id"
@@ -109,7 +110,7 @@
           </template>
         </el-form-item>
         <el-form-item label="线路名称">
-          <el-input v-model="form.name" auto-complete="off"  class="dot_tips"></el-input>
+          <el-input v-model="form.name" auto-complete="off" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="服务器IP">
           <el-input v-model="form.url" auto-complete="off" class="dot_tips"></el-input>
@@ -449,7 +450,8 @@
     text-indent: 30px;
     position: relative;
   }
-  .el-select{
+
+  .el-select {
     width: 100%;
   }
 </style>

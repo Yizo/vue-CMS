@@ -236,7 +236,7 @@
       d_totalSize: 0,
     }),
     computed: {
-      ...mapGetters(['versions']),
+      ...mapGetters(['versions','initDate']),
     },
     watch: {
       data(){
@@ -454,6 +454,8 @@
       },
     },
     mounted(){
+      this.filter.start = this.initDate.start;
+      this.filter.end = this.initDate.end;
       this.getData(1).then(res => {
         this.draw()
       })
@@ -482,9 +484,10 @@
     text-align: right;
     margin-top: 20px;
   }
+  .el-select{
+    width: 200px;
+  }
+  .el-input{
+    width: 200px;
+  }
 </style>
-</
-
-style
-
->

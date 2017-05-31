@@ -10,4 +10,6 @@ export default {
   AREATYPENAME: (state, param) => {
     state.area_type_name = param.data.regions
   },
+
 }
+

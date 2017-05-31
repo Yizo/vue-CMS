@@ -100,14 +100,16 @@
   export default{
     data(){
       return {
-        filter: {
-          start: '',
-          end: ''
-        },
         data: [],
         currentPage: 1,
         pageSize: 15,
         total: 0,
+      }
+    },
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+        return this.initDate
       }
     },
     methods: {

@@ -7,7 +7,8 @@ import getters from "./getters";
 
 const state = {
   node_type_name: [],
-  area_type_name: []
+  area_type_name: [],
+  monthTime: {}
 };
 
 export default {

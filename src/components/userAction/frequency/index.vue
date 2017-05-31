@@ -97,14 +97,11 @@
 
 <script>
   import * as API from '../../../api/api'
+  import { mapGetters } from 'vuex'
   export default{
     data: () => ({
       data: [],
       pagename: ['1-2次', '3-5次', '6-9次', '10-19次', '20-49次', '50次以上'],
-      filter: {
-        start: '',
-        end: ''
-      },
       pageSize: 15,
       /*折线图*/
       options: {
@@ -148,6 +145,12 @@
         data: []
       },
     }),
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+        return this.initDate
+      }
+    },
     watch: {
       data(){
         this.draw()
@@ -282,7 +285,19 @@
         })
       },
       d_handleCurrentChange(val){
-
+        let options = {
+          page: val,
+          limit: this.pageSize,
+          times_scope: this.pagename[index].replace('次', ''),
+          start_at: this.filter.start || '',
+          end_at: this.filter.end || ''
+        };
+        this.getDetails(options).then(res => {
+          let data = res.data.data
+          this.dialog.data = data.logs;
+          this.dialog.currentPage = data.current_page;
+          this.dialog.total = data.total_count;
+        })
       }
     },
     mounted(){

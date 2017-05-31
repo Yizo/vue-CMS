@@ -294,4 +294,10 @@
     border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
+  .el-select{
+    width: 200px;
+  }
+  .el-input{
+    width: 200px;
+  }
 </style>

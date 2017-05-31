@@ -131,16 +131,19 @@ a, a:hover {
   right: 50px;
   color: red;
 }
-.dot_tips{
+
+.dot_tips {
   position: relative;
 }
-.dot_tips:before{
+
+.dot_tips:before {
   content: '*';
   color: red;
-  position:absolute;
-  top:4px;
+  position: absolute;
+  top: 4px;
   right: -8px;
 }
+
 input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
   color: #ccc;
   font-family: "微软雅黑";

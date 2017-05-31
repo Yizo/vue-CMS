@@ -68,6 +68,22 @@ export function Times(data) {
   return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
 }
 
+export function monthTime() {
+  let now = new Date()
+  var year = now.getFullYear();
+  var month = now.getMonth() + 1;
+  var date = now.getDate();
+
+  if (month < 9) {
+    month = '0' + month
+  }
+  if (date < 9) {
+    date = '0' + date
+  }
+
+  return {start: year + "-" + month + "-" + 1, end: year + "-" + month + "-" + date}
+}
+
 /*金额逗号间隔*/
 export function format_number(n) {
   var b = parseInt(n).toString();

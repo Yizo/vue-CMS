@@ -22,7 +22,6 @@ for (var key in filters) {
 
 //请求拦截器
 axios.interceptors.request.use(function (config) {
-  console.log(config.url)
   return config;
 }, function (err) {
   return Promise.reject(err);

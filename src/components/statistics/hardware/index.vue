@@ -8,7 +8,7 @@
     <!--筛选-->
     <div class="warp_filter">
       <template>
-        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
+        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange" style="width: 200px;">
           <el-option
             v-for="(item,index) in versions.app_versions"
             :label="item.name"
@@ -17,7 +17,7 @@
         </el-select>
       </template>
       <template>
-        <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange">
+        <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange" style="width: 200px;">
           <el-option
             v-for="(item,index) in versions.app_channels"
             :label="item.name"
@@ -299,6 +299,12 @@
     font-weight: 500;
   }
 
+  }
+  .el-select{
+    width: 200px;
+  }
+  .el-input{
+    width: 200px;
   }
 </style>
 
