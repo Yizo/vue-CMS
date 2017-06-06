@@ -9,6 +9,11 @@
 
     <!--筛选-->
     <div class="warp_filter">
+      <el-alert
+        title="数据说明"
+        type="info"
+        description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
+      </el-alert>
       <template>
         <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
           <el-option
@@ -28,7 +33,6 @@
           </el-option>
         </el-select>
       </template>
-
       <!--展示-->
       <el-row :gutter="20" class="">
         <el-col :span="12">
@@ -46,11 +50,16 @@
               <th>数量</th>
               <th>占比</th>
             </tr>
-            <tr v-for="(item,index) in tableData">
-              <td>{{item.is_enabled}}</td>
+            <tr>
+              <td>正常</td>
+              <td>{{tableData[0]?tableData[0].total:0}}</td>
+              <td>{{tableData[0]?tableData[0].percent:0}}</td>
+            </tr>
+            <tr>
+              <td>封号</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                        @click="details(item)">{{item.total}}</span></td>
-              <td>{{item.percent}}</td>
+                        @click="details">{{tableData[1]?tableData[1].total:0}}</span></td>
+              <td>{{tableData[1]?tableData[1].percent:0}}</td>
             </tr>
             </tbody>
           </table>
@@ -58,12 +67,15 @@
       </el-row>
 
       <!--数量弹窗-->
-      <el-dialog v-model="dialogTableVisible">
-        <h2 class="dh2">用户状态详情:<span v-text="pageInfo.device_model"></span></h2>
+      <el-dialog v-model="dialogTableVisible" :title="pageInfo.is.is_enabled">
         <el-table :data="dialogData" style="text-align: center">
           <el-table-column property="username" label="被封账号" width="150"></el-table-column>
           <el-table-column property="admin_username" label="封号人"></el-table-column>
-          <el-table-column label="封号时间" property="created_at" width="200"></el-table-column>
+          <el-table-column label="封号时间" width="200">
+            <template scope="scope">
+              <span>{{scope.row.created_at | Time}}</span>
+            </template>
+          </el-table-column>
         </el-table>
         <div slot="footer">
           <el-pagination
@@ -221,40 +233,38 @@
 
       /*弹窗*/
       /*查看详情*/
-      details(is){
-        this.pageInfo.is = is;
-        var options = {
-          page: 1
-        }
-        this.getDetails(options);
-      },
-      //获取统计详情
-      getDetails(parm){
+      details(){
         this.dialogTableVisible = true;
-        let is = this.pageInfo.is;
-
-        if (is) {
-          is = 1
-        } else {
-          is = 0
+        var options = {
+          page: 1,
+          limit: 15,
+          is_enabled: false
         }
-        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-        this.$http({
-          method: 'GET',
-          url: API.status_stat_details,
-          headers: {'Authorization': token},
-          params: {
-            is_enabled: is,
-            limit: this.pageSize,
-            page: parm.page
-          },
-        }).then(res => {
+        this.getDetails(options).then(res => {
           if (res.status == 200) {
             let data = res.data.data
-            this.dialogData = data.users;
+            this.dialogData = data.logs;
             this.currentPage = data.current_page;
             this.totalSize = data.total_count
           }
+        });
+      },
+      //获取统计详情
+      getDetails(parm){
+        return new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'GET',
+            url: API.status_stat_details,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
+              resolve(res)
+            }
+          }).catch(function (err) {
+            reject(err)
+          })
         })
       },
 
@@ -294,10 +304,12 @@
     border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

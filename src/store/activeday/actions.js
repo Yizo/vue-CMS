@@ -24,6 +24,25 @@ export default {
       })
     })
   },
+  //日活跃-图表
+  ACTIVEDAY_DAY_CHART(store, parm) {
+    return new Promise((resolve, reject) => {
+      const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+      axios({
+        method: 'GET',
+        url: API.activeday_day_chart,
+        headers: {'Authorization': token},
+        params: parm
+      }).then(function (res) {
+        if (res.status == 200) {
+          store.commit('ACTIVEDAY_DAY_CHART', res.data);
+          resolve(res)
+        }
+      }).catch(function (err) {
+        reject(err)
+      })
+    })
+  },
   //日活跃用户-详情
   ACTIVEDAY_DAY_DETAILS(store, parm){
     return new Promise((resolve, reject) => {
@@ -55,6 +74,25 @@ export default {
       }).then(function (res) {
         if (res.status == 200) {
           store.commit('ACTIVEDAY_MONTH', res.data.data);
+          resolve(res)
+        }
+      }).catch(function (err) {
+        reject(err)
+      })
+    })
+  },
+  //月活跃-图表
+  ACTIVEDAY_MONTH_CHART(store, parm) {
+    return new Promise((resolve, reject) => {
+      const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+      axios({
+        method: 'GET',
+        url: API.activeday_month_chart,
+        headers: {'Authorization': token},
+        params: parm
+      }).then(function (res) {
+        if (res.status == 200) {
+          store.commit('ACTIVEDAY_MONTH_CHART', res.data);
           resolve(res)
         }
       }).catch(function (err) {

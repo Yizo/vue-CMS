@@ -4,6 +4,11 @@
       <el-breadcrumb-item>运营行为</el-breadcrumb-item>
       <el-breadcrumb-item>新增用户</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <!--筛选-->
     <el-row style="text-align: left;margin-top: 20px">
       <div style="display: inline-block">
@@ -40,10 +45,10 @@
     <!--视图-->
     <div class="warp">
       <div class="warp_col">
-        <day class="c"></day>
+        <day class="c" :filter="filter"></day>
       </div>
       <div class="warp_col">
-        <month class="c"></month>
+        <month class="c" :filter="filter"></month>
       </div>
     </div>
   </div>
@@ -52,6 +57,7 @@
 <script>
   import day from './day.vue'
   import month from './month.vue'
+  import * as JS from '../../../assets/js/js'
   import {mapActions, mapGetters}  from 'vuex'
   export default{
     data: () => ({
@@ -61,18 +67,20 @@
         versions: '',
         channels: ''
       },
-      pageSize: 10
+      pageSize: 15
     }),
     components: {
       day, month
     },
     computed: {
-      ...mapGetters(['versions', 'date','initDate']),
+      ...mapGetters(['versions', 'date', 'initDate']),
     },
     methods: {
       ...mapActions({
         day: 'ADDDAY_DAY',
-        month: 'ADDDAY_MONTH'
+        month: 'ADDDAY_MONTH',
+        dayChart: 'ADDDAY_DAY_CHART',
+        monthChart: 'ADDDAY_MONTH_CHART'
       }),
       //筛选
       start_date(val){
@@ -88,6 +96,13 @@
         if (this.filter.versions == '全部版本') {
           this.filter.versions = ''
         }
+
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.month(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.month(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -96,13 +111,16 @@
           start_at: this.filter.start,
           end_at: this.filter.end
         }
+        this.dayChart(options);
+        this.monthChart(options);
         this.day(options);
         this.month(options);
       }
     },
     mounted(){
-        this.filter.start = this.initDate.start;
-        this.filter.end = this.initDate.end
+      this.filter.start = this.initDate.start;
+      this.filter.end = this.initDate.end;
+      this.filtration();
     }
   }
 </script>
@@ -129,10 +147,12 @@
     text-align: right;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

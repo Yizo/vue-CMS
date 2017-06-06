@@ -10,3 +10,4 @@ export const PAYDETAILS = 'PAYDETAILS';
 
 export const CONSUMECOINS = 'CONSUMECOINS';
 
+export const PAYINFO_pay_char = 'PAYINFO_pay_char';

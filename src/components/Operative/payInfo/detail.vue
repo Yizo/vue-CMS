@@ -72,7 +72,7 @@
         <el-table-column property="username" label="账号名" width="150"></el-table-column>
         <el-table-column property="coins" label="使用服务器名">
           <template scope="scope">
-            {{scope.row.node_type+"-"+scope.row.node_region+"-"+scope.row.node_name}}
+            {{scope.row.node_type}}{{scope.row.node_region?"-":''}}{{scope.row.node_region}}{{scope.row.node_name?"-":''}}{{scope.row.node_name}}
           </template>
         </el-table-column>
         <el-table-column property="coins" label="消费钻石数量" width="150"></el-table-column>
@@ -173,8 +173,8 @@
           date: data.data.stat_date
         }
         this.trad(options).then(res => {
-          let data = res.data.data
-          this.dalogData = data.logs;
+          let data = res.data.data;
+          this.dalogData = [...data.logs];
           this.currentPage = data.current_page
           this.totalSize = data.total_count
         })
@@ -191,7 +191,7 @@
         }
         this.trad(options).then(res => {
           let data = res.data.data
-          this.dalogData = data.logs;
+          this.dalogData = [...data.logs];
           this.currentPage = data.current_page
           this.totalSize = data.total_count
         })
@@ -208,7 +208,7 @@
         }
         this.tccd(options).then(res => {
           let data = res.data.data
-          this.dalogData2 = data.logs;
+          this.dalogData2 = [...data.logs];
           this.currentPage = data.current_page
           this.totalSize = data.total_count
         })
@@ -237,7 +237,7 @@
         }
         this.tccd(options).then(res => {
           let data = res.data.data
-          this.dalogData2 = data.logs;
+          this.dalogData2 = [...data.logs];
           this.currentPage = data.current_page
           this.totalSize = data.total_count
         })
@@ -252,7 +252,7 @@
           }
           this.tccd(options).then(res => {
             let data = res.data.data
-            this.dalogData = data.logs;
+            this.dalogData = [...data.logs];
             this.currentPage = data.current_page
             this.totalSize = data.total_count
           })
@@ -265,7 +265,7 @@
           }
           this.trad(options).then(res => {
             let data = res.data.data
-            this.dalogData = data.logs;
+            this.dalogData = [...data.logs];
             this.currentPage = data.current_page
             this.totalSize = data.total_count
           })

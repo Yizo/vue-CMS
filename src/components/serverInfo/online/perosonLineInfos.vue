@@ -6,12 +6,12 @@
       <el-table-column property="ip" label="用户IP"></el-table-column>
       <el-table-column property="" label="IP解析">
         <template scope="scope">
-          <span>{{scope.row.ip_country}}{{scope.row.ip_city}}{{scope.row.ip_province}}</span>
+          <span>{{scope.row.ip_country}}{{scope.row.ip_province}}{{scope.row.ip_city}}</span>
         </template>
       </el-table-column>
       <el-table-column property="created_at" label="访问时间">
         <template scope="scope">
-          <span>{{scope.row.created_at|formatDate}}</span>
+          <span>{{scope.row.created_at | Time}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -22,7 +22,7 @@
         :current-page="regionLineDetails.current_page"
         :page-size="pageSize"
         layout="total, prev, pager, next"
-        :total="regionLineDetails.total_pages">
+        :total="regionLineDetails.total_pages" class="page">
       </el-pagination>
     </div>
   </div>
@@ -35,7 +35,7 @@
   import {mapGetters, mapActions} from 'vuex'
 
   export default{
-    props: ['nodeId', 'regionId'],
+    props: ['nodeId'],
     data(){
       return {
         users: [],
@@ -44,10 +44,7 @@
       }
     },
     computed: {
-      ...mapGetters(['token', 'regionLineDetails'])
-    },
-    filters: {
-      formatDate: formatDate
+      ...mapGetters(['regionLineDetails'])
     },
     methods: {
       //分页action
@@ -58,9 +55,8 @@
         this.$emit('changePage3', val);
         this.$store.dispatch('getRegionLineDetails', {
           page: val,
-          limit: 25,
-          node_id: this.nodeId,
-          region_id: this.regionId
+          limit: 15,
+          node_id: this.node - id
         })
       }
     }

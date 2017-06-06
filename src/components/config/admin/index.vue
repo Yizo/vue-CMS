@@ -45,7 +45,10 @@
             <template scope="scope">
               <el-button size="small" @click="upPass(scope.row)">修改密码</el-button>
               <el-button size="small" @click="upRole(scope.row)">修改权限组</el-button>
-              <el-button size="small" type="warning" @click="del(scope.row)">删除</el-button>
+              <el-button size="small" :disabled="!scope.row.is_enabled"
+                         :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="del(scope.row)">
+                {{scope.row.is_enabled?'禁用':'启用'}}
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -61,9 +64,8 @@
       class="page">
     </el-pagination>
     <!--新增管理员-->
-    <el-dialog title="新增管理员" v-model="add.visable" size="tiny">
-      <el-form :model="add.form" :rules="add_rules" :ref="add.form" label-position="left" label-width="180px"
-               class="demo-ruleForm">
+    <el-dialog title="新增管理员" v-model="add.visable" size="tiny" @close="closeBlcok">
+      <el-form :model="add.form" :rules="add_rules" ref="add" label-position="left" label-width="180px">
         <el-form-item label="管理员用户名" prop="username">
           <el-input v-model="add.form.username" auto-complete="off"></el-input>
         </el-form-item>
@@ -85,8 +87,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSave(formName)">确定</el-button>
+        <el-button @click="add.visable = false">取消</el-button>
+        <el-button type="primary" @click="handleSave">确定</el-button>
       </div>
     </el-dialog>
     <!--修改权限组-->
@@ -111,6 +113,24 @@
         <el-button type="primary" @click="upRoleSave()">确定</el-button>
       </div>
     </el-dialog>
+    <!--修改密码-->
+    <el-dialog title="修改密码" v-model="pw_visable" size="tiny" @close="closeBlcok_up">
+      <el-form label-position="left" label-width="150px" :model="pw" :rules="up_pass" ref="up">
+        <el-form-item label="管理员旧密码" prop="old_password">
+          <el-input v-model="pw.old_password" auto-complete="off" style="width:217px"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员新密码" prop="new_password">
+          <el-input v-model="pw.new_password" auto-complete="off" style="width:217px"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员确认密码" prop="password_confirmation">
+          <el-input v-model="pw.password_confirmation" auto-complete="off" style="width:217px"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="pw_visable = false">取消</el-button>
+        <el-button type="primary" @click="upPassHave()">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -119,9 +139,22 @@
   import axios from 'axios'
   export default {
     data(){
+      let confirm = (rule, value, callback) => {
+        if (value === this.add.form.password) {
+          callback()
+        } else {
+          callback(new Error('两次输入密码不一致'))
+        }
+      }, confirm2 = (rule, value, callback) => {
+        if (value === this.pw.new_password) {
+          callback()
+        } else {
+          callback(new Error('两次输入密码不一致'))
+        }
+      };
       return {
         data: [],
-        pageSize: 15,
+        pageSize: 20,
         currentPage: 1,
         totalSize: 0,
         roles: [],
@@ -137,10 +170,27 @@
           ],
           password_confirmation: [
             {required: true, message: '确认密码不能为空', trigger: 'blur'},
-            {min: 5, message: '确认密码长度至少为5', trigger: 'blur'}
+            {min: 6, message: '确认密码长度至少为6', trigger: 'blur'},
+            {validator: confirm, trigger: 'blur'}
           ],
           role_id: [
             {type: 'number', required: true, message: '权限组不能为空', trigger: 'blur'},
+          ]
+        },
+        //修改密码校验
+        up_pass: {
+          old_password: [
+            {required: true, message: '旧密码不能为空', trigger: 'blur'},
+            {min: 5, message: '旧密码长度至少为6', trigger: 'blur'}
+          ],
+          new_password: [
+            {required: true, message: '密码不能为空', trigger: 'blur'},
+            {min: 6, message: '密码长度至少为6', trigger: 'blur'}
+          ],
+          password_confirmation: [
+            {required: true, message: '确认密码不能为空', trigger: 'blur'},
+            {min: 6, message: '确认密码长度至少为6', trigger: 'blur'},
+            {validator: confirm2, trigger: 'blur'}
           ]
         },
         add: {
@@ -160,6 +210,14 @@
           id: 0,
           role_id: null
         },
+        //修改密码
+        pw_visable: false,
+        pw: {
+          id: 0,
+          old_password: '',
+          new_password: '',
+          password_confirmation: ''
+        }
       }
     },
     computed: {
@@ -275,37 +333,28 @@
           })
         })
       },
+      closeBlcok(){
+        this.$refs.add.resetFields();
+      },
+      closeBlcok_up(){
+        this.$refs.up.resetFields();
+      },
       handleSizeChange(val){
         this.getData(val)
       },
       //新增
       addAdmin(){
         this.add.visable = true;
-        for (var i in this.add.form) {
-          if (i == 'role_id') {
-            this.add.form[i] = 0
-          } else {
-            this.add.form[i] = ''
-          }
-        }
-        if (this.$refs[this.formName]) {
-          this.$refs[this.formName].resetFields();
-        }
       },
       //保存新增
-      handleSave(formName){
-        this.$refs[formName].validate((valid) => {
+      handleSave(){
+        this.$refs.add.validate((valid) => {
           if (valid) {
             this.admin_create(this.add.form).then(res => {
               if (res.data.success) {
                 this.add.visable = false;
                 this.data.push(res.data.data)
                 this.totalSize = this.totalSize + 1
-              } else {
-                this.$message({
-                  type: 'error',
-                  message: '添加失败'
-                });
               }
             })
           } else {
@@ -313,9 +362,15 @@
           }
         });
       },
-      //删除
+      //启用或禁用
       del(data){
-        this.$confirm('您将删除账号' + data.username + ', 是否继续?', '提示', {
+        let star = '';
+        if (data.is_enabled) {
+          star = '禁用'
+        } else {
+          star = '启用'
+        }
+        this.$confirm('您将' + star + '账号' + data.username + ', 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -324,45 +379,51 @@
             if (res.data.success) {
               this.$message({
                 type: 'success',
-                message: '删除成功!'
+                message: star + '成功!'
               });
               this.data[this.data.indexOf(data)].is_enabled = false;
             } else {
               this.$message({
                 type: 'error',
-                message: '删除失败'
+                message: star + '失败'
               });
             }
           })
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消操作'
           });
         });
       },
       //修改密码
       upPass(data){
-        this.$prompt('您将修改账号' + data.username + '的密码', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          inputPattern: /[A-Za-z0-9]{6,}/,
-          inputErrorMessage: '格式不正确',
-        }).then(({value}) => {
-          this.admin_up({id: data.id, new_password: value}).then(res => {
-            if (res.data.success) {
-              this.$message({
-                type: 'success',
-                message: '修改成功!'
-              });
-              this.data.splice(this.data.indexOf(data), 1, res.data.data)
-            } else {
-              this.$message({
-                type: 'error',
-                message: '修改失败'
-              });
-            }
-          })
+        this.pw.id = data.id;
+        this.pw_visable = true
+      },
+      //确认修改密码
+      upPassHave(){
+        this.$refs.up.validate((valid) => {
+          if (valid) {
+            this.admin_up(this.pw).then(res => {
+              let ID = res.data.data.id;
+              let adminID = JSON.parse(window.sessionStorage.getItem('loginInfo')).admin_id;
+              if (res.data.success) {
+                this.$message({
+                  duration: 1000,
+                  type: 'success',
+                  message: '修改成功',
+                  onClose: () => {
+                    if (ID === adminID) {
+                      window.sessionStorage.removeItem('loginInfo');
+                      this.$router.push({path: '/login'})
+                    }
+                  }
+                });
+                this.pw_visable = false
+              }
+            })
+          }
         })
       },
       //修改权限组
@@ -382,11 +443,6 @@
             });
             this.up_role.visable = false;
             this.data.splice(this.index, 1, res.data.data)
-          } else {
-            this.$message({
-              type: 'error',
-              message: '修改失败'
-            });
           }
         })
       }
@@ -412,6 +468,18 @@
     background-color: #fff;
     border: 1px solid #D3DCE6;
     margin-top: 20px;
+  }
+
+  .a {
+    background: #F9C855;
+    color: #fff;
+    border: #F9C855;
+  }
+
+  .b {
+    background-color: #ccc;
+    border: #ccc;
+    color: #fff;
   }
 </style>
 

@@ -61,7 +61,7 @@
         <el-table-column
           label="操作">
           <template scope="scope">
-            <el-button type="button" size="small" @click="update1(scope.row)">修改</el-button>
+            <el-button type="button" size="small" @click="update(scope.$index,scope.row)">修改</el-button>
             <!--<el-button type="danger" size="small" @click="del1(scope.row)">删除</el-button>-->
             <el-button size="small" :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="star(scope.row)">
               {{scope.row.is_enabled?'禁用':'启用'}}
@@ -69,85 +69,79 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!--分页-->
+      <el-pagination
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="totalSize"
+        class="page">
+      </el-pagination>
+
       <!--新增弹窗-->
-      <el-dialog :title="pageInfo.name" v-model="dialogTableVisible_add" size="tiny">
-        <el-form :model="form" label-width="150px" label-position="left">
+      <el-dialog :title="pageInfo.name" v-model="dialogTableVisible_add" size="tiny" @close="closeBlcok">
+        <el-form :model="form" label-width="200px" label-position="left" ref="serverType" :rules="rules">
           <el-row :gutter="20">
-            <el-col :span="2">
-              <p class="bj-rot" style="margin-top: 5px">*</p>
-            </el-col>
             <el-col :span="20">
-              <el-form-item label="服务类型名称">
+              <el-form-item label="服务类型名称" prop="name" class="dot_tips">
                 <el-input v-model="form.name" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="2">
-              <p class="bj-rot" style="margin-top: 5px"></p>
-            </el-col>
             <el-col :span="20">
-              <el-form-item label="服务类型描述">
+              <el-form-item label="服务类型描述" prop="description">
                 <el-input v-model="form.description" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="2">
-              <p class="bj-rot" style="margin-top: 5px">*</p>
-            </el-col>
             <el-col :span="20">
-              <el-form-item label="级别">
+              <el-form-item label="级别" prop="level" class="dot_tips">
                 <el-input v-model="form.level" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="2">
-              <p class="bj-rot" style="margin-top: 5px">*</p>
-            </el-col>
             <el-col :span="20">
-              <el-form-item label="最低账号类型">
-                <span class="bj-rot">*</span>
+              <el-form-item label="最低账号类型" prop="user_group_id" class="dot_tips">
                 <el-select v-model="form.user_group_id">
                   <el-option
                     v-for="(item,index) in group"
                     :label="item.name"
                     :value="item.id"
-                    :key="index">
+                    :key="index" selected>
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="2">
-              <p class="bj-rot" style="margin-top: 5px">*</p>
-            </el-col>
             <el-col :span="20">
-              <el-form-item label="所需钻石">
-                <span class="bj-rot">*</span>
+              <el-form-item label="所需钻石" prop="expense_coins" class="dot_tips">
                 <el-input v-model="form.expense_coins" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="20">
-              <el-form-item label="转为包月次数">
+              <el-form-item label="转为包月次数" prop="times_for_monthly">
                 <el-input v-model="form.times_for_monthly" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="20">
-              <el-form-item label="上行限速">
+              <el-form-item label="上行限速" prop="limit_speed_up">
                 <el-input v-model="form.limit_speed_up" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="20">
-              <el-form-item label="下行限速">
+              <el-form-item label="下行限速" prop="limit_speed_down">
                 <el-input v-model="form.limit_speed_down" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
@@ -173,7 +167,7 @@
           <el-button @click="dialogTableVisible_add = false">取 消</el-button>
           <el-button type="primary">
             <span v-if="is=='增加'?true:false" @click="add">确 定</span>
-            <span v-else @click="update">确定</span>
+            <span v-else @click="updateSave">确定</span>
           </el-button>
         </div>
       </el-dialog>
@@ -193,6 +187,55 @@
   import * as API from '../../../api/api'
   export default {
     data(){
+      /*非必填数字*/
+      let number = (rule, value, callback) => {
+          setTimeout(() => {
+            if (value === '') {
+              callback();
+            } else if (/^\d+$/.test(String(value)) == false) {
+              callback(new Error('请输入数字'));
+            } else {
+              callback();
+            }
+          }, 1000);
+        },
+        /*必填数字*/
+        number2 = (rule, value, callback) => {
+          if (!value) {
+            return callback(new Error('级别不能为空'));
+          }
+          setTimeout(() => {
+            if (/^\d+$/.test(String(value)) == false) {
+              callback(new Error('请输入数字'));
+            } else {
+              callback()
+            }
+          }, 1000);
+        },
+        length = (rule, value, callback) => {
+          setTimeout(() => {
+            if (String(value).length <= 255) {
+              callback();
+            } else {
+              callback(new Error('长度必须小于255'))
+            }
+          }, 1000);
+        }, lengthName = (rule, value, callback) => {
+          setTimeout(() => {
+            if (String(value).length <= 50) {
+              callback();
+            } else {
+              callback(new Error('长度必须小于50'))
+            }
+          }, 1000);
+        }, group = (rule, value, callback) => {
+          if (value) {
+            callback();
+          } else {
+            callback(new Error('请选择最低账号类型'))
+          }
+
+        };
       return {
         /*列表*/
         tableData: [],
@@ -225,44 +268,39 @@
         },
         /*分页*/
         currentPage: 1,
-        total: 1
+        totalSize: 0,
+        pageSize: 20,
+        total: 1,
+        rules: {
+          name: [
+            {required: true, message: '服务器类型名称必填', trigger: 'blur'},
+            {validator: lengthName, trigger: 'blur'},
+          ],
+          description: [
+            {validator: length, trigger: 'change'},
+          ],
+          level: [
+            {validator: number2, trigger: 'blur'},
+          ],
+          user_group_id: [
+            {validator: group, trigger: 'change'},
+          ],
+          expense_coins: [
+            {validator: number2, trigger: 'blur'},
+          ],
+          times_for_monthly: [
+            {validator: number, trigger: 'change'},
+          ],
+          limit_speed_up: [
+            {validator: number, trigger: 'change'},
+          ],
+          limit_speed_down: [
+            {validator: number, trigger: 'change'},
+          ]
+        }
       }
     },
     methods: {
-      setForm(data){
-        var forms = this.form;
-        forms.level = data.level;
-        forms.name = data.name;
-        forms.description = data.description
-        forms.user_group_id = data.user_group_id
-        forms.expense_coins = data.expense_coins;
-        forms.times_for_monthly = data.times_for_monthly;
-        forms.can_be_monthly = String(data.can_be_monthly)
-        forms.is_enabled = String(data.is_enabled);
-        forms.limit_speed_up = data.limit_speed_up;
-        forms.limit_speed_down = data.limit_speed_down
-      },
-      checkEmpty(){
-        for (var key in this.form) {
-          if (this.form[key] == '') {
-            return false
-          }
-          return true
-        }
-      },
-      format(data){
-        var forms = this.form;
-        forms.level = data.level;
-        forms.name = data.name;
-        forms.description = data.description
-        forms.user_group_id = data.user_group_id
-        forms.expense_coins = data.expense_coins;
-        forms.times_for_monthly = data.times_for_monthly;
-        forms.can_be_monthly = String(data.can_be_monthly)
-        forms.is_enabled = String(data.is_enabled);
-        forms.limit_speed_up = data.limit_speed_up;
-        forms.limit_speed_down = data.limit_speed_down
-      },
       /*获取服务器列表*/
       getInfo(parm){
         return new Promise((resolve, reject) => {
@@ -320,8 +358,11 @@
           })
         })
       },
+      closeBlcok(){
+        this.$refs.serverType.resetFields();
+      },
       add(){
-        var options = {
+        let options = {
           name: this.form.name,
           description: this.form.description,
           level: this.form.level,
@@ -333,29 +374,29 @@
           limit_speed_up: this.form.limit_speed_up,
           limit_speed_down: this.form.limit_speed_down
         }
-        if (this.checkEmpty()) {
-          this.addServer(options).then(res => {
-            if (res.data.messages) {
-              this.$message({
-                message: res.data.messages[0],
-                type: 'error'
-              })
-            } else {
-              this.dialogTableVisible_add = false;
-              this.$message({
-                message: '添加成功',
-                type: 'success'
-              })
-              this.getInfo({null}).then(res => {
-                this.tableData = res.data.data.node_types
-                this.currentPage = res.data.data.current_page
-                this.total = res.data.data.total_pages
-              })
-            }
-          }).catch(err => {
-            console.log(err)
-          })
-        }
+        this.$refs.serverType.validate((valid) => {
+          if (valid) {
+            this.addServer(options).then(res => {
+              if (res.data.messages) {
+                this.$message({
+                  message: res.data.messages[0],
+                  type: 'error'
+                })
+              } else {
+                this.dialogTableVisible_add = false;
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.getInfo({null}).then(res => {
+                  this.tableData = res.data.data.node_types
+                  this.currentPage = res.data.data.current_page
+                  this.total = res.data.data.total_pages
+                })
+              }
+            })
+          }
+        })
       },
       add1(){
         this.dialogTableVisible_add = true;
@@ -388,17 +429,20 @@
           })
         })
       },
-      update1(data){
+      update(index, data){
+        this.form = Object.assign({}, data)
+        this.form.can_be_monthly = String(data.can_be_monthly)
+        this.form.is_enabled = String(data.is_enabled);
+        this.pageInfo.index = index
         this.pageInfo.data = data
         this.pageInfo.name = '修改'
         this.is = '修改';
         this.dialogTableVisible_add = true;
-        this.setForm(data);
         this.GradeInfo({is_enabled: 'true'}).then(res => {
           this.group = res.data.data.user_groups
         })
       },
-      update(){
+      updateSave(){
         var options = {
           id: this.pageInfo.data.id,
           name: this.form.name,
@@ -406,25 +450,31 @@
           level: this.form.level,
           user_group_id: this.form.user_group_id,
           expense_coins: this.form.expense_coins,
-          can_be_monthly: this.form.is_enabled,
-          times_for_monthly: this.form.times_for_monthly
+          can_be_monthly: this.form.can_be_monthly,
+          times_for_monthly: this.form.times_for_monthly,
+          is_enabled: this.form.is_enabled
         }
-        this.updateServer(options).then(res => {
-          if (res.data.messages) {
-            this.$message({
-              message: res.data.messages[0],
-              type: 'error'
-            })
-          } else {
-            this.dialogTableVisible_add = false;
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.getInfo({null}).then(res => {
-              this.tableData = res.data.data.node_types
-              this.currentPage = res.data.data.current_page
-              this.total = res.data.data.total_pages
+        this.$refs.serverType.validate((valid) => {
+          if (valid) {
+            this.updateServer(options).then(res => {
+
+              if (res.data.messages) {
+                this.$message({
+                  message: res.data.messages[0],
+                  type: 'error'
+                })
+              } else {
+                this.dialogTableVisible_add = false;
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.getInfo({null}).then(res => {
+                  this.tableData = res.data.data.node_types
+                  this.currentPage = res.data.data.current_page
+                  this.total = res.data.data.total_pages
+                })
+              }
             })
           }
         })
@@ -478,21 +528,24 @@
       },
       //停用或启用
       star(data){
-        console.log(data)
         this.updateServer({id: data.id, is_enabled: !data.is_enabled}).then(res => {
           this.tableData.splice(this.tableData.indexOf(data), 1, res.data.data)
         })
-
       },
-      handleCurrentChange(){
-
-      }
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getUserTypes({page: val, limit: this.pageSize}).then((res) => {
+          const data = res.data.data
+          this.tableData = [...data.node_types];
+          this.totalSize = data.total_count;
+        });
+      },
     },
     mounted(){
-      this.getInfo({null}).then(res => {
-        this.tableData = res.data.data.node_types
-        this.currentPage = res.data.data.current_page
-        this.total = res.data.data.total_pages
+      this.getInfo({page: 1, limit: this.pageSize}).then(res => {
+        const data = res.data.data
+        this.tableData = [...data.node_types];
+        this.totalSize = data.total_count;
       })
     }
   }

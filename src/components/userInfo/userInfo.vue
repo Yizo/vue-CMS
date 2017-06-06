@@ -174,7 +174,7 @@
       :current-page="USERINFO_base.data.current_page"
       layout="total, prev, pager, next, jumper"
       :page-size="pageSize"
-      :total="USERINFO_base.data.users_count"
+      :total="USERINFO_base.data.total_count"
       class="page">
     </el-pagination>
 
@@ -186,6 +186,7 @@
 
 <script>
   import {mapGetters, mapActions} from 'vuex'
+  import * as JS from '../../assets/js/js'
   import userDetail from '../publicView/accoutInfo/index.vue'
   export default{
     components: {
@@ -222,10 +223,10 @@
             label: '取消时间筛选'
           },
           {
-            value: 'created_at',
+            value: 'logged_at',
             label: '登录时间'
           }, {
-            value: 'logged_at',
+            value: 'created_at',
             label: '注册时间'
           }],
         //列表
@@ -266,6 +267,12 @@
         this.filter.end = val
       },
       filtration(){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         this.getuser(1);
       },
       search(){
@@ -450,7 +457,8 @@
   .el-dialog--small {
     width: 60%;
   }
-  .el-row{
+
+  .el-row {
     padding: 5px 0;
   }
 </style>

@@ -62,6 +62,7 @@
 <script>
   import {mapActions, mapGetters}  from 'vuex'
   import * as JS from '../../../assets/js/js'
+  import * as API from '../../../api/api'
   import payInfo from './payInfo.vue'
   export default {
     components: {
@@ -96,14 +97,27 @@
         },
       }
     },
+    watch: {
+      charData(newData){
+        this.options.series = [...this.AnalysisJSON(newData.data.logs)]
+        this.options.xAxis.categories = [...this.setXAxis(newData.data.logs)]
+        this.$HighCharts.chart('main', this.options)
+      },
+    },
     computed: {
       ...mapGetters({
         s_data: 'summary_data',
         pdData: 'pay_details_data',
-        time: 'time'
+        time: 'time',
+        charData: 'payInfo_pay_chart'
       })
     },
     methods: {
+      ...mapActions({
+        consume: 'PAYINFO_consume_coins_details',
+        details: 'PAYINFO_pay_details',
+        chart: 'PAYINFO_pay_char'
+      }),
       AnalysisJSON(parm) {
         var result = []
         var keyList = {total_recharge_amount: '充值金额总数', total_consume_coins: '消费钻石总数', recharge_users_count: '充值总人数'}
@@ -128,26 +142,27 @@
       },
     },
     watch: {
-      pdData: function (newData) {
+      charData: function (newData) {
         this.options.series = [...this.AnalysisJSON(newData.data.logs)]
         this.options.xAxis.categories = [...this.setXAxis(newData.data.logs)]
         this.$HighCharts.chart('main', this.options)
       },
     },
-    beforeMount(){
-      this.$store.dispatch('PAYINFO_consume_coins_details').then(() => {
-        this.$store.dispatch('PAYINFO_pay_details', {
-          year: this.time.year || null,
-          month: this.time.month || null,
-          limit: 15,
-          page: 1
-        }).then(res => {
-          this.options.series = [...this.AnalysisJSON(res.data.data.logs)]
-          this.options.xAxis.categories = [...this.setXAxis(res.data.data.logs)]
-          this.$HighCharts.chart('main', this.options)
-        });
+    mounted(){
+      let options = {
+        year: new Date().getFullYear(),
+        month: null,
+        limit: 15,
+        page: 1
+      }
+      this.consume();
+      this.details({page: 1, limit: 15});
+      this.chart(options).then(res => {
+        this.options.series = [...this.AnalysisJSON(res.data.data.logs)]
+        this.options.xAxis.categories = [...this.setXAxis(res.data.data.logs)]
+        this.$HighCharts.chart('main', this.options)
       });
-    }
+    },
   }
 </script>
 

@@ -7,4 +7,6 @@ export default {
   ACTIVEDAY_day_details_data: (state) => state.day_details_data,
   ACTIVEDAY_month_data: (state) => state.month_data,
   ACTIVEDAY_month_details_data: (state) => state.month_details_data,
+  ACTIVEDAY_day_chart: (state) => state.day_chart,
+  ACTIVEDAY_month_chart: (state) => state.month_chart,
 }

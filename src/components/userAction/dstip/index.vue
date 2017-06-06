@@ -4,6 +4,11 @@
       <el-breadcrumb-item>用户行为</el-breadcrumb-item>
       <el-breadcrumb-item>去向IP</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <el-row style="text-align: left;margin-top: 20px">
       <span>筛选方式</span>
       <el-select v-model="select" placeholder="筛选方式">
@@ -71,7 +76,7 @@
         class="page">
       </el-pagination>
       <!--访问用户详情-->
-      <el-dialog :title="user.row_data.domain" v-model="user.visable">
+      <el-dialog :title="user.row_data.domain" v-model="user.visable" size="tiny">
         <el-table :data="user.data">
           <el-table-column property="username" label="账号名"></el-table-column>
           <el-table-column property="visits_count" label="访问次数"></el-table-column>
@@ -91,7 +96,7 @@
           <el-table-column type="index" label="编号" width="80px"></el-table-column>
           <el-table-column label="地域">
             <template scope="scope">
-              {{scope.row.ip_country}}_{{scope.row.ip_province}}_{{scope.row.ip_city}}
+              {{scope.row.ip_country}}{{scope.row.ip_province?"_":''}}{{scope.row.ip_province}}{{scope.row.ip_city?"_":''}}{{scope.row.ip_city}}
             </template>
           </el-table-column>
           <el-table-column property="users_count" label="人数"></el-table-column>
@@ -109,7 +114,8 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters } from 'vuex'
+  import * as JS from '../../../assets/js/js'
+  import {mapGetters} from 'vuex'
   export default{
     components: {},
     data(){
@@ -171,7 +177,7 @@
     computed: {
       ...mapGetters(['initDate']),
       filter(){
-          return this.initDate
+        return this.initDate
       }
     },
     methods: {
@@ -297,6 +303,12 @@
         this.filter.end = val
       },
       filtration(){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -514,10 +526,12 @@
     text-align: right;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

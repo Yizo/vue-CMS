@@ -27,6 +27,25 @@ export default {
       })
     })
   },
+  //付费信息-图表数据
+  PAYINFO_pay_char(store, parm) {
+    return new Promise((resolve, reject) => {
+      const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+      axios({
+        method: 'GET',
+        url: API.transaction_logs_chart,
+        headers: {'Authorization': token},
+        params: parm
+      }).then(function (res) {
+        if (res.status == 200) {
+          store.commit('PAYINFO_pay_char', res.data);
+          resolve(res)
+        }
+      }).catch(function (err) {
+        reject(err)
+      })
+    })
+  },
   //充值详情
   PAYINFO_pay_details(store, parm){
     return new Promise((resolve, reject) => {

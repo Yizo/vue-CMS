@@ -4,6 +4,11 @@
       <el-breadcrumb-item>服务器信息</el-breadcrumb-item>
       <el-breadcrumb-item>服务器详情信息表</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="列表数据每10分钟更新一次" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <div class="warp">
       <template>
         <el-table

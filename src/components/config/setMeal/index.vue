@@ -5,14 +5,14 @@
       <el-breadcrumb-item>套餐配置</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="setMeal-wrapper">
-      <el-button type="primary" @click="handleAdd" style="margin: 15px 0;">添加</el-button>
+      <el-button type="primary" @click="handleAdd('form')" style="margin: 15px 0;">添加</el-button>
       <el-table
         :data="plans"
         highlight-current-row
         @current-change="handleCurrentRowChange"
         style="width: 100%">
         <el-table-column
-          label="编号"
+          label="套餐ID"
           property="id"
           width="100">
         </el-table-column>
@@ -33,6 +33,21 @@
           label="赠送钻石">
         </el-table-column>
         <el-table-column
+          label="是否启用">
+          <template scope="scope">
+            <el-tag
+              :type="scope.row.is_enabled ? 'success' : 'primary'"
+              close-transition>{{scope.row.is_enabled ? '是': '否'}}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否是IAP套餐">
+          <template scope="scope">
+            {{scope.row.is_iap?'是':'否'}}
+          </template>
+        </el-table-column>
+        <el-table-column
           property="description"
           label="套餐描述">
         </el-table-column>
@@ -44,38 +59,36 @@
               size="small"
               @click="handleEdit(scope.$index, scope.row)">修改
             </el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除
+
+            <el-button size="small" :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="star(scope.row)">
+              {{scope.row.is_enabled?'禁用':'启用'}}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="block" style="text-align: right;margin: 15px 0">
         <el-pagination
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
           :page-size="pageSize"
           :total="totalPages"
-          layout="prev, pager, next, jumper"
+          layout="total,prev, pager, next, jumper"
         >
         </el-pagination>
       </div>
     </div>
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
-      <el-form :model="form">
-        <el-form-item label="账号名称" :label-width="formLabelWidth">
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" @close="closeBlcok">
+      <el-form :model="form" :rules="add_rules" ref="form" label-position="left">
+        <el-form-item label="套餐名称" :label-width="formLabelWidth" prop="name" class="dot_tips">
           <el-input v-model="form.name" auto-complete="off" style="width:400px"></el-input>
         </el-form-item>
-        <el-form-item label="购买价格" :label-width="formLabelWidth">
-          <el-input v-model="form.price" auto-complete="off" style="width:400px"></el-input>
+        <el-form-item label="购买价格" :label-width="formLabelWidth" prop="price" class="dot_tips">
+          <el-input v-model="form.price" auto-complete="off" style="width:400px" class="dot_tips"></el-input>
         </el-form-item>
-        <el-form-item label="获得钻石" :label-width="formLabelWidth">
-          <el-input v-model="form.coins" auto-complete="off" style="width:400px"></el-input>
+        <el-form-item label="获得钻石" :label-width="formLabelWidth" prop="coins" class="dot_tips">
+          <el-input v-model="form.coins" auto-complete="off" style="width:400px" class="dot_tips"></el-input>
         </el-form-item>
-        <el-form-item label="赠送钻石" :label-width="formLabelWidth">
+        <el-form-item label="赠送钻石" :label-width="formLabelWidth" prop="present_coins">
           <el-input v-model="form.present_coins" auto-complete="off" style="width:400px"></el-input>
         </el-form-item>
         <el-form-item label="是否启用" :label-width="formLabelWidth">
@@ -86,15 +99,17 @@
             </el-radio-group>
           </template>
         </el-form-item>
-        <el-form-item label="是否是IAP(苹果应用内付费)套餐" :label-width="formLabelWidth">
+        <el-form-item label="是否是IAP套餐" :label-width="formLabelWidth">
           <template scope>
             <el-radio-group v-model="form.is_iap">
               <el-radio label="iap1">是</el-radio>
               <el-radio label="iap2">否</el-radio>
             </el-radio-group>
+            <span style="margin-left: 10px;color: #888">(苹果应用内付费)</span>
           </template>
         </el-form-item>
-        <el-form-item label="套餐ID" :label-width="formLabelWidth">
+        <el-form-item label="IAP套餐ID" :label-width="formLabelWidth" prop="iap_id"
+                      :class="{dot_tips:form.is_iap == 'iap1'}">
           <el-input v-model="form.iap_id" auto-complete="off" style="width:400px"></el-input>
         </el-form-item>
         <el-form-item label="套餐描述" :label-width="formLabelWidth">
@@ -103,7 +118,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleSave">确 定</el-button>
+        <el-button type="primary" @click="handleSave('form')">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -124,14 +139,62 @@
 
   export default {
     data(){
+      let number2 = (rule, value, callback) => {
+          if (value === '') {
+            return callback(new Error('不能为空'));
+          }
+          setTimeout(() => {
+            if (/^\d+$/.test(String(value)) == false) {
+              callback(new Error('请输入数字'));
+            } else {
+              callback()
+            }
+          }, 1000);
+        }, number = (rule, value, callback) => {
+          setTimeout(() => {
+            if (this.form.is_iap == 'iap2') {
+              callback();
+            } else {
+              if (value != '') {
+                callback();
+              } else {
+                callback(new Error('IAP套餐ID必填'))
+              }
+            }
+          }, 1000);
+        }, price = (rule, value, callback) => {
+          if (value === '') {
+            return callback(new Error('不能为空'));
+          }
+          setTimeout(() => {
+            var is = /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/.test(String(value));
+            if (!is) {
+              alert(is)
+              alert(value)
+              callback(new Error('请输入数字'));
+            } else {
+              callback()
+            }
+          }, 1000);
+        },
+        presentCoins = (rule, value, callback) => {
+          setTimeout(() => {
+            if (value === '') {
+              callback();
+            } else if (/^\d+$/.test(String(value)) == false) {
+              callback(new Error('请输入数字'));
+            } else {
+              callback();
+            }
+          }, 1000);
+        };
       return {
         currentPage: 1,
-        limit: 15,
-        pageSize: 1,
-        totalPages: 1,
+        pageSize: 20,
+        totalPages: 0,
         plans: [],
         dialogTitle: '',
-        formLabelWidth: '128px',
+        formLabelWidth: '150px',
         dialogFormVisible: false,
         dialogVisibleDelete: false,
         handleType: 'add',
@@ -147,22 +210,33 @@
           is_iap: 'iap2',
           iap_id: '',
           description: ''
-        }
+        },
+        //新增校验
+        add_rules: {
+          name: [
+            {required: true, message: '不能为空', trigger: 'blur'},
+            {max: 50, message: '长度不能大于50', trigger: 'blur'}
+          ],
+          coins: [{validator: number2, trigger: 'blur'}],
+          price: [{validator: price, trigger: 'blur'}],
+          present_coins: [{validator: presentCoins, trigger: 'blur'}],
+          iap_id: [{validator: number, trigger: 'blur'}]
+        },
       }
     },
     components: {},
-    computed: {
-      ...mapGetters(['token'])
-    },
     methods: {
+      closeBlcok(){
+        this.$refs.form.resetFields();
+      },
       /*获取数据列表*/
       getSetMealPromise(){
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const url = API.set_meal_get;
         const params = {
           page: this.currentPage,
-          limit: this.limit
+          limit: this.pageSize
         };
-        const token = this.token;
         return this.$http({
           methods: 'GET',
           url: url,
@@ -171,7 +245,7 @@
         })
       },
       /*添加配置*/
-      handleAdd(){
+      handleAdd(form){
         this.form = {
           id: '',
           name: '',
@@ -185,7 +259,7 @@
         };
         this.dialogTitle = '添加';
         this.dialogFormVisible = true;
-        this.handleType = 'add';
+        this.handleType = 'add'
       },
       /*修改*/
       handleEdit(index, row){
@@ -201,7 +275,7 @@
       handleSavePromise(){
         const form = this.form;
         const params = {...this.form};
-        const token = this.token;
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const {id} = {...params};
         let url, method;
         params['is_enabled'] = form['is_enabled'] === 'enabled1' || false;
@@ -222,20 +296,38 @@
         })
       },
       //保存
-      handleSave(){
-        this.handleSavePromise().then((res) => {
-            if (this.handleType == 'update') {
-              this.plans.splice(this.curIndex, 1, res.data.data);
-            } else {
-              if (this.plans.length < this.limit) {
-                this.plans.push(res.data.data);
+      handleSave(form){
+        this.$refs[form].validate((valid) => {
+          if (valid) {
+            this.handleSavePromise().then((res) => {
+                if (this.handleType == 'update') {
+                  this.plans.splice(this.curIndex, 1, res.data.data);
+                  this.$message({
+                    message: '修改成功',
+                    type: 'success'
+                  })
+                } else {
+                  if (this.plans.length < this.limit) {
+                    this.plans.push(res.data.data);
+                  }
+                }
+                this.dialogFormVisible = false;
               }
-            }
+            )
           }
-        ).catch((err) => {
-          alert(err)
         });
-        this.dialogFormVisible = false
+      },
+      //启用或禁用
+      star(data){
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+        this.$http({
+          method: 'PATCH',
+          url: API.set_meal_update + "/" + data.id,
+          headers: {'Authorization': token},
+          params: {id: data.id, is_enabled: !data.is_enabled},
+        }).then((res) => {
+          this.plans.splice(this.plans.indexOf(data), 1, res.data.data)
+        })
       },
       /*删除*/
       handleDelete(index, row){
@@ -250,7 +342,7 @@
       deletePlanPromise(){
         const {id} = this.form;
         const url = `${API.set_meal_delete}${id}`;
-        const token = this.token;
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         return this.$http({
           method: 'DELETE',
           url: url,
@@ -272,8 +364,6 @@
         this.currentRow = val;
       },
       //分页action
-      handleSizeChange(val){
-      },
       handleCurrentChange(val){
         this.currentPage = val;
         this.getSetMeal();
@@ -282,13 +372,8 @@
         this.getSetMealPromise().then((res) => {
           const data = res.data.data;
           this.currentPage = data.current_page;
-          this.totalPages = data.total_pages * this.pageSize;
+          this.totalPages = data.total_count;
           this.plans = [...data.plans];
-        }).catch((res) => {
-          this.$message({
-            message: '网络异常',
-            type: 'warning'
-          });
         })
       }
     },
@@ -299,7 +384,7 @@
 </script>
 
 
-<style lang="less" scope>
+<style scope>
   #setMeal {
     padding: 10px;
   }
@@ -322,5 +407,17 @@
 
   .el-table th > .cell {
     text-align: left;
+  }
+
+  .a {
+    background: #F9C855;
+    color: #fff;
+    border: #F9C855;
+  }
+
+  .b {
+    background-color: #42D885;
+    border: #42D885;
+    color: #fff;
   }
 </style>

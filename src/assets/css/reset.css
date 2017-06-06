@@ -110,6 +110,7 @@ a, a:hover {
   text-align: right;
   margin-top: 20px;
 }
+
 .el-table .el-table__header-wrapper table th > .cell {
   text-align: center;
 }
@@ -125,23 +126,17 @@ a, a:hover {
   color: #333;
 }
 
-.bj-rot {
-  position: absolute;
-  top: 0;
-  right: 50px;
-  color: red;
-}
-
-.dot_tips {
+.dot_tips > .el-form-item__label {
   position: relative;
 }
 
-.dot_tips:before {
+.dot_tips > .el-form-item__label:before {
   content: '*';
   color: red;
   position: absolute;
-  top: 4px;
-  right: -8px;
+  top: 14px;
+  left: -12px;
+  font-size: 14px;
 }
 
 input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {

@@ -180,7 +180,7 @@
       }
     },
     beforeMount(){
-      this.GradeInfo().then(res => {
+      this.GradeInfo({is_enabled: 'true'}).then(res => {
         this.group = res.data.data.user_groups
       })
     }

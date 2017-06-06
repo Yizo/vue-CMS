@@ -16,5 +16,11 @@ export default {
   },
   [type.ACTIVEDAY_MONTH_DETAILS](state, parm){
     state.month_details_data = parm
+  },
+  [type.ACTIVEDAY_DAY_CHART](state, parm){
+    state.day_chart = parm
+  },
+  [type.ACTIVEDAY_MONTH_CHART](state, parm){
+    state.month_chart = parm
   }
 }

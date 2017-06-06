@@ -6,7 +6,11 @@
       <el-breadcrumb-item :to="{ name:'share' }">失败信息</el-breadcrumb-item>
       <el-breadcrumb-item>连接失败</el-breadcrumb-item>
     </el-breadcrumb>
-
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <div class="filter">
       <el-row>
         <div style="display: inline-block">
@@ -71,7 +75,7 @@
         @current-change="handleCurrentChange"
         :current-page="currentPage"
         layout="total, prev, pager, next, jumper"
-        :total="total"
+        :total="totalSize"
         :page-size="pageSize"
         class="page">
       </el-pagination>
@@ -98,10 +102,10 @@
         </el-table>
         <div slot="footer">
           <el-pagination
-            @current-change="handleCurrentChange"
+            @current-change="lianjie"
             :current-page="currentPage"
-            :page-size="10"
-            :total="total"
+            :page-size="pageSize"
+            :total="d_total"
             layout="prev,next"
             class="page">
           </el-pagination>
@@ -125,10 +129,10 @@
         </el-table>
         <div slot="footer">
           <el-pagination
-            @current-change="handleCurrentChange"
+            @current-change="lianjie"
             :current-page="currentPage"
-            :page-size="10"
-            :total="total"
+            :page-size="pageSize"
+            :total="d_total"
             layout="prev,next"
             class="page">
           </el-pagination>
@@ -176,7 +180,7 @@
         },
         /*列表*/
         tableData: [],
-
+        chartData: [],
         /*弹窗*/
         dialogTableVisible: false,
         dialogTableVisible1: false,
@@ -186,16 +190,16 @@
           page: '',
           device_model: ''
         },
-
         /*分页*/
+        parm: {},//分页参数
         currentPage: 1,
         pageSize: 10,
-        total: 1
-
+        totalSize: 0,
+        d_total: 0
       }
     },
     computed: {
-      ...mapGetters(['versions','initDate']),
+      ...mapGetters(['versions', 'initDate']),
       filter(){
         return this.initDate
       }
@@ -244,24 +248,27 @@
       },
       /*筛选菜单*/
       filtration(){
-        let a = JSON.stringify(JS.Timestamp(this.filter.start));
-        let b = JSON.stringify(JS.Timestamp(this.filter.end));
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         var options = {
           page: 1,
           is_enabled: this.filter.status === null ? null : this.filter.status,
           date_type: this.filter.time === null ? null : this.filter.time,
-          start_at: this.filter.start ? a : null,
-          end_at: this.filter.end ? b : null,
-          limit: 10
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          limit: this.pageSize
         }
 
         this.getInfo(options).then(res => {
           this.tableData = res.data.data.logs;
-          //设置数据
-          this.options.series = this.AnalysisJSON(this.tableData);
-          //设置X轴
-          this.options.xAxis.categories = this.setXAxis(this.tableData)
-          this.$HighCharts.chart('main', this.options);
+          this.currentPage = res.data.data.current_page
+          this.totalSize = res.data.data.total_count;
+
+          this.rendering()
         });
       },
 
@@ -280,9 +287,9 @@
           type: parm.index,
           stat_at: parm.stat_at,
           page: 1,
-          limit: 10
+          limit: this.pageSize
         }
-
+        this.parm = options;
         this.errInfo(options).then(res => {
           this.dialogData = res.data.data.logs;
         })
@@ -303,6 +310,40 @@
             } else {
               reject(res)
             }
+          })
+        })
+      },
+      //渲染图表
+      rendering(){
+        this.getChart({
+          limit: this.pageSize,
+          page: 1,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }).then(res => {
+          this.chartData = res.data.data.logs
+          //设置数据
+          this.options.series = this.AnalysisJSON(this.chartData);
+          //设置X轴
+          this.options.xAxis.categories = this.setXAxis(this.chartData)
+          this.$HighCharts.chart('main', this.options);
+        })
+      },
+      //获取图表数据
+      getChart(parm){
+        return new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'GET',
+            url: API.connection_failed_chart,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
+              resolve(res)
+            }
+          }).catch(function (err) {
+            reject(err)
           })
         })
       },
@@ -327,21 +368,35 @@
       },
 
       /*分页*/
-      handleCurrentChange(){
+      handleCurrentChange(val){
+        this.getInfo({
+          limit: this.pageSize,
+          page: val,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }).then(res => {
+          this.tableData = res.data.data.logs;
+          this.currentPage = res.data.data.current_page
+          this.totalSize = res.data.data.total_count;
+        })
+      },
+      /*连接失败/软件崩溃/未联网*/
+      lianjie(val){
+        let options = this.parm;
+        options.page = val
+        this.errInfo(options).then(res => {
+          this.dialogData = res.data.data.logs;
+        })
+      },
 
-      }
     },
     mounted(){
 
-      this.getInfo({page: 1, limit: 10}).then(res => {
+      this.getInfo({limit: this.pageSize, page: 1, start_at: this.filter.start, end_at: this.filter.end}).then(res => {
         this.tableData = res.data.data.logs;
         this.currentPage = res.data.data.current_page
-        this.total = res.data.data.total_count;
-        //设置数据
-        this.options.series = this.AnalysisJSON(this.tableData);
-        //设置X轴
-        this.options.xAxis.categories = this.setXAxis(this.tableData)
-        this.$HighCharts.chart('main', this.options);
+        this.totalSize = res.data.data.total_count;
+        this.rendering()
       })
     },
   }

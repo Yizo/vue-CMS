@@ -1,7 +1,7 @@
 <template>
   <div>
     <p style="margin-bottom: 10px;text-align: left">使用总流量<span
-      style="padding: 0 10px;color: red">{{data.total_bytes}}</span></p>
+      style="padding: 0 10px;color: red">{{data.total_bytes | getFlow}}</span></p>
     <el-table
       :data="data.connection_logs"
       style="width: 100%">

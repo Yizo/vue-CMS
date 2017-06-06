@@ -20,46 +20,56 @@ for (var key in filters) {
   Vue.filter(key, filters[key])
 }
 
+axios.defaults.validateStatus = function (status) {
+  return status >= 200 && status <= 500;
+},
+
 //请求拦截器
-axios.interceptors.request.use(function (config) {
-  return config;
-}, function (err) {
-  return Promise.reject(err);
-});
+  axios.interceptors.request.use(function (config) {
+
+    return config;
+  }, function (err) {
+    return Promise.reject(err);
+  });
 //响应拦截器
 axios.interceptors.response.use(function (res) {
-  if (res.status == 200) {
-    if (res.data.success === false) {
-      if (res.data.error == 'InvalidToken') {
-        Message.warning({
-          showClose: true,
-          message: '页面已过有效期,请退出重新登录!',
-          type: 'warning'
-        })
-      } else if (res.data.error == 'AccessDenied') {
-        Message.warning({
-          showClose: true,
-          message: '权限不足',
-          type: 'warning'
-        })
-      } else {
-        Message.warning({
-          showClose: true,
-          message: res.data.message[0],
-          type: 'warning'
-        })
-      }
+  if (!res.data.success) {
+    if (res.data.error == 'InvalidToken') {
+      Message.warning({
+        duration: 1000,
+        message: '页面已过有效期,请退出重新登录!',
+        type: 'warning'
+      })
+    } else if (res.data.error == 'AccessDenied') {
+      Message.warning({
+        duration: 1000,
+        message: "没有权限访问此页面",
+        type: 'warning'
+      })
+    } else if (res.data.error == 'InvalidParameter') {
+      Message.warning({
+        duration: 1000,
+        message: "请填必需参数",
+        type: 'warning'
+      })
+    } else if (res.data.error == 'ResourceNotFound') {
+      Message.warning({
+        duration: 1000,
+        message: "记录未找到",
+        type: 'warning'
+      })
+    } else {
+      console.log(res.data.messages[0])
+      let meg = res.data.messages[0];
+      Message.warning({
+        duration: 1000,
+        message: meg,
+        type: 'warning'
+      })
     }
-  } else {
-    Message.error({
-      showClose: true,
-      message: '网络异常',
-      type: 'error'
-    })
   }
   return res;
 }, function (err) {
-  //Do something with response error
   return Promise.reject(err);
 })
 

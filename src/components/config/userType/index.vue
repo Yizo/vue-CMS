@@ -9,7 +9,6 @@
       <el-table
         :data="user_groups"
         highlight-current-row
-        @current-change="handleCurrentRowChange"
         style="width: 100%">
         <el-table-column
           property="level"
@@ -22,6 +21,15 @@
         <el-table-column
           property="need_coins"
           label="累计钻石">
+        </el-table-column>
+        <el-table-column
+          label="是否启用">
+          <template scope="scope">
+            <el-tag
+              :type="scope.row.is_enabled ? 'success' : 'primary'"
+              close-transition>{{scope.row.is_enabled ? '是': '否'}}
+            </el-tag>
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -43,15 +51,26 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny">
-      <el-form :model="form" label-position="left" label-width="140px">
-        <el-form-item label="级别">
+
+    <!--分页-->
+    <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
+      :total="totalSize"
+      class="page">
+    </el-pagination>
+
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny" @close="closeBlock">
+      <el-form :model="form" label-position="left" label-width="150px" :rules="rules" ref="userType">
+        <el-form-item label="级别" class="dot_tips" prop="level">
           <el-input v-model="form.level" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="账号类型名称">
+        <el-form-item label="账号类型名称" class="dot_tips" prop="name">
           <el-input v-model="form.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="累计钻石">
+        <el-form-item label="累计钻石" class="dot_tips" prop="need_coins">
           <el-input v-model="form.need_coins" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="是否启用" style="text-align: left">
@@ -60,7 +79,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="handleSave">确 定</el-button>
       </div>
     </el-dialog>
@@ -73,27 +92,80 @@
   import {mapGetters} from 'vuex'
   export default {
     data(){
+      let level = (rule, value, callback) => {
+          if (!value) {
+            return callback(new Error('级别不能为空'));
+          }
+          setTimeout(() => {
+            if (/^\d+$/.test(value) == false) {
+              callback(new Error('请输入数字'));
+            } else {
+              callback()
+            }
+          }, 1000);
+        },
+        name = (rule, value, callback) => {
+          if (!value) {
+            return callback(new Error('账号类型名称不能为空'));
+          }
+          setTimeout(() => {
+            if (String(value).length > 0 && String(value).length <= 50) {
+              callback()
+            } else {
+              callback(new Error('长度必须大于0小于等于50'))
+            }
+          }, 1000);
+        },
+        need_coins = (rule, value, callback) => {
+          if (!value) {
+            return callback(new Error('累计钻石不能为空'));
+          }
+          setTimeout(() => {
+            if (/^\d+$/.test(value) == false) {
+              callback(new Error('请输入数字值'));
+            } else {
+              callback()
+            }
+          }, 1000);
+        };
       return {
         user_groups: [],
         currentPage: 1,
-        limit: 15,
+        totalSize: 0,
+        pageSize: 20,
         dialogTitle: '',
         dialogFormVisible: false,
+        index: 0,
         form: {
           level: null,
           name: '',
           need_coins: null,
           is_enabled: "false"
+        },
+        rules: {
+          level: [
+            {validator: level, trigger: 'blur'}
+          ],
+          name: [
+            {validator: name, trigger: 'blur'},
+          ],
+          need_coins: [
+            {validator: need_coins, trigger: 'blur'},
+          ]
         }
       }
     },
     components: {},
-    computed: {
-      ...mapGetters(['token'])
-    },
     methods: {
+      cancel(){
+        this.dialogFormVisible = false;
+      },
+      closeBlock(){
+        this.$refs.userType.resetFields();
+      },
       handleEdit(index, data){
-        this.form = data;
+        this.index = index;
+        this.form = Object.assign({}, data);
         this.form.is_enabled = String(data.is_enabled)
         this.dialogTitle = '修改';
         this.dialogFormVisible = true;
@@ -104,48 +176,49 @@
       handleAdd(){
         this.dialogTitle = '添加';
         this.dialogFormVisible = true;
-        this.form = {level: null, name: '', need_coins: null, is_enabled: "false"}
+        this.form = {
+          level: null,
+          name: '',
+          need_coins: null,
+          is_enabled: "false"
+        }
       },
       handleSave(){
-        var is = false;
-        for (var i in this.form) {
-          if (this.form[i]) {
-            is = true
+        this.$refs.userType.validate((valid) => {
+          if (valid) {
+            if (this.dialogTitle == '添加') {
+              this.addUserType(this.form).then(res => {
+                this.user_groups.push(res.data.data);
+                this.dialogFormVisible = false;
+                this.$message({
+                  duration: 1000,
+                  message: '添加成功',
+                  type: 'success'
+                });
+              })
+            } else {
+              this.updateUserType(this.form).then(res => {
+                this.user_groups.splice(this.index, 1, res.data.data);
+                this.dialogFormVisible = false;
+                this.$message({
+                  duration: 1000,
+                  message: '修改成功',
+                  type: 'success'
+                });
+              })
+            }
           } else {
-            is = false
-            break;
+            return false;
           }
-        }
-        if (this.dialogTitle == '添加') {
-          if (is) {
-            this.addUserType(this.form).then(res => {
-              this.user_groups.push(res.data.data);
-              this.dialogFormVisible = false;
-            })
-          } else {
-            this.$message({
-              showClose: true,
-              message: '请输入完整',
-              type: 'warning'
-            });
-          }
-        } else {
-          if (is) {
-            this.updateUserType(this.form).then(res => {
-              this.user_groups.splice(this.user_groups.indexOf(this.form), 1, res.data.data);
-              this.dialogFormVisible = false;
-            })
-          } else {
-            this.$message({
-              showClose: true,
-              message: '请输入完整',
-              type: 'warning'
-            });
-          }
-        }
+        });
       },
-      handleCurrentRowChange(val) {
-        this.currentRow = val;
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getUserTypes({page: val, limit: this.pageSize}).then((res) => {
+          const data = res.data.data
+          this.user_groups = [...data.user_groups];
+          this.totalSize = data.total_count;
+        });
       },
       //启用或禁用
       star(data){
@@ -193,11 +266,11 @@
         })
       },
       getUserTypes(){
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const params = {
           page: this.currentPage,
           limit: this.limit
         };
-        const token = this.token;
         return this.$http({
           method: 'GET',
           url: API.user_types_get,
@@ -207,9 +280,10 @@
       }
     },
     mounted(){
-      this.getUserTypes().then((res) => {
+      this.getUserTypes({page: 1, limit: this.pageSize}).then((res) => {
         const data = res.data.data
         this.user_groups = [...data.user_groups];
+        this.totalSize = data.total_count;
       });
     }
   }

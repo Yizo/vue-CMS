@@ -94,6 +94,7 @@
 
 <script>
   import * as API from '../../../api/api'
+  import * as JS from '../../../assets/js/js'
   import {formatDate} from '../../../utils/filters'
   import {mapGetters} from 'vuex'
 
@@ -139,6 +140,12 @@
         this.filter.end = val
       },
       filtration(){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -153,7 +160,13 @@
       },
       //分页action
       handleSizeChange(val){
-        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+        let options = {
+          page: val,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }
+        this.getInfo(options).then(res => {
           this.data = res.data.data.logs;
           this.total = res.data.data.total_count
         })

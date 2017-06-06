@@ -14,5 +14,7 @@ export default {
   },
   regionLineDetails(state){
     return state.regionLineDetails;
-  }
+  },
+  regionAreaDetails: (state) => state.regionAreaDetails,
+  regionAreaUserDetails: (state) => state.regionAreaUserDetails
 }

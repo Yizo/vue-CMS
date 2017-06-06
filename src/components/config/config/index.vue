@@ -19,6 +19,16 @@
           width="100">
         </el-table-column>
         <el-table-column
+          prop="platform"
+          label="平台"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="app_version"
+          label="版本"
+          width="180">
+        </el-table-column>
+        <el-table-column
           prop="key"
           label="键名"
           width="180">
@@ -40,10 +50,11 @@
         </el-table-column>
       </el-table>
     </div>
+    <!--分页-->
     <el-pagination
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-size="15"
+      :page-size="pageSize"
       layout="total, prev, pager, next, jumper"
       :total="totalSize"
       class="page">
@@ -51,7 +62,7 @@
     <!--新增弹窗-->
     <el-dialog :title="pageInfo.name" v-model="dialogTableVisible_add" size="tiny">
       <el-form :model="form" label-width="100px" label-position="left">
-        <el-form-item label="平台">
+        <el-form-item label="平台" class="dot_tips">
           <el-select v-model="form.platform" placeholder="请选择" class="dot_tips">
             <el-option
               v-for="item in platform"
@@ -61,7 +72,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="版本">
+        <el-form-item label="版本" class="dot_tips">
           <el-select v-model="form.app_version" placeholder="请选择" class="dot_tips">
             <el-option
               v-for="(item,index) in versions.app_versions"
@@ -70,10 +81,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="键名">
+        <el-form-item label="键名" class="dot_tips">
           <el-input v-model="form.key" class="dot_tips"></el-input>
         </el-form-item>
-        <el-form-item label="键值">
+        <el-form-item label="键值" class="dot_tips">
           <el-input v-model="form.value" class="dot_tips"></el-input>
         </el-form-item>
         <el-form-item label="描述">
@@ -99,7 +110,8 @@
       return {
         tableData: [],
         //分页
-        currentPage: 0,
+        pageSize: 20,
+        currentPage: 1,
         totalSize: 0,
         /*弹窗*/
         platform: [

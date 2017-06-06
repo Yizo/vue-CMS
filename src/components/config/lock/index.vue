@@ -37,14 +37,14 @@
       </template>
     </div>
     <!--分页-->
-    <!--    <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="10"
-          layout="total, prev, pager, next, jumper"
-          :total="totalSize"
-          class="page">
-        </el-pagination>-->
+    <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
+      :total="totalSize"
+      class="page">
+    </el-pagination>
   </div>
 </template>
 
@@ -55,7 +55,8 @@
       return {
         tableData: [],
         currentPage: 1,
-        totalSize: 10
+        totalSize: 0,
+        pageSize: 20
       }
     },
     methods: {
@@ -81,7 +82,12 @@
       /*分页*/
       handleCurrentChange(val) {
         this.currentPage = val;
-        this.getuser(val)
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+          const data = res.data.data;
+          this.totalSize = data.total_count;
+          this.currentPage = data.current_page;
+          this.tableData = [...data.logs];
+        })
       },
       //时间戳
       Timestamp(row){
@@ -97,8 +103,11 @@
       },
     },
     mounted(){
-      this.getInfo().then(res => {
-        this.tableData = res.data.data.logs
+      this.getInfo({page: 1, limit: this.pageSize}).then(res => {
+        const data = res.data.data;
+        this.totalSize = data.total_count;
+        this.currentPage = data.current_page;
+        this.tableData = [...data.logs];
       })
     }
   }

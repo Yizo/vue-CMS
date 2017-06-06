@@ -17,5 +17,8 @@ export default {
   },
   [type.CONSUMECOINS](state, parm){
     state.summary_data = parm
+  },
+  [type.PAYINFO_pay_char](state, parm){
+    state.payChart = parm
   }
 }

@@ -41,16 +41,16 @@
       </template>
     </div>
     <!--新增-->
-    <el-dialog :title="pageInfo.name" v-model="dialogVisible" size="tiny">
-      <el-form :model="form" label-width="120px" label-position="left">
-        <el-form-item label="URL">
+    <el-dialog :title="pageInfo.name" v-model="dialogVisible" size="tiny" @close="closeBlock">
+      <el-form :model="form" label-width="120px" label-position="left" :rules="rules" ref="dynamicip">
+        <el-form-item label="URL" prop="url">
           <el-input v-model="form.url" auto-complete="off"></el-input>
           </el-input>
         </el-form-item>
-        <el-form-item label="IP区域">
+        <el-form-item label="IP区域" prop="region">
           <el-input v-model="form.region" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="优先级">
+        <el-form-item label="优先级" prop="priority" class="dot_tips">
           <el-input v-model="form.priority" auto-complete="off" placeholder="数字越小优先级越高"></el-input>
         </el-form-item>
         <el-form-item label="是否启用">
@@ -75,14 +75,14 @@
   </span>
     </el-dialog>
     <!--分页-->
-    <!--    <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="10"
-          layout="total, prev, pager, next, jumper"
-          :total="totalSize"
-          class="page">
-        </el-pagination>-->
+    <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
+      :total="totalSize"
+      class="page">
+    </el-pagination>
   </div>
 </template>
 
@@ -91,10 +91,23 @@
   import * as JS from '../../../assets/js/js'
   export default {
     data(){
+      let number = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('优先级不能为空'));
+        }
+        setTimeout(() => {
+          if (/^\d+$/.test(String(value)) == false) {
+            callback(new Error('请输入数字'));
+          } else {
+            callback()
+          }
+        }, 1000);
+      };
       return {
         tableData: [],
+        pageSize: 20,
         currentPage: 1,
-        totalSize: 10,
+        totalSize: 0,
         /*弹窗*/
         dialogVisible: false,
         dialogVisible_del: false,
@@ -109,10 +122,18 @@
           region: '',
           priority: '',
           is_enabled: 'false'
+        },
+        rules: {
+          url: {required: true, message: 'url不能为空', trigger: 'blur'},
+          region: {required: true, message: 'IP区域不能为空', trigger: 'blur'},
+          priority: [{validator: number, trigger: 'blur'}],
         }
       }
     },
     methods: {
+      closeBlock(){
+        this.$refs.dynamicip.resetFields();
+      },
       setForm(data){
         var forms = this.form;
         forms.url = data.url;
@@ -199,7 +220,12 @@
       /*分页*/
       handleCurrentChange(val) {
         this.currentPage = val;
-        this.getuser(val)
+        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+          const data = res.data.data;
+          this.currentPage = data.current_page;
+          this.totalSize = data.total_count;
+          this.tableData = [...data.dynamic_servers];
+        })
       },
       add1(){
         this.dialogVisible = true;
@@ -211,8 +237,8 @@
         this.is = true
       },
       add(){
-        if (JS.checkEmpty(this.form)) {
-          if (JS.isDigit(this.form.priority)) {
+        this.$refs.dynamicip.validate((valid) => {
+          if (valid) {
             this.addInfo(this.form).then(res => {
               if (res.data.success) {
                 this.getInfo().then(res => {
@@ -230,18 +256,8 @@
                 });
               }
             })
-          } else {
-            this.$message({
-              message: '格式错误',
-              type: 'error'
-            });
           }
-        } else {
-          this.$message({
-            message: '不能为空',
-            type: 'warning'
-          });
-        }
+        })
       },
       update1(data){
         this.dialogVisible = true
@@ -251,30 +267,27 @@
         this.is = false
       },
       update(){
-        if (JS.checkEmpty(this.form)) {
-          this.upInfo(this.pageInfo.data.id, this.form).then(res => {
-            if (res.data.success) {
-              this.getInfo().then(res => {
-                this.tableData = res.data.data.dynamic_servers
-              })
-              this.dialogVisible = false;
-              this.$message({
-                message: '修改成功',
-                type: 'success'
-              });
-            } else {
-              this.$message({
-                message: '格式错误',
-                type: 'error'
-              });
-            }
-          })
-        } else {
-          this.$message({
-            message: '不能为空',
-            type: 'warning'
-          });
-        }
+        this.$refs.dynamicip.validate((valid) => {
+          if (valid) {
+            this.upInfo(this.pageInfo.data.id, this.form).then(res => {
+              if (res.data.success) {
+                this.getInfo().then(res => {
+                  this.tableData = res.data.data.dynamic_servers
+                })
+                this.dialogVisible = false;
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  message: '格式错误',
+                  type: 'error'
+                });
+              }
+            })
+          }
+        })
       },
       del1(data){
         this.pageInfo.name = data.region
@@ -344,8 +357,11 @@
 
     },
     mounted(){
-      this.getInfo().then(res => {
-        this.tableData = res.data.data.dynamic_servers
+      this.getInfo({page: 1, limit: this.pageSize}).then(res => {
+        const data = res.data.data;
+        this.currentPage = data.current_page;
+        this.totalSize = data.total_count;
+        this.tableData = [...data.dynamic_servers];
       })
     }
   }
@@ -371,6 +387,10 @@
   .el-table .cell img {
     height: 30px;
     margin-top: 10px;
+  }
+
+  .dot_tips > label {
+    text-indent: 10px;
   }
 </style>
 

@@ -8,7 +8,8 @@
     <div class="feedback-wrapper">
       <div class="feedback-filter">
         <template>
-          <el-select v-model="appVersionValue" placeholder="版本选择" size="small" @change="feedbackFilter">
+          <el-select v-model="appVersionValue" placeholder="版本选择" size="small" @change="feedbackFilter"
+                     style="width: 200px">
             <el-option
               v-for="item in versions.app_versions"
               :label="item.name"
@@ -18,7 +19,8 @@
           </el-select>
         </template>
         <template>
-          <el-select v-model="appChannelValue" placeholder="切换渠道" size="small" @change="feedbackFilter">
+          <el-select v-model="appChannelValue" placeholder="切换渠道" size="small" @change="feedbackFilter"
+                     style="width: 200px">
             <el-option
               v-for="item in versions.app_channels"
               :label="item.name"
@@ -36,52 +38,43 @@
         <el-table-column
           label="编号"
           property="id"
-          align="left"
           width="80">
         </el-table-column>
         <el-table-column
           property="feedback_type"
-          align="left"
           width="120"
           label="问题类型">
         </el-table-column>
         <el-table-column
           property="app_version"
-          align="left"
           label="版本信息">
         </el-table-column>
         <el-table-column
           property="user_name"
-          align="left"
           label="账号">
         </el-table-column>
         <el-table-column
           property="created_at"
-          align="left"
           label="提交日期">
           <template scope="scope">
-            <span>{{scope.row.created_at | formatDate}}</span>
+            <span>{{scope.row.created_at | Time}}</span>
           </template>
         </el-table-column>
         <el-table-column
           property="content"
-          align="left"
           label="问题描述">
         </el-table-column>
 
         <el-table-column
           property="processed_at"
-          align="left"
           label="处理日期">
           <template scope="scope">
-            <span>{{scope.row.processed_at | formatDate}}</span>
+            <span>{{scope.row.processed_at | Time}}</span>
           </template>
-          <!--<span>{{scope.row.processed_at | formatDate}}</span>-->
         </el-table-column>
 
         <el-table-column
           property="has_read"
-          align="left"
           label="处理状态">
           <template scope="scope">
             <span>{{scope.row.has_read?'是':'否'}}</span>
@@ -90,7 +83,6 @@
 
         <el-table-column
           property="has_read"
-          align="left"
           label="用户阅读"
           width="100">
           <template scope="scope">
@@ -103,12 +95,10 @@
 
         <el-table-column
           property="reply_content"
-          align="left"
           label="客服回复">
         </el-table-column>
         <el-table-column
           label="操作"
-          align="left"
           width="150">
           <template scope="scope">
             <el-button
@@ -126,15 +116,14 @@
           :current-page="currentPage"
           :page-size="pageSize"
           :total="totalPages"
-          layout="prev, pager, next, jumper"
-        >
+          layout="total,prev, pager, next, jumper">
         </el-pagination>
       </div>
     </div>
     <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
       <el-form :model="feedback">
         <el-form-item label="账号名称" :label-width="formLabelWidth">
-          <el-input v-model="feedback.user_id" auto-complete="off" readonly style="width:400px"></el-input>
+          <el-input v-model="feedback.user_name" auto-complete="off" readonly style="width:400px"></el-input>
         </el-form-item>
         <el-form-item label="问题类型" :label-width="formLabelWidth">
           <el-input v-model="feedback.feedback_type" auto-complete="off" readonly style="width:400px"></el-input>
@@ -158,7 +147,6 @@
 
 <script>
   import * as API from '../../../api/api'
-  import {formatDate} from '../../../utils/filters'
   import {mapGetters, mapActions} from 'vuex'
 
   export default {
@@ -168,7 +156,7 @@
         appVersionValue: '',
         currentPage: 1,
         limit: 15,
-        pageSize: 1,
+        pageSize: 20,
         totalPages: 1,
         feedbackData: [],
         dialogTitle: '',
@@ -186,37 +174,39 @@
     },
     components: {},
     computed: {
-      ...mapGetters(['versions', 'token'])
-    },
-    filters: {
-      formatDate: formatDate
+      ...mapGetters(['versions'])
     },
     methods: {
       handleDealPromise(){
-        const token = this.token;
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const {id, reply_content} = this.feedback;
         const url = `${API.feedback_update}${id}`;
         const params = {
           id,
           reply_content
         };
-        return this.$http({
-          url,
-          params,
-          method: 'PATCH',
-          headers: {'Authorization': token}
-        })
+        if (!params.reply_content) {
+          this.$message({
+            showClose: true,
+            message: '答复内容必填',
+            type: 'warning'
+          });
+          return false
+        } else {
+          return this.$http({
+            url,
+            params,
+            method: 'PATCH',
+            headers: {'Authorization': token}
+          })
+        }
       },
       handleDeal(){
         this.handleDealPromise().then((res) => {
           const index = this.currentRowIndex;
           this.feedbackData.splice(index, 1, res.data.data);
-        }).catch((err) => {
-          console.log(err);
-          alert('参数reply_content未提供或为空')
         });
         this.dialogFormVisible = false;
-
       },
       handleWatch(index, row){
         this.feedback = Object.assign({}, this.feedbackData[index]);
@@ -228,6 +218,7 @@
         this.currentRow = val;
       },
       getFeedbackDataPromise(){
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const app_version = this.getAppVersion();
         const app_channel = this.getAppChannel();
         const params = {
@@ -236,7 +227,6 @@
           page: this.currentPage,
           limit: this.limit,
         };
-        const token = this.token;
         const url = API.feedback_get;
         return this.$http({
           url,
@@ -268,7 +258,7 @@
           const data = res.data.data;
           this.feedbackData = [...data.feedbacks];
           this.currentPage = data.current_page;
-          this.totalPages = data.total_pages;
+          this.totalPages = data.total_count;
         })
       },
       feedbackFilter(){
@@ -316,10 +306,12 @@
   .el-table th > .cell {
     text-align: left;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

@@ -9,8 +9,10 @@ import actions from "./actions";
 const state = {
 
   day_data: [],
+  day_chart: [],
   day_details_data: [],
   month_data: [],
+  month_chart: [],
   month_details_data: []
 
 }

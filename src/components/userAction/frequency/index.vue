@@ -40,27 +40,27 @@
           </tr>
           <tr>
             <td>1-2次</td>
-            <td @click="detail(0)">{{data.count_1_2?data.count_1_2:0}}</td>
+            <td @click="detail(0)"><span style="cursor: pointer">{{data.count_1_2?data.count_1_2:0}}</span></td>
           </tr>
           <tr>
             <td>3-5次</td>
-            <td @click="detail(1)">{{data.count_3_5?data.count_3_5:0}}</td>
+            <td @click="detail(1)"><span style="cursor: pointer">{{data.count_3_5?data.count_3_5:0}}</span></td>
           </tr>
           <tr>
             <td>6-9次</td>
-            <td @click="detail(2)">{{data.count_6_9?data.count_6_9:0}}</td>
+            <td @click="detail(2)"><span style="cursor: pointer">{{data.count_6_9?data.count_6_9:0}}</span></td>
           </tr>
           <tr>
             <td>10-19次</td>
-            <td @click="detail(3)">{{data.count_10_19?data.count_10_19:0}}</td>
+            <td @click="detail(3)"><span style="cursor: pointer">{{data.count_10_19?data.count_10_19:0}}</span></td>
           </tr>
           <tr>
             <td>20-49次</td>
-            <td @click="detail(4)">{{data.count_20_49?data.count_20_49:0}}</td>
+            <td @click="detail(4)"><span style="cursor: pointer">{{data.count_20_49?data.count_20_49:0}}</span></td>
           </tr>
           <tr>
             <td>50次以上</td>
-            <td @click="detail(5)">{{data.count_50?data.count_50:0}}</td>
+            <td @click="detail(5)"><span style="cursor: pointer">{{data.count_50?data.count_50:0}}</span></td>
           </tr>
           </tbody>
         </table>
@@ -97,7 +97,8 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters } from 'vuex'
+  import * as JS from '../../../assets/js/js'
+  import {mapGetters} from 'vuex'
   export default{
     data: () => ({
       data: [],
@@ -259,6 +260,12 @@
         this.filter.end = val
       },
       filtration(val){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -277,6 +284,9 @@
           start_at: this.filter.start || '',
           end_at: this.filter.end || ''
         };
+        if (index == 5) {
+          options.times_scope = '50'
+        }
         this.getDetails(options).then(res => {
           let data = res.data.data
           this.dialog.data = data.logs;

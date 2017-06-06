@@ -22,5 +22,11 @@ export default {
   },
   [type.GET_REGION_lINE_DETAILS](state, data){
     state.regionLineDetails = data.data;
+  },
+  [type.GET_REGION_AREA_DETAILS](state, data){
+    state.regionAreaDetails = data.data;
+  },
+  [type.GET_REGION_AREA_USER_DETAILS](state, data){
+    state.regionAreaUserDetails = data.data;
   }
 }

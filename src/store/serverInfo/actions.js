@@ -99,5 +99,31 @@ export default {
     }).catch((err) => {
       console.log(err)
     })
+  },
+  //地域连接人数详情
+  getRegionAreaDetails(store, params){
+    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+    axios({
+      method: 'GET',
+      url: API.server_region_details,
+      headers: {'Authorization': token},
+      params: params,
+    }).then((res) => {
+      store.commit('GET_REGION_AREA_DETAILS', res.data)
+    }).catch((err) => {
+    })
+  },
+  //地域连接人数详情 - 在线人数详情
+  getRegionAreaUserDetails(store, params){
+    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+    axios({
+      method: 'GET',
+      url: API.server_region_user_details,
+      headers: {'Authorization': token},
+      params: params,
+    }).then((res) => {
+      store.commit('GET_REGION_AREA_USER_DETAILS', res.data)
+    }).catch((err) => {
+    })
   }
 }

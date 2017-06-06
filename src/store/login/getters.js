@@ -9,9 +9,9 @@ export default {
     return state.LoginStatus
   },
   versions: function (state) {
-    let sx = JSON.parse(window.sessionStorage.getItem('loginInfo'));
-    sx.app_channels.unshift({name: "全部渠道"});
-    sx.app_versions.unshift({name: "全部版本"})
-    return sx;
+    let s = JSON.parse(window.sessionStorage.getItem('loginInfo'));
+    s.app_channels.unshift({name: "全部渠道"});
+    s.app_versions.unshift({name: "全部版本"})
+    return s;
   }
 }

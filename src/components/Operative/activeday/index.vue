@@ -4,6 +4,11 @@
       <el-breadcrumb-item>运营行为</el-breadcrumb-item>
       <el-breadcrumb-item>活跃用户</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <!--筛选-->
     <el-row style="text-align: left;margin-top: 20px">
       <div style="display: inline-block">
@@ -40,10 +45,10 @@
     <!--视图-->
     <div class="warp">
       <div class="warp_col">
-        <day class="c"></day>
+        <day class="c" :filter="filter"></day>
       </div>
       <div class="warp_col">
-        <month class="c"></month>
+        <month class="c" :filter="filter"></month>
       </div>
     </div>
   </div>
@@ -52,6 +57,7 @@
 <script>
   import day from './day.vue'
   import month from './month.vue'
+  import * as JS from '../../../assets/js/js'
   import {mapActions, mapGetters}  from 'vuex'
   export default{
     data: () => ({
@@ -67,12 +73,14 @@
       day, month
     },
     computed: {
-      ...mapGetters(['versions','initDate']),
+      ...mapGetters(['versions', 'initDate']),
     },
     methods: {
       ...mapActions({
         day: 'ACTIVEDAY_DAY',
-        month: 'ACTIVEDAY_MONTH'
+        month: 'ACTIVEDAY_MONTH',
+        dayChart: 'ACTIVEDAY_DAY_CHART',
+        monthChart: 'ACTIVEDAY_MONTH_CHART'
       }),
       //筛选
       start_date(val){
@@ -88,6 +96,12 @@
         if (this.filter.versions == '全部版本') {
           this.filter.versions = ''
         }
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.month(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.month(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -98,11 +112,14 @@
         }
         this.day(options);
         this.month(options);
+        this.dayChart(options);
+        this.monthChart(options);
       }
     },
     mounted(){
       this.filter.start = this.initDate.start;
-      this.filter.end = this.initDate.end
+      this.filter.end = this.initDate.end;
+      this.filtration();
     }
   }
 </script>
@@ -124,10 +141,12 @@
   .warp_col {
     width: 50%;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

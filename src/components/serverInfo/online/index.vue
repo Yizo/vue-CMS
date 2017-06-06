@@ -4,6 +4,11 @@
       <el-breadcrumb-item>服务器信息</el-breadcrumb-item>
       <el-breadcrumb-item>当前在线人数</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="在线人数及列表每10分钟更新一次" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <div class="online-wrap">
       <h3 style="margin-bottom: 10px">服务器区域及总在线人数：{{number}}人</h3>
       <el-table
@@ -14,17 +19,16 @@
         <el-table-column
           label="编号"
           property="id"
-          align="left"
           width="80">
         </el-table-column>
         <el-table-column
-          property="region_name"
-          align="left"
           label="区域">
+          <template scope="scope">
+            {{scope.row.node_type_name}}-{{scope.row.region_name}}
+          </template>
         </el-table-column>
         <el-table-column
           property="region_connections_count"
-          align="left"
           label="总在线人数">
           <template scope="scope">
             <el-button type="primary" size="small" @click="handleDetails(scope.$index,scope.row)">
@@ -34,7 +38,6 @@
         </el-table-column>
         <el-table-column
           property="name"
-          align="left"
           label="线路名称">
           <template scope="scope">
             <el-button type="primary" size="small" @click="handleLineNameDetails(scope.$index,scope.row)">
@@ -44,11 +47,10 @@
         </el-table-column>
         <el-table-column
           property="region_connections_count"
-          align="left"
           label="在线人数">
           <template scope="scope">
             <el-button type="primary" size="small" @click="handleLinePersonDetails(scope.$index,scope.row)">
-              {{scope.row.region_connections_count}}
+              {{scope.row.connections_count}}
             </el-button>
           </template>
         </el-table-column>
@@ -59,20 +61,25 @@
           @current-change="handleCurrentChange"
           :current-page="currentPage"
           :page-size="pageSize"
-          :total="total"
-          layout="prev, pager, next, jumper">
+          :total="totalSize"
+          layout="total,prev, pager, next, jumper" class="page">
         </el-pagination>
       </div>
     </div>
     <el-dialog title="详情" v-model="dialogVisible1">
-      <person-info :node-id="node_id" v-on:changePage1="changePage1"></person-info>
+      <person-info :regionId="region_id" v-on:changePage1="changePage1"></person-info>
     </el-dialog>
-    <el-dialog title="详情" v-model="dialogVisible2">
-      <region-area :region-id="region_id" v-on:changePage2="changePage2"></region-area>
+    <el-dialog title="详情" v-model="dialogVisible2" size="tiny">
+      <region-area :nodeId="node_id" v-on:changePage2="changePage2" @AreaUser="showArea"></region-area>
     </el-dialog>
     <el-dialog title="详情" v-model="dialogVisible3">
-      <person-line-infos :region-id="region_id" :node-id="node_id" v-on:changePage3="changePage3"></person-line-infos>
+      <person-line-infos :nodeId="node_id" v-on:changePage3="changePage3"></person-line-infos>
     </el-dialog>
+
+    <el-dialog title="线路详情-人数详情" v-model="dialogVisible4">
+      <areaUser :nodeId="node_id" v-on:changePage4="changePage4"></areaUser>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -84,65 +91,74 @@
   import personInfo from './personInfos.vue'
   import regionArea from './regionArea.vue'
   import personLineInfos from './perosonLineInfos.vue'
+  import areaUser from './regionAreaUser.vue'
 
   export default {
     data(){
       return {
         number: 0, //总在线人数
         currentPage: 1,
-        limit: 25,
-        pageSize: 25,
-        total: 0,
+        pageSize: 15,
+        totalSize: 0,
         region_id: 0,
         node_id: 0,
-        currentPage1: 0,
-        currentPage2: 0,
-        currentPage3: 0,
+        currentPage1: 1,
+        currentPage2: 1,
+        currentPage3: 1,
+        currentPage4: 1,
         nodes: [],
         dialogVisible1: false,
         dialogVisible2: false,
         dialogVisible3: false,
+        dialogVisible4: false,
       }
     },
-    components: {personInfo, regionArea, personLineInfos},
-    computed: {
-      ...mapGetters(['token'])
-    },
+    components: {personInfo, regionArea, personLineInfos, areaUser},
     methods: {
-      //服务器在线人数总和
-      connectionsCount(data){
-        let number = 0;
-        for (let i in data) {
-          number += parseInt(data[i].region_connections_count)
-        }
-        return number
-      },
+      //在线人数
       handleLinePersonDetails(index, row){
-        this.region_id = this.nodes[index]['region_id'];
-        this.node_id = this.nodes[index]['id'];
+        this.region_id = row.region_id;
+        this.node_id = row.id;
         this.$store.dispatch('getRegionLineDetails', {
           page: this.currentPage3,
-          limit: 25,
-          node_id: this.node_id,
-          node_region_id: this.region_id
+          limit: this.pageSize,
+          node_id: row.id,
         });
         this.dialogVisible3 = true;
       },
+      //线路名称
       handleLineNameDetails(index, row){
-        this.region_id = this.nodes[index]['region_id'];
-        this.$store.dispatch('getRegionDetails', {
+        this.region_id = row.region_id;
+        this.node_id = row.id;
+        this.$store.dispatch('getRegionAreaDetails', {
           page: this.currentPage2,
-          limit: 25,
-          node_region_id: this.region_id
+          limit: this.pageSize,
+          node_id: row.id
         });
         this.dialogVisible2 = true;
       },
+      //线路详情-人数详情
+      showArea(data){
+        this.dialogVisible4 = true;
+        let options = {
+          node_id: this.node_id,
+          ip_country: data.ip_country,
+          ip_province: data.ip_province,
+          ip_city: data.ip_city,
+          page: 1,
+          limit: this.pageSize
+        }
+        this.$store.dispatch('getRegionAreaUserDetails', options)
+      },
+      //总在线人数
       handleDetails(index, row){
-        this.node_id = this.nodes[index]['id'];
+        this.region_id = row.region_id;
+        this.node_id = row.id;
         this.$store.dispatch('getPersonDetails', {
           page: this.currentPage1,
-          limit: 25,
-          node_id: this.node_id
+          limit: 15,
+          node_id: row.id,
+          node_region_id: row.region_id
         });
         this.dialogVisible1 = true;
       },
@@ -151,6 +167,7 @@
       },
       //分页action
       handleSizeChange(val){
+
       },
       handleCurrentChange(val){
         this.currentPage = val;
@@ -165,31 +182,30 @@
       changePage3(val){
         this.currentPage3 = val;
       },
+      changePage4(val){
+        this.currentPage4 = val;
+      },
       getOnlineListPromise(){
-        const token = this.token;
-        const limit = this.limit;
-        const page = this.currentPage;
-        const method = 'GET';
-        const headers = {'Authorization': token};
+        const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const url = API.server_online_list_get;
         const params = {
-          limit,
-          page
+          limit: this.pageSize,
+          page: this.currentPage
         };
         return this.$http({
-          url,
-          method,
-          headers,
-          params,
+          methods: 'GET',
+          url: url,
+          headers: {'Authorization': token},
+          params: params
         })
       },
       getOnlineList(){
         this.getOnlineListPromise().then((res) => {
           const data = res.data.data;
+          this.number = data.online_users;
           this.nodes = [...data.nodes];
           this.currentPage = data.current_page;
-          this.total = data.total_count;
-          this.number = this.connectionsCount(data.nodes)
+          this.totalSize = data.total_count;
         })
       },
     },

@@ -16,5 +16,11 @@ export default {
   },
   [type.ADDDAY_MONTH_DETAILS](state, parm){
     state.month_details_data = parm
+  },
+  [type.ADDDAY_DAY_CHART](state, parm){
+    state.day_chart = parm
+  },
+  [type.ADDDAY_MONTH_CHART](state, parm){
+    state.month_chart = parm
   }
 }

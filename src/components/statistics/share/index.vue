@@ -9,6 +9,11 @@
 
     <!--筛选-->
     <div class="warp_filter">
+      <el-alert
+        title="数据说明"
+        type="info"
+        description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
+      </el-alert>
       <template>
         <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange" style="width: 200px;">
           <el-option
@@ -28,7 +33,6 @@
           </el-option>
         </el-select>
       </template>
-
       <!--展示-->
       <!--饼图-->
       <el-row :gutter="20" class="">
@@ -61,9 +65,9 @@
             <tr v-for="(item,index) in tableData">
               <td>{{item.share_type}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                        @click="details_users(index)">{{item.total_users}}</span></td>
+                        @click="details_users(index,item)">{{item.total_users}}</span></td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                        @click="details_times(index)">{{item.total_times}}</span></td>
+                        @click="details_times(index,item)">{{item.total_times}}</span></td>
               <td>{{item.per_average_share}}</td>
             </tr>
             </tbody>
@@ -86,11 +90,11 @@
         </el-table>
         <div slot="footer">
           <el-pagination
-            @current-change="handleCurrentChange_sn"
+            @current-change="user"
             :current-page="currentPage"
-            :page-size="10"
-            :total="total"
-            layout="prev,next"
+            :page-size="pageSize"
+            :total="totalSize"
+            layout="total, prev, pager, next, jumper"
             class="page">
           </el-pagination>
         </div>
@@ -105,15 +109,19 @@
               <span>{{ scope.row.app_channel+"_"+scope.row.app_version+"_"+scope.row.app_version_number}}</span>
             </template>
           </el-table-column>
-          <el-table-column property="created_at" label="分享时间点"></el-table-column>
+          <el-table-column label="分享时间点">
+            <template scope="scope">
+              <span>{{scope.row.created_at | Time}}</span>
+            </template>
+          </el-table-column>
         </el-table>
         <div slot="footer">
           <el-pagination
-            @current-change="handleCurrentChange_nv"
+            @current-change="count"
             :current-page="currentPage"
-            :page-size="10"
-            :total="total"
-            layout="prev,next"
+            :page-size="pageSize"
+            :total="totalSize"
+            layout="total, prev, pager, next, jumper"
             class="page">
           </el-pagination>
         </div>
@@ -196,13 +204,15 @@
         dialogData_nv: [],//分享次数数据
         pageInfo: {
           index: '',
+          id: 0,
           page: '',
           device_model: ''
         },
 
         /*分页*/
         currentPage: 1,
-        total: 1
+        totalSize: 0,
+        pageSize: 15
 
       }
     },
@@ -294,25 +304,29 @@
         this.pageInfo.index = index;
         var options = {
           page: 1,
-          type: index
+          type: index,
+          limit: this.pageSize
         }
         this.getDetails_users(options).then(res => {
-          this.total = res.data.data.total_pages;
-          this.dialogData_sn = res.data.data.logs;
-
+          let data = res.data.data
+          this.dialogData_sn = data.logs;
+          this.currentPage = data.current_page;
+          this.totalSize = data.total_count
         });
       },
       //分享人数中的分享次数
       details_users_times(parm){
         this.dialogTableVisible_nv = true;
-        var options = {
+        this.getDetails_times({
           page: 1,
           type: this.pageInfo.index,
+          limit: this.pageSize,
           user_id: parm.user_id
-        }
-        this.getDetails_times(options).then(res => {
-          this.total = res.data.data.total_pages;
-          this.dialogData_nv = res.data.data.logs;
+        }).then(res => {
+          let data = res.data.data;
+          this.dialogData_nv = data.logs;
+          this.currentPage = data.current_page;
+          this.totalSize = data.total_count
         });
       },
       //分享人数详情
@@ -334,16 +348,20 @@
         })
       },
       /*查看分享次数*/
-      details_times(index){
+      details_times(index, data){
         this.dialogTableVisible_nv = true;
         this.pageInfo.index = index;
-        console.log(index)
+        this.pageInfo.id = data.user_id;
         var options = {
-          page: 1
+          type: this.pageInfo.index,
+          page: 1,
+          limit: this.pageSize
         }
         this.getDetails_times(options).then(res => {
-          this.total = res.data.data.total_pages;
-          this.dialogData_sn = res.data.data.logs;
+          let data = res.data.data
+          this.dialogData_nv = data.logs;
+          this.currentPage = data.current_page;
+          this.totalSize = data.total_count
         }).catch(err => {
           console.log(err)
         })
@@ -356,11 +374,7 @@
             method: 'GET',
             url: API.share_count_stat_details,
             headers: {'Authorization': token},
-            params: {
-              type: this.pageInfo.index,
-              limit: 10,
-              page: parm.page
-            },
+            params: parm,
           }).then(res => {
             if (res.status == 200) {
               resolve(res)
@@ -372,16 +386,29 @@
       },
       /*分页*/
       //分享人数详情分页
-      handleCurrentChange_sn(val){
-        this.currentPage = val;
-        this.getDetails_users({page: val})
+      user(val){
+        var options = {
+          page: val,
+          type: this.pageInfo.index,
+          limit: this.pageSize
+        }
+        this.getDetails_users(options).then(res => {
+          let data = res.data.data
+          this.dialogData_sn = data.logs;
+        });
       },
       //分享次数详情分页
-      handleCurrentChange_nv(val){
-        this.currentPage = val;
-        this.getDetails_times({page: val})
-      }
-
+      count(val){
+        let options = {
+          type: this.pageInfo.index,
+          page: val,
+          limit: this.pageSize
+        }
+        this.getDetails_times(options).then(res => {
+          let data = res.data.data
+          this.dialogData_nv = data.logs;
+        })
+      },
     },
     mounted(){
       //绘制图形
@@ -428,7 +455,7 @@
   }
 
   }
-  .el-select{
+  .el-select {
     width: 200px;
   }
 </style>

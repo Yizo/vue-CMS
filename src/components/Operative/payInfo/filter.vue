@@ -19,8 +19,8 @@
     data(){
       return {
         //年月切换
-        radio: '月',
-        value: '',
+        radio: '年',
+        value: new Date()
       }
     },
     methods: {

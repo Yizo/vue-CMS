@@ -39,7 +39,7 @@
     data: () => ({
       data: [],
       currentPage: 1,
-      pageSize: 15,
+      pageSize: 20,
       totalSize: 0
     }),
     computed: {

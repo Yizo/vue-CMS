@@ -109,21 +109,23 @@
         credits: false
       },
     }),
-    watch: {
-      get_month(){
-        this.draw()
-        return this.get_month
-      }
-    },
     computed: {
       ...mapGetters({
         get_month: 'ACTIVEDAY_month_data',
-        get_month_detail: 'ACTIVEDAY_month_details_data'
+        get_month_detail: 'ACTIVEDAY_month_details_data',
+        get_month_chart: 'ACTIVEDAY_month_chart',
       }),
+    },
+    watch: {
+      get_month_chart(){
+        this.draw()
+        return this.get_month_chart
+      }
     },
     methods: {
       ...mapActions({
         month: 'ACTIVEDAY_MONTH',
+        monthChart: 'ACTIVEDAY_MONTH_CHART',
         month_details: 'ACTIVEDAY_MONTH_DETAILS'
       }),
       //表格数据
@@ -164,15 +166,13 @@
       //绘图
       draw(){
         //设置数据
-        this.options.series = this.AnalysisJSON(this.get_month.logs);
+        this.options.series = this.AnalysisJSON(this.get_month_chart.data.logs);
         //设置X轴
-        this.options.xAxis.categories = this.setXAxis(this.get_month.logs)
+        this.options.xAxis.categories = this.setXAxis(this.get_month_chart.data.logs)
         this.$HighCharts.chart('main2', this.options);
       }
     },
     mounted(){
-      this.month({limit: this.pageSize})
-      this.draw()
     }
   }
 </script>

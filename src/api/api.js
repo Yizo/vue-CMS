@@ -1,7 +1,8 @@
 /**
  * Created by admin on 2017/3/28.
  */
-export const url = 'api'
+/*开发服*/
+/*export const url = 'url'*/
 /*登录接口:成功则返回token*/
 export const login = url + '/api/manage/v1/auth'
 
@@ -68,12 +69,18 @@ export const pageclick_user_details = url + '/api/manage/v1/user_operation_stats
 export const connection_failed_logs = url + '/api/manage/v1/connection_failed_logs'
 /*连接失败详情*/
 export const connection_failed_detail = url + '/api/manage/v1/connection_failed_logs/detail'
+/*连接失败图表*/
+export const connection_failed_chart = url + '/api/manage/v1/connection_failed_logs/chart'
 /*登录失败*/
 export const loginfail = url + '/api/manage/v1/user_signin_failed_logs'
+/*登录失败图表*/
+export const loginfail_chart = url + '/api/manage/v1/user_signin_failed_logs/chart'
 /*登录失败详情*/
 export const loginfail_detail = url + '/api/manage/v1/user_signin_failed_logs/detail'
 /*用户未操作*/
 export const unext = url + '/api/manage/v1/user_no_operation_logs'
+/*用户未操作图表*/
+export const unext_chart = url + '/api/manage/v1/user_no_operation_logs/chart'
 /*未操作详情*/
 export const unext_detail = url + '/api/manage/v1/user_no_operation_logs/detail'
 
@@ -117,12 +124,6 @@ export const dynamic_servers = url + '/api/manage/v1/dynamic_servers';
 /*动态IP配置-推送*/
 export const dynamic_servers_push = url + '/api/manage/v1/dynamic_servers/push';
 
-/*动态IP状态*/
-/*列表*/
-export const dynamic_status = url + '/api/manage/v1/dynamic_servers/status';
-/*详情*/
-export const dynamic_status_details = url + '/api/manage/v1/dynamic_servers/{id}/status_details';
-
 /*用户类型配置*/
 /*列表-创建*/
 export const user_types_get = url + '/api/manage/v1/user_groups';
@@ -132,6 +133,8 @@ export const user_types_updata = url + '/api/manage/v1/user_groups/{id}';
 /*付费信息*/
 /*人数统计*/
 export const t_users_count_collects = url + '/api/manage/v1/transaction_logs/users_count_collects';
+/*充值信息图表数据*/
+export const transaction_logs_chart = url + '/api/manage/v1/transaction_logs/details_chart';
 /*充值详情*/
 export const transaction_logs_details = url + '/api/manage/v1/transaction_logs/details';
 /*充值金额信息详情-充值人数信息详情*/
@@ -147,34 +150,58 @@ export const recharge_list_get = url + '/api/manage/v1/transaction_logs';
 /*新增用户*/
 /*日新增用户-列表*/
 export const addday_day_list = url + '/api/manage/v1/new_user_stats/day_index';
+/*日新增用户-图表*/
+export const addday_day_chart = url + '/api/manage/v1/new_user_stats/day_chart';
 /*日新增用户-详情*/
 export const addday_day_details = url + '/api/manage/v1/new_user_stats/day_details';
 /*月新增用户-列表*/
 export const addday_month_list = url + '/api/manage/v1/new_user_stats/month_index';
+/*月新增用户-图表*/
+export const addday_month_chart = url + '/api/manage/v1/new_user_stats/month_chart';
 /*月新增用户-详情*/
 export const addday_month_details = url + '/api/manage/v1/new_user_stats/month_details';
 
 /*活跃用户*/
 /*日活跃用户-列表*/
 export const activeday_day_list = url + '/api/manage/v1/active_user_stats/day_index';
+/*日活跃-图表*/
+export const activeday_day_chart = url + '/api/manage/v1/active_user_stats/day_chart';
 /*日活跃用户-详情*/
 export const activeday_day_details = url + '/api/manage/v1/active_user_stats/day_details';
 /*月活跃用户-列表*/
 export const activeday_month_list = url + '/api/manage/v1/active_user_stats/month_index';
+/*月活跃-图表*/
+export const activeday_month_chart = url + '/api/manage/v1/active_user_stats/month_chart';
 /*月活跃用户-详情*/
 export const activeday_month_details = url + '/api/manage/v1/active_user_stats/month_details';
 
 /*留存*/
 /*留存-列表*/
 export const remain_list = url + '/api/manage/v1/user_retention_rates';
+/*留存-图表*/
+export const remain_chart = url + '/api/manage/v1/user_retention_rates/chart';
 /*留存-当日新增详情*/
 export const remain_details = url + '/api/manage/v1/user_retention_rates/details';
 /*留存-留存数详情*/
 export const remain_retention_details = url + '/api/manage/v1/user_retention_rates/retention_details';
 
 /*服务器信息*/
+/*当前在线人数*/
+export const server_online_list_get = url + '/api/manage/v1/nodes/online_users';
+/*当前在线人数-在线用户详情*/
+export const online_detail_get = url + '/api/manage/v1/nodes/online_details';
+/*当前在线人数-地域连接人数详情*/
+export const server_region_details = url + '/api/manage/v1/nodes/region_details';
+/*当前在线人数-地域连接人数详情 - 在线人数详情*/
+export const server_region_user_details = url + '/api/manage/v1/nodes/region_user_details';
 /*服务器详情信息表*/
 export const server_details_info = url + '/api/manage/v1/nodes/details'
+/*动态IP状态*/
+/*列表*/
+export const dynamic_status = url + '/api/manage/v1/dynamic_servers/status';
+/*详情*/
+export const dynamic_status_details = url + '/api/manage/v1/dynamic_servers/{id}/status_details';
+
 /*登录IP*/
 export const loginip = url + '/api/manage/v1/user_signin_logs'
 
@@ -222,12 +249,6 @@ export const server_list_get = url + '/api/manage/v1/nodes';
 export const server_list_add = url + '/api/manage/v1/nodes';
 /*服务器配置列表 更新*/
 export const server_list_update = url + '/api/manage/v1/nodes/{id}';
-
-/*服务器信息在线人数*/
-export const server_online_list_get = url + '/api/manage/v1/nodes/online_users';
-
-/*服务器详情信息*/
-export const online_detail_get = url + '/api/manage/v1/nodes/online_details';
 
 /*参数配置*/
 /*列表-创建*/

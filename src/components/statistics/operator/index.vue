@@ -7,6 +7,11 @@
 
     <!--筛选-->
     <div class="warp_filter">
+      <el-alert
+        title="数据说明"
+        type="info"
+        description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
+      </el-alert>
       <template>
         <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
           <el-option
@@ -322,10 +327,11 @@
   }
 
   }
-  .el-select{
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

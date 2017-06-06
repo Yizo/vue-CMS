@@ -1,18 +1,26 @@
 <template>
   <div>
-    <el-table :data="regionDetails.users">
-      <el-table-column property="id" label="所属地域"></el-table-column>
-      <el-table-column property="username" label="在线人数"></el-table-column>
-      <!--<el-table-column property="address" label="地址"></el-table-column>-->
+    <el-table :data="regionAreaDetails.logs">
+      <el-table-column label="所属地域">
+        <template scope="scope">
+          {{scope.row.ip_country}}{{scope.row.ip_province}}{{scope.row.ip_city}}
+        </template>
+      </el-table-column>
+      <el-table-column label="在线人数">
+        <template scope="scope">
+          <span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
+                @click="areaUser(scope.row)">{{scope.row.users_count}}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="block">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="regionDetails.current_page"
+        :current-page="regionAreaDetails.current_page"
         :page-size="pageSize"
         layout="total, prev, pager, next"
-        :total="regionDetails.total_pages">
+        :total="regionAreaDetails.total_pages" class="page">
       </el-pagination>
     </div>
   </div>
@@ -25,16 +33,17 @@
 
 
   export default{
-    props: ['regionId'],
+    props: ['nodeId'],
     data(){
       return {
         users: [],
-        limit: 25,
-        pageSize: 1
+        pageSize: 15,
+        /*详情*/
+        dialog: false,
       }
     },
     computed: {
-      ...mapGetters(['token', 'regionDetails'])
+      ...mapGetters(['regionAreaDetails', 'regionAreaUserDetails'])
     },
     filters: {
       formatDate: formatDate
@@ -42,14 +51,26 @@
     methods: {
       //分页action
       handleSizeChange(val){
+        let options = {
+          node_id: this.nodeId,
+          ip_country: data.ip_country,
+          ip_province: data.ip_province,
+          ip_city: data.ip_city,
+          page: val,
+          limit: this.pageSize
+        }
+        this.$store.dispatch('getRegionAreaDetails', options)
       },
       handleCurrentChange(val){
         this.$emit('changePage2', val);
         this.$store.dispatch('getRegionDetails', {
           page: val,
-          limit: 25,
-          region_id: regionId
+          limit: this.pageSize,
+          node_id: this.node - id
         })
+      },
+      areaUser(data){
+        this.$emit('AreaUser', data);
       }
     }
   }

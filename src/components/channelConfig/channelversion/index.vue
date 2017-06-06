@@ -70,7 +70,8 @@
   .el-form-item__content {
     text-align: left;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
 </style>

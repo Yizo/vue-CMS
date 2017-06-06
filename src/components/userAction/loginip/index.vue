@@ -32,6 +32,10 @@
           label="用户IP">
         </el-table-column>
         <el-table-column
+          prop="coord_method"
+          label="解析方式">
+        </el-table-column>
+        <el-table-column
           prop="ip_region"
           label="IP解析">
         </el-table-column>
@@ -106,11 +110,11 @@
 
     },
     mounted(){
-      this.getInfo({limit: 15}).then(res => {
-        this.data = res.data.data.logs;
-        this.currentPage = res.data.data.current_page;
-        this.total = res.data.data.total_count;
-      })
+      /*      this.getInfo({limit: 15}).then(res => {
+       this.data = res.data.data.logs;
+       this.currentPage = res.data.data.current_page;
+       this.total = res.data.data.total_count;
+       })*/
     }
   }
 </script>

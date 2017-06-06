@@ -4,6 +4,11 @@
       <el-breadcrumb-item>失败信息</el-breadcrumb-item>
       <el-breadcrumb-item>登录失败</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <el-row style="text-align: left;margin-top: 20px">
       <div style="display: inline-block">
         <el-date-picker
@@ -112,12 +117,13 @@
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
-  import { mapGetters } from 'vuex'
+  import {mapGetters} from 'vuex'
   export default{
     components: {},
     data(){
       return {
         data: [],
+        chartData: [],
         currentPage: 1,
         total: 0,
         pageSize: 15,
@@ -171,6 +177,12 @@
         this.filter.end = val
       },
       filtration(){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -180,10 +192,22 @@
         this.getInfo(options).then(res => {
           this.data = res.data.data.logs
           this.total = res.data.data.total_count;
+          this.rendering()
+        })
+      },
+      //渲染图表
+      rendering(){
+        this.getChart({
+          limit: this.pageSize,
+          page: 1,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }).then(res => {
+          this.chartData = res.data.data.logs
           //设置数据
-          this.options.series = this.AnalysisJSON(this.data);
+          this.options.series = this.AnalysisJSON(this.chartData);
           //设置X轴
-          this.options.xAxis.categories = this.setXAxis(this.data)
+          this.options.xAxis.categories = this.setXAxis(this.chartData)
           this.$HighCharts.chart('main', this.options);
         })
       },
@@ -274,29 +298,51 @@
           })
         })
       },
+      //获取表格数据
+      getChart(parm){
+        return new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'GET',
+            url: API.loginfail_chart,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
+              resolve(res)
+            }
+          }).catch(function (err) {
+            reject(err)
+          })
+        })
+      },
       handleCurrentChange(val){
-        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+        this.getInfo({
+          limit: this.pageSize,
+          page: val,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }).then(res => {
           this.data = res.data.data.logs
-          this.total = res.data.data.total_count;
         })
       },
       d_handleCurrentChange(val){
-        this.getDetail({type: this.parm.type, stat_at: this.parm.stat_at, limit: 15, page: val}).then(res => {
-          this.d_currentPage = res.data.data.current_page;
+        this.getDetail({
+          limit: this.pageSize,
+          page: val,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }).then(res => {
           this.d_total = res.data.data.total_count,
             this.dialogData = res.data.data.logs;
         })
       }
     },
     mounted(){
-      this.getInfo({limit: 10}).then(res => {
+      this.getInfo({limit: this.pageSize, page: 1, start_at: this.filter.start, end_at: this.filter.end}).then(res => {
         this.data = res.data.data.logs
         this.total = res.data.data.total_count;
-        //设置数据
-        this.options.series = this.AnalysisJSON(this.data);
-        //设置X轴
-        this.options.xAxis.categories = this.setXAxis(this.data)
-        this.$HighCharts.chart('main', this.options);
+        this.rendering();
       })
     }
   }

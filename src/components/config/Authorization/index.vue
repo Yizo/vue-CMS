@@ -215,7 +215,7 @@
             <el-checkbox v-model="roles.node_manage"></el-checkbox>
           </el-col>
           <el-col :span="12">
-            <span class="r_lable">系统配置</span>
+            <span class="r_lable">参数配置</span>
             <el-checkbox v-model="roles.system_setting"></el-checkbox>
           </el-col>
         </el-row>
@@ -303,7 +303,7 @@
             <el-checkbox v-model="roles.node_manage"></el-checkbox>
           </el-col>
           <el-col :span="12">
-            <span class="r_lable">系统配置</span>
+            <span class="r_lable">参数配置</span>
             <el-checkbox v-model="roles.system_setting"></el-checkbox>
           </el-col>
         </el-row>
@@ -330,7 +330,7 @@
     data(){
       return {
         data: [],
-        pageSize: 15,
+        pageSize: 20,
         currentPage: 1,
         totalSize: 0,
         roles: {
@@ -517,14 +517,14 @@
               this.data.splice(this.up_role.index, 1, res.data.data);
               this.$message({
                 showClose: true,
-                message: '添加成功',
+                message: '修改成功',
                 type: 'success'
               });
               this.up_role.visable = false
             } else {
               this.$message({
                 showClose: true,
-                message: '添加失败',
+                message: '修改失败',
                 type: 'error'
               });
             }

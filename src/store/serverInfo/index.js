@@ -10,7 +10,9 @@ const state = {
   dncIpData: {},
   personDetails: {},
   regionDetails: {},
-  regionLineDetails: {}
+  regionLineDetails: {},
+  regionAreaDetails: {},
+  regionAreaUserDetails: {}
 };
 
 export default {

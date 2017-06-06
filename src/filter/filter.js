@@ -37,6 +37,11 @@ export function Timestamp(row) {
 
 export function Time(data) {
   const now = new Date(data * 1000);
+
+  if (!data) {
+    return ''
+  }
+
   var year = now.getFullYear();
   var month = now.getMonth() + 1;
   var date = now.getDate();
@@ -44,19 +49,19 @@ export function Time(data) {
   var minute = now.getMinutes();
   var second = now.getSeconds();
 
-  if (month < 9) {
+  if (month <= 9) {
     month = '0' + month
   }
-  if (date < 9) {
+  if (date <= 9) {
     date = '0' + date
   }
-  if (hour < 9) {
+  if (hour <= 9) {
     hour = '0' + hour
   }
-  if (minute < 9) {
+  if (minute <= 9) {
     minute = '0' + minute
   }
-  if (second < 9) {
+  if (second <= 9) {
     second = '0' + second
   }
 
@@ -66,4 +71,24 @@ export function Time(data) {
 export function transfer(value) {
   let num = value / (1024 * 1024)
   return Math.round(num * 100) / 100
+}
+
+//计算流量
+export function getFlow(flowVlueBytes) {
+  var flow = "";
+  //如果赠送流量小于1MB.则显示为KB
+  if (flowVlueBytes / 1024 < 1024) {
+    flow = (Math.round(flowVlueBytes / 1024) > 0 ? Math.round(flowVlueBytes / 1024) : 0) + 'KB';
+  } else if (flowVlueBytes / 1024 >= 1024 && flowVlueBytes / 1024 / 1024 < 1024) {
+    //如果赠送流量大于1MB且小于1    GB的则显示为MB
+    flow = (Math.round(flowVlueBytes / 1024 / 1024) > 0 ? Math.round(flowVlueBytes / 1024 / 1024) : 0) + 'MB';
+  } else if (flowVlueBytes / 1024 / 1024 >= 1024) {
+    //如果流量大于1Gb
+    var gb_Flow = flowVlueBytes / 1024 / 1024 / 1024;
+    //toFixed(1);四舍五入保留一位小数
+    flow = gb_Flow.toFixed(1) + 'GB';
+  } else {
+    flow = "0KB";
+  }
+  return flow;
 }

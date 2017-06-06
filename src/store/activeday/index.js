@@ -11,7 +11,9 @@ const state = {
   day_data: [],
   day_details_data: [],
   month_data: [],
-  month_details_data: []
+  month_details_data: [],
+  day_chart: [],
+  month_chart: []
 
 }
 

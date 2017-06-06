@@ -129,10 +129,10 @@
             <router-link :to="{name:'c_dynamicip'}" tag="span">动态IP配置</router-link>
           </el-menu-item>
         </el-submenu>
-        <el-menu-item index="4-5"><i class="iconfont icon-canshupeizhi" v-show="roles.system_setting"></i>
+        <el-menu-item index="4-5" v-show="roles.system_setting"><i class="iconfont icon-canshupeizhi"></i>
           <router-link :to="{name:'config'}" tag="span">参数配置</router-link>
         </el-menu-item>
-        <el-menu-item index="4-6"><i class="iconfont icon-qudaopeizhi" v-show="roles.system_enum"></i>
+        <el-menu-item index="4-6" v-show="roles.system_enum"><i class="iconfont icon-qudaopeizhi"></i>
           <router-link :to="{name:'channelversion'}" tag="span">渠道版本配置</router-link>
         </el-menu-item>
       </el-menu-item-group>

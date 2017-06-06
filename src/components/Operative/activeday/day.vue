@@ -34,7 +34,7 @@
         :current-page="get_day.current_page"
         layout="total, prev, pager, next, jumper"
         :total="get_day.total_count"
-        :page-size="pageSize"
+        :page-size="pageSize2"
         class="page">
       </el-pagination>
 
@@ -104,21 +104,24 @@
         credits: false
       },
     }),
+    props: ['filter'],
     computed: {
       ...mapGetters({
         get_day: 'ACTIVEDAY_day_data',
-        get_day_detail: 'ACTIVEDAY_day_details_data'
+        get_day_detail: 'ACTIVEDAY_day_details_data',
+        get_day_chart: 'ACTIVEDAY_day_chart',
       }),
     },
     watch: {
-      get_day(){
+      get_day_chart(){
         this.draw()
-        return this.get_day
+        return this.get_day_chart
       }
     },
     methods: {
       ...mapActions({
         day: 'ACTIVEDAY_DAY',
+        dayChart: 'ACTIVEDAY_DAY_CHART',
         day_details: 'ACTIVEDAY_DAY_DETAILS'
       }),
       //表格数据
@@ -147,13 +150,21 @@
       //绘图
       draw(){
         //设置数据
-        this.options.series = this.AnalysisJSON(this.get_day.logs);
+        this.options.series = this.AnalysisJSON(this.get_day_chart.data.logs);
         //设置X轴
-        this.options.xAxis.categories = this.setXAxis(this.get_day.logs)
+        this.options.xAxis.categories = this.setXAxis(this.get_day_chart.data.logs)
         this.$HighCharts.chart('main', this.options);
       },
       handleCurrentChange(val){
-        this.day({page: val, limit: this.pageSize})
+        let options = {
+          page: val,
+          limit: this.pageSize2,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }
+        this.day(options)
       },
       handleCurrentChange2(val){
         this.day_details({page: val, limit: this.pageSize2, stat_date: this.detail.stat_date})
@@ -166,8 +177,7 @@
 
     },
     mounted(){
-      this.day({limit: this.pageSize})
-      this.draw();
+
     }
   }
 </script>

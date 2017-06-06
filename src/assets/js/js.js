@@ -6,12 +6,13 @@ import axios from "axios";
 
 /*非空检查*/
 export function checkEmpty(data) {
+  let is = true
   for (var key in data) {
     if (data[key] == '') {
-      return false
+      is = false
     }
-    return true
   }
+  return is;
 }
 
 /*数字检查*/
@@ -24,16 +25,35 @@ export function isDigit(value) {
   }
 }
 
+export function year(row) {
+  const now = new Date(row);
+  var year = now.getFullYear();
+  return year;
+}
+
+export function month(row) {
+  const now = new Date(row);
+  var year = now.getFullYear();
+  var month = now.getMonth() + 1;
+  var date = now.getDate();
+
+  if (month <= 9) {
+    month = '0' + month
+  }
+
+  return year + "-" + month;
+}
+
 export function Timestamp(row) {
   const now = new Date(row);
   var year = now.getFullYear();
   var month = now.getMonth() + 1;
   var date = now.getDate();
 
-  if (month < 9) {
+  if (month <= 9) {
     month = '0' + month
   }
-  if (date < 9) {
+  if (date <= 9) {
     date = '0' + date
   }
 
@@ -49,19 +69,19 @@ export function Times(data) {
   var minute = now.getMinutes();
   var second = now.getSeconds();
 
-  if (month < 9) {
+  if (month <= 9) {
     month = '0' + month
   }
-  if (date < 9) {
+  if (date <= 9) {
     date = '0' + date
   }
-  if (hour < 9) {
+  if (hour <= 9) {
     hour = '0' + hour
   }
-  if (minute < 9) {
+  if (minute <= 9) {
     minute = '0' + minute
   }
-  if (second < 9) {
+  if (second <= 9) {
     second = '0' + second
   }
 

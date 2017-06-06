@@ -51,7 +51,7 @@
       <el-table :data="dialogData" border>
         <el-table-column property="username" label="账号"></el-table-column>
         <el-table-column label="当前版本信息">
-          <template scope="scope">{{scope.row.username}}_{{scope.row.app_version}}_{{scope.row.app_version_number}}
+          <template scope="scope">{{scope.row.app_channel}}_{{scope.row.app_version}}_{{scope.row.app_version_number}}
           </template>
         </el-table-column>
         <el-table-column label="时间">

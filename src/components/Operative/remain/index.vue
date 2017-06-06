@@ -4,6 +4,11 @@
       <el-breadcrumb-item>运营行为</el-breadcrumb-item>
       <el-breadcrumb-item>留存</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <!--筛选-->
     <el-row style="text-align: left;margin-top: 20px;position: relative">
       <div style="display: inline-block">
@@ -92,7 +97,7 @@
         <el-table-column
           label="次日留存率">
           <template scope="scope">
-            {{scope.row.second_day_rate}}%
+            {{scope.row.second_day_rate}}
           </template>
         </el-table-column>
         <el-table-column
@@ -104,7 +109,7 @@
         <el-table-column
           label="7日留存率">
           <template scope="scope">
-            {{scope.row.seventh_day_rate}}%
+            {{scope.row.seventh_day_rate}}
           </template>
         </el-table-column>
         <el-table-column
@@ -116,7 +121,7 @@
         <el-table-column
           label="30日留存率">
           <template scope="scope">
-            {{scope.row.thirtieth_day_rate}}%
+            {{scope.row.thirtieth_day_rate}}
           </template>
         </el-table-column>
       </el-table>
@@ -179,6 +184,7 @@
 
 <script>
   import * as API from '../../../api/api'
+  import * as JS from '../../../assets/js/js'
   import {mapActions, mapGetters}  from 'vuex'
   export default{
     data: () => ({
@@ -189,6 +195,7 @@
         channels: '全部渠道'
       },
       data: [],
+      chartData: [],
       pageSize: 10,
       currentPage: 0,
       totalSize: 0,
@@ -236,12 +243,7 @@
       d_totalSize: 0,
     }),
     computed: {
-      ...mapGetters(['versions','initDate']),
-    },
-    watch: {
-      data(){
-        this.draw()
-      }
+      ...mapGetters(['versions', 'initDate']),
     },
     methods: {
       //获取列表信息
@@ -302,8 +304,13 @@
         })
       },
       getData(val){
+        let options = {
+          limit: this.pageSize, page: val, start_at: this.filter.start, end_at: this.filter.end,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels,
+        }
         return new Promise((resolve, reject) => {
-          this.getInfo({page: val, limit: this.pageSize}).then(res => {
+          this.getInfo(options).then(res => {
             let data = res.data.data
             this.currentPage = data.current_page
             this.totalSize = data.total_count
@@ -340,13 +347,42 @@
         }
         return arry
       },
-      //绘图
-      draw(){
-        //设置数据
-        this.options.series = this.AnalysisJSON(this.data);
-        //设置X轴
-        this.options.xAxis.categories = this.setXAxis(this.data)
-        this.$HighCharts.chart('main', this.options);
+      //渲染图表
+      rendering(){
+        let options = {
+          page: 1,
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }
+        this.getChart(options).then(res => {
+          this.chartData = res.data.data.logs
+          //设置数据
+          this.options.series = this.AnalysisJSON(this.chartData);
+          //设置X轴
+          this.options.xAxis.categories = this.setXAxis(this.chartData)
+          this.$HighCharts.chart('main', this.options);
+        })
+      },
+      //获取图表数据
+      getChart(parm){
+        return new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'GET',
+            url: API.remain_chart,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
+              resolve(res)
+            }
+          }).catch(function (err) {
+            reject(err)
+          })
+        })
       },
       //筛选
       start_date(val){
@@ -362,6 +398,12 @@
         if (this.filter.versions == '全部版本') {
           this.filter.versions = ''
         }
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -375,6 +417,7 @@
           this.currentPage = data.current_page
           this.totalSize = data.total_count
           this.data = data.logs;
+          this.rendering()
         })
       },
       handleSizeChange(val){
@@ -422,15 +465,15 @@
           page: 1,
           limit: this.d_pageSize,
           stat_date: data.stat_date,
-          app_version: this.filter.versions,
-          app_channel: this.filter.channels,
+          app_version: this.filter.versions || null,
+          app_channel: this.filter.channels || null,
         }
         this.dialog2.visable = true
         if (id === 2) {
           this.dialog2.name = '次日留存用户'
           options.stat_type = 1
           this.getRemain(options).then(res => {
-            this.dialog2.data = res.data.data.users
+            this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
             this.d_totalSize = res.data.data.total_count
           })
@@ -438,7 +481,7 @@
           this.dialog2.name = '7日留存用户'
           options.stat_type = 7
           this.getRemain(options).then(res => {
-            this.dialog2.data = res.data.data.users
+            this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
             this.d_totalSize = res.data.data.total_count
           })
@@ -446,7 +489,7 @@
           this.dialog2.name = '30日留存用户'
           options.stat_type = 30
           this.getRemain(options).then(res => {
-            this.dialog2.data = res.data.data.users
+            this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
             this.d_totalSize = res.data.data.total_count
           })
@@ -457,7 +500,7 @@
       this.filter.start = this.initDate.start;
       this.filter.end = this.initDate.end;
       this.getData(1).then(res => {
-        this.draw()
+        this.rendering()
       })
     }
   }
@@ -484,10 +527,12 @@
     text-align: right;
     margin-top: 20px;
   }
-  .el-select{
+
+  .el-select {
     width: 200px;
   }
-  .el-input{
+
+  .el-input {
     width: 200px;
   }
 </style>

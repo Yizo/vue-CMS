@@ -4,6 +4,11 @@
       <el-breadcrumb-item>用户行为</el-breadcrumb-item>
       <el-breadcrumb-item>页面点击</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <el-row style="text-align: left;margin-top: 20px">
       <div style="display: inline-block">
         <el-date-picker
@@ -112,7 +117,8 @@
 
 <script>
   import * as API from '../../../api/api'
-  import { mapGetters } from 'vuex'
+  import * as JS from '../../../assets/js/js'
+  import {mapGetters} from 'vuex'
   export default{
     components: {},
     props: {
@@ -286,6 +292,12 @@
         this.filter.end = val
       },
       filtration(){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
         let options = {
           page: 1,
           limit: this.pageSize,
@@ -376,7 +388,13 @@
 
     },
     mounted(){
-      this.getData().then(res => {
+      let options = {
+        page: 1,
+        limit: this.pageSize,
+        start_at: this.filter.start,
+        end_at: this.filter.end
+      }
+      this.getData(options).then(res => {
         this.draw()
       })
 
