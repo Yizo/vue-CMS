@@ -14,5 +14,13 @@ export default {
   //登录请求是否成功
   [type.LOGIN_ISLOGINREQUEST](state, param){
     state.LoginStatus.success = param;
+  },
+  //更新版本和渠道
+  upChannerVerion (state) {
+    let s = JSON.parse(window.sessionStorage.getItem('loginInfo'));
+    s.app_channels.unshift({name: "全部渠道"});
+    s.app_versions.unshift({name: "全部版本"});
+    state.channerVerion = s
   }
+
 }

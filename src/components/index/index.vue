@@ -28,9 +28,6 @@
         window.sessionStorage.removeItem('loginInfo');
         this.$router.push({path: '/login'})
       }
-    },
-    mounted(){
-
     }
   }
 </script>

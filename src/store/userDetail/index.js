@@ -38,6 +38,9 @@ const state = {
   UD_profile: {
     data: []
   },
+  UD_consumption_logs: {
+    data: []
+  }
 
 }
 

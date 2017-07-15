@@ -71,7 +71,7 @@
     },
     mounted(){
       this.getInfo().then(res => {
-        console.log(res)
+
       })
     },
     methods: {},

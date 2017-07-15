@@ -1,232 +1,44 @@
 <template>
-  <div class="serverInfo">
+  <div class="serverdetailed">
     <el-breadcrumb separator="/" class="breadcrumb">
       <el-breadcrumb-item>服务器信息</el-breadcrumb-item>
-      <el-breadcrumb-item>服务器详情信息表</el-breadcrumb-item>
+      <el-breadcrumb-item>服务器信息</el-breadcrumb-item>
     </el-breadcrumb>
     <el-alert
       title="数据说明"
       type="info"
       description="列表数据每10分钟更新一次" style="margin-top: 10px;text-align: left">
     </el-alert>
-    <div class="warp">
-      <template>
-        <el-table
-          id="serverdetailed"
-          :data="data"
-          border
-          :row-class-name="tableRowClassName"
-          style="width: 100%">
-          <el-table-column
-            prop="name"
-            column-key
-            label="服务器名称">
-          </el-table-column>
-          <el-table-column
-            prop="node_region_name"
-            label="线路">
-          </el-table-column>
-          <el-table-column
-            prop="max_connections_count"
-            label="最大连接人数">
-          </el-table-column>
-          <el-table-column
-            prop="connections_count"
-            label="当前链接人数">
-          </el-table-column>
-          <el-table-column
-            prop="connections_percent"
-            label="占比">
-          </el-table-column>
-          <el-table-column
-            label="线路分配">
-            <template scope="scope">
-              <p>{{isEnabled(scope.row.is_enabled)}}</p>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="带宽占比">
-            <template scope="scope">
-              <span v-show="scope.row.status">{{scope.row.bandwidth_percent}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="CPU">
-            <template scope="scope">
-              <span v-show="scope.row.status">{{scope.row.cpu_percent}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="内存">
-            <template scope="scope">
-              <span v-show="scope.row.status">{{scope.row.memory_percent}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="总流量">
-            <template scope="scope">
-              <span v-show="scope.row.status">{{scope.row.transfer | transfer}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="上行速度(kb/s)">
-            <template scope="scope">
-              <span v-show="scope.row.status">{{scope.row.network_speed_up}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="下行速度(kb/s)">
-            <template scope="scope">
-              <span v-show="scope.row.status">{{scope.row.network_speed_down}}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </template>
-    </div>
-    <!--分页-->
-    <el-pagination
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-size="25"
-      layout="total, prev, pager, next, jumper"
-      :total="totalSize"
-      class="page">
-    </el-pagination>
+    <el-tabs v-model="activeName">
+      <el-tab-pane label="当前记录" name="first">
+        <current></current>
+      </el-tab-pane>
+      <el-tab-pane label="历史记录" name="second">
+        <history></history>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
-  import * as API from '../../../api/api'
+  import current from './current.vue'
+  import history from './history.vue'
   export default{
-    components: {},
     data(){
       return {
-        data: [],
-        currentPage: 1,
-        totalSize: 0,
-        pageSize: 15
+        activeName: 'first'
       }
     },
-    methods: {
-      isEnabled(data){
-        return data ? "分配" : "未分配"
-      },
-      tableRowClassName(row, index) {
-        if (row.class == 'b') {
-          return 'b'
-        } else {
-          return 'a'
-        }
-      },
-      getInfo(parm){
-        return new Promise((resolve, reject) => {
-          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
-          this.$http({
-            method: 'GET',
-            url: API.server_details_info,
-            headers: {'Authorization': token},
-            params: parm
-          }).then(function (res) {
-            if (res.status == 200) {
-              resolve(res)
-            }
-          }).catch(function (err) {
-            reject(err)
-          })
-        })
-      },
-      list(array){
-        var xx = array
-        for (var i = 0; i < xx.length - 1; i++) {
-          eval("xx[0].status=" + true);
-          if (xx[i].url == xx[i + 1].url) {
-            eval("xx[i+1].status=" + false);
-
-          } else {
-            eval("xx[i+1].status=" + true);
-          }
-          if (xx[i]) {
-          }
-        }
-
-        var num = 0;
-        var list = [];
-        for (var i = 1; i < xx.length; i++) {
-          if (xx[i - 1].url == xx[i].url) {
-            num++;
-          } else {
-            list.push(num)
-            num = 0
-          }
-        }
-
-        xx[0].class = "b"
-        for (var i = 1; i < xx.length; i++) {
-          xx[i].class = "a"
-        }
-        [1, 2, 1]
-        var mm = 0
-        for (var i = 0; i < list.length; i++) {
-          mm += (list[i] + 1)
-          if ((i % 2) == "0") {
-            for (var j = mm - (list[i] + 1); j < mm; j++) {
-              xx[j].class = "b"
-            }
-          }
-        }
-
-        return array
-      },
-      /*分页*/
-      handleCurrentChange(val) {
-        this.currentPage = val;
-        this.getInfo({page: val}).then(res => {
-          this.data = this.list(res.data.data.nodes)
-          this.totalSize = res.data.data.total_count
-          this.currentPage = res.data.data.current_page
-        })
-      }
-    },
+    components: {current, history},
+    methods: {},
     mounted(){
-
-      this.getInfo().then(res => {
-        this.data = this.list(res.data.data.nodes)
-        this.totalSize = res.data.data.total_count
-        this.currentPage = res.data.data.current_page
-      })
     }
   }
 </script>
 
 <style scoped>
-  .serverInfo {
+  .serverdetailed {
     padding: 10px;
-  }
-
-  .warp {
-    text-align: left;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #D3DCE6;
-    margin-top: 20px;
-  }
-
-  .page {
-    text-align: right;
-    margin-top: 20px;
-  }
-
-  .el-table .cell {
-    color: #333;
   }
 </style>
 
-<style>
-  #serverdetailed .el-table__body-wrapper .el-table__body tr[class=b] {
-    background-color: #fff;
-  }
-
-  #serverdetailed .el-table__body-wrapper .el-table__body tr[class=a] {
-    background-color: #F9FAFC;
-  }
-</style>

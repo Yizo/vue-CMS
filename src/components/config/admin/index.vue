@@ -64,7 +64,7 @@
       class="page">
     </el-pagination>
     <!--新增管理员-->
-    <el-dialog title="新增管理员" v-model="add.visable" size="tiny" @close="closeBlcok">
+    <el-dialog title="新增管理员" v-model="add.visable" @close="closeBlcok" class="filex_dialog">
       <el-form :model="add.form" :rules="add_rules" ref="add" label-position="left" label-width="180px">
         <el-form-item label="管理员用户名" prop="username">
           <el-input v-model="add.form.username" auto-complete="off"></el-input>
@@ -92,7 +92,7 @@
       </div>
     </el-dialog>
     <!--修改权限组-->
-    <el-dialog title="修改权限组" v-model="up_role.visable" size="tiny">
+    <el-dialog title="修改权限组" v-model="up_role.visable" class="filex_dialog">
       <el-form label-position="left" label-width="150px" class="demo-ruleForm">
         <el-form-item label="管理员用户名" prop="username">
           <el-input v-model="up_role.username" auto-complete="off" disabled style="width:217px"></el-input>
@@ -114,7 +114,7 @@
       </div>
     </el-dialog>
     <!--修改密码-->
-    <el-dialog title="修改密码" v-model="pw_visable" size="tiny" @close="closeBlcok_up">
+    <el-dialog title="修改密码" v-model="pw_visable" @close="closeBlcok_up" class="filex_dialog">
       <el-form label-position="left" label-width="150px" :model="pw" :rules="up_pass" ref="up">
         <el-form-item label="管理员旧密码" prop="old_password">
           <el-input v-model="pw.old_password" auto-complete="off" style="width:217px"></el-input>

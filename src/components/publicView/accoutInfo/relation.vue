@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-bottom: 10px">
     <el-table
       :data="data.devices"
       style="width: 100%">
@@ -17,14 +17,14 @@
       </el-table-column>
     </el-table>
     <!--分页-->
-    <el-pagination
-      @current-change="handleSizeChange"
-      :current-page="data.current_page"
-      :page-size="pageSize"
-      layout="total, prev, pager, next, jumper"
-      :total="data.total_count"
-      class="page">
-    </el-pagination>
+    <!--<el-pagination-->
+    <!--@current-change="handleSizeChange"-->
+    <!--:current-page="data.current_page"-->
+    <!--:page-size="pageSize"-->
+    <!--layout="total, prev, pager, next, jumper"-->
+    <!--:total="data.total_count"-->
+    <!--class="page">-->
+    <!--</el-pagination>-->
   </div>
 </template>
 

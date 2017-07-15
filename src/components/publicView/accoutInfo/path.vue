@@ -17,7 +17,7 @@
         label="开启次数">
       </el-table-column>
       <el-table-column
-        prop="interface_id"
+        prop="step"
         label="操作步骤">
       </el-table-column>
       <el-table-column
@@ -51,9 +51,14 @@
     computed: {
       ...mapGetters({
         data: 'UD_operation_logs',
-        current: 'UD_current'
-      })
+        current: 'UD_current',
+        initDate: 'initDate'
+      }),
+      filter(){
+        return this.initDate
+      },
     },
+
     methods: {
       ...mapActions({
         UD_operation_logs: "UD_operation_logs",
@@ -73,7 +78,8 @@
       },
     },
     mounted(){
-
+      this.time = this.filter.end
+      this.data.current_page = 1
     }
   }
 </script>

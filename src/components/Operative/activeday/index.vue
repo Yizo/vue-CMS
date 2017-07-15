@@ -24,19 +24,19 @@
           placeholder="结束年月"
           @change="end_date">
         </el-date-picker>
-        <el-select v-model="filter.versions" placeholder="版本筛选">
-          <el-option
-            v-for="(item,index) in versions.app_versions"
-            :label="item.name"
-            :value="item.name" :key="index">
-          </el-option>
-        </el-select>
         <el-select v-model="filter.channels" placeholder="切换渠道">
           <el-option
             v-for="(item,index) in versions.app_channels"
             :label="item.name"
             :value="item.name" :key="index"
           >
+          </el-option>
+        </el-select>
+        <el-select v-model="filter.versions" placeholder="版本筛选">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
           </el-option>
         </el-select>
       </div>
@@ -90,12 +90,6 @@
         this.filter.end = val
       },
       filtration(){
-        if (this.filter.channels == '全部渠道') {
-          this.filter.channels = ''
-        }
-        if (this.filter.versions == '全部版本') {
-          this.filter.versions = ''
-        }
         if (typeof this.filter.start == 'object') {
           this.filter.start = JS.month(this.filter.start)
         }
@@ -109,6 +103,15 @@
           app_channel: this.filter.channels,
           start_at: this.filter.start,
           end_at: this.filter.end
+        }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
         }
         this.day(options);
         this.month(options);

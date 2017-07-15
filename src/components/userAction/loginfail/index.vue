@@ -24,6 +24,25 @@
           @change="end_date">
         </el-date-picker>
       </div>
+      <template>
+        <el-select v-model="filter2.channels" placeholder="切换渠道" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_channels"
+            :label="item.name"
+            :value="item.name" :key="index"
+          >
+          </el-option>
+        </el-select>
+      </template>
+      <template>
+        <el-select v-model="filter2.versions" placeholder="版本筛选" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
+          </el-option>
+        </el-select>
+      </template>
       <el-button style="margin-left: 40px" @click="filtration">筛选</el-button>
     </el-row>
 
@@ -94,6 +113,10 @@
           prop="username"
           label="账号名"
           width="180px">
+          <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="device_uuid"
@@ -102,7 +125,7 @@
       </el-table>
       <div slot="footer">
         <el-pagination
-          @current-change="d_handleCurrentChange"
+          @current-change="detail_Paging"
           :current-page="d_currentPage"
           :page-size="pageSize"
           :total="d_total"
@@ -111,15 +134,20 @@
         </el-pagination>
       </div>
     </el-dialog>
+
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default{
-    components: {},
+    components: {
+      userDetail
+    },
     data(){
       return {
         data: [],
@@ -161,15 +189,34 @@
           series: [],
           credits: false
         },
+        filter2: {
+          versions: '',
+          channels: '',
+        },
+        dialogVisible: false,
+        username: '姓名'
       }
     },
     computed: {
-      ...mapGetters(['initDate']),
+      ...mapGetters(['initDate', 'versions']),
       filter(){
         return this.initDate
       }
     },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       start_date(val){
         this.filter.start = val
       },
@@ -187,7 +234,18 @@
           page: 1,
           limit: this.pageSize,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
+        }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
         }
         this.getInfo(options).then(res => {
           this.data = res.data.data.logs
@@ -201,7 +259,9 @@
           limit: this.pageSize,
           page: 1,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         }).then(res => {
           this.chartData = res.data.data.logs
           //设置数据
@@ -254,6 +314,8 @@
         let options = {
           type: parm.type,
           stat_at: parm.stat_at,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels,
           page: 1,
           limit: 15
         }
@@ -321,17 +383,21 @@
           limit: this.pageSize,
           page: val,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         }).then(res => {
           this.data = res.data.data.logs
         })
       },
-      d_handleCurrentChange(val){
+      detail_Paging(val){
         this.getDetail({
           limit: this.pageSize,
           page: val,
-          start_at: this.filter.start,
-          end_at: this.filter.end
+          type: this.parm.type,
+          stat_at: this.parm.stat_at,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         }).then(res => {
           this.d_total = res.data.data.total_count,
             this.dialogData = res.data.data.logs;
@@ -339,7 +405,14 @@
       }
     },
     mounted(){
-      this.getInfo({limit: this.pageSize, page: 1, start_at: this.filter.start, end_at: this.filter.end}).then(res => {
+      this.getInfo({
+        limit: this.pageSize,
+        page: 1,
+        start_at: this.filter.start,
+        end_at: this.filter.end,
+        app_version: this.filter2.versions,
+        app_channel: this.filter2.channels
+      }).then(res => {
         this.data = res.data.data.logs
         this.total = res.data.data.total_count;
         this.rendering();

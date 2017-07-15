@@ -29,6 +29,15 @@
             label="优先级">
           </el-table-column>
           <el-table-column
+            label="是否启用">
+            <template scope="scope">
+              <el-tag
+                :type="scope.row.is_enabled ? 'success' : 'primary'"
+                close-transition>{{scope.row.is_enabled ? '是': '否'}}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
             label="操作功能">
             <template scope="scope">
             <span>
@@ -41,7 +50,7 @@
       </template>
     </div>
     <!--新增-->
-    <el-dialog :title="pageInfo.name" v-model="dialogVisible" size="tiny" @close="closeBlock">
+    <el-dialog :title="pageInfo.name" v-model="dialogVisible" @close="closeBlock" class="filex_dialog">
       <el-form :model="form" label-width="120px" label-position="left" :rules="rules" ref="dynamicip">
         <el-form-item label="URL" prop="url">
           <el-input v-model="form.url" auto-complete="off"></el-input>
@@ -337,7 +346,6 @@
           type: 'info'
         }).then(() => {
           this.pushInfo().then(res => {
-            console.log(res)
             if (res.data.data.result.http_code == 200) {
               this.$message({
                 type: 'success',

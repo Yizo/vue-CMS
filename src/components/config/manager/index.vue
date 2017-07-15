@@ -10,7 +10,7 @@
           :data="data"
           style="width: 100%">
           <el-table-column
-            prop="admin_id"
+            prop="id"
             label="编号">
           </el-table-column>
           <el-table-column

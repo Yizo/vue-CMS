@@ -49,7 +49,7 @@
             <th style="padding: 10px 0">暂无数据</th>
           </tr>
           <tr v-else v-for="item in get_day_detail.logs">
-            <th>{{item.username}}</th>
+            <th><span class="dialog_num" @click="userInfo(item)">{{item.username}}</span></th>
           </tr>
           </tbody>
         </table>
@@ -65,11 +65,13 @@
         </div>
       </el-dialog>
     </div>
+    <user-detail :visab="user_dialog2" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import {mapActions, mapGetters}  from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default{
     data: () => ({
       pageSize: 10,
@@ -103,13 +105,19 @@
         series: [],
         credits: false
       },
+      user_dialog2: false,
+      username: '姓名'
     }),
+    components: {
+      userDetail
+    },
     props: ['filter'],
     computed: {
       ...mapGetters({
         get_day: 'ACTIVEDAY_day_data',
         get_day_detail: 'ACTIVEDAY_day_details_data',
         get_day_chart: 'ACTIVEDAY_day_chart',
+        ud_base: 'UD_base_info',
       }),
     },
     watch: {
@@ -124,6 +132,15 @@
         dayChart: 'ACTIVEDAY_DAY_CHART',
         day_details: 'ACTIVEDAY_DAY_DETAILS'
       }),
+      cdialog(){
+        this.user_dialog2 = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.user_dialog2 = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       //表格数据
       AnalysisJSON(parm) {
         var result = []
@@ -170,9 +187,16 @@
         this.day_details({page: val, limit: this.pageSize2, stat_date: this.detail.stat_date})
       },
       num(data){
+        let options = {
+          page: 1,
+          limit: this.pageSize2,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels,
+          stat_date: data.stat_date
+        }
         this.detail = data
         this.dialogVisible = true
-        this.day_details({limit: this.pageSize2, stat_date: data.stat_date})
+        this.day_details(options)
       },
 
     },

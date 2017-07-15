@@ -42,7 +42,6 @@
         } else {
           this.show = true
         }
-        console.log(val)
       }
     },
     beforeMount(){

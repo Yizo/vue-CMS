@@ -7,5 +7,5 @@ export default {
   payInfo_pay_chart: (state) => state.payChart,
   ff_data: (state) => state.ff_data,
   pay_details_data: (state) => state.pay_details_data,
-  summary_data: (state) => state.summary_data.data,
+  summary_data: (state) => state.summary_data,
 }

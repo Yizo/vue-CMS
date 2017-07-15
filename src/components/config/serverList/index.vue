@@ -94,12 +94,14 @@
             <span>{{scope.row.is_domestic?'国内':'国外'}}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="启用"
+          label="是否启用"
           property="is_enabled">
           <template scope="scope">
-            <span>{{scope.row.is_enabled?'是':'否'}}</span>
+            <el-tag
+              :type="scope.row.is_enabled ? 'success' : 'primary'"
+              close-transition>{{scope.row.is_enabled ? '是': '否'}}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -131,8 +133,11 @@
       </div>
     </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny" @close="closeBlcok">
-      <el-form :model="form" label-position="left" label-width="150px" :rules="rules" ref="serverlist">
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" @close="closeBlcok" class="filex_dialog">
+      <el-form :model="form" label-position="right" label-width="150px" :rules="rules" ref="serverlist">
+        <el-form-item label="线路编号" prop="id" class="dot_tips">
+          <el-input v-model="form.id" auto-complete="off" class="dot_tips" :disabled="dialogTitle=='修改'"></el-input>
+        </el-form-item>
         <el-form-item label="服务器类型" prop="node_type_id">
           <template>
             <el-select v-model="form.node_type_id" placeholder="请选择" class="dot_tips">
@@ -250,6 +255,17 @@
               callback()
             }
           }, 1000);
+        }, numberId = (rule, value, callback) => {
+          if (!value) {
+            return callback(new Error('线路编号不能为空'));
+          }
+          setTimeout(() => {
+            if (/^\d+$/.test(String(value)) == false) {
+              callback(new Error('请输入数字'));
+            } else {
+              callback()
+            }
+          }, 1000);
         };
       return {
         currentPage: 1,
@@ -259,6 +275,7 @@
         formLabelWidth: '128px',
         form_id: 0,
         form: {
+          id: 0,
           node_type_id: '',
           node_region_id: '',
           name: '',
@@ -276,6 +293,7 @@
         dialogFormVisible: false,
         currentRow: null,
         rules: {
+          id: [{validator: numberId, trigger: 'blur'}],
           node_type_id: {type: 'number', required: true, message: '服务器类型不能为空', trigger: 'blur'},
           node_region_id: {type: 'number', required: true, message: '所属地域不能为空', trigger: 'blur'},
           name: {required: true, message: '线路名称不能为空', trigger: 'blur'},
@@ -334,9 +352,9 @@
         }
       },
       handleEdit(index, row){
-        console.log(row)
         this.form_id = row.id;
         this.form = {
+          id: row.id,
           node_type_id: row.node_type_id,
           node_region_id: row.region_id,
           name: row.name,
@@ -531,7 +549,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   #serverList {
     padding: 10px;
   }

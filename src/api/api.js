@@ -2,13 +2,35 @@
  * Created by admin on 2017/3/28.
  */
 /*开发服*/
-/*export const url = 'url'*/
+/*export const url = ''*/
+
+export const phpUrl = ''
+
+/*测试服*/
+export const url = ''
+/*正式服*/
+/*export const url = ''*/
 /*登录接口:成功则返回token*/
 export const login = url + '/api/manage/v1/auth'
+
+/*渠道版本配置 - 分组列表*/
+export const group_index = url + '/api/manage/v1/system_enums/group_index'
+
+/*官网下载统计*/
+/*获取访问总量和下载总量*/
+export const website_sum = phpUrl + '/baas/v3/limaoservice/getWebStatSum'
+
+/*按日期获取分页用户访问列表*/
+export const website_list = phpUrl + '/baas/v3/limaoservice/getAccessPageListByDate'
+
+/*获取下载量列表*/
+export const website_download_list = phpUrl + '/baas/v3/limaoservice/getDownloadList'
 
 /*users：用户基础信息*/
 /*用户列表*/
 export const base_list = url + '/api/manage/v1/users/base_list'
+/*批量加钻*/
+export const batch_diamond = url + '/api/manage/v1/users/batch_reward_coins'
 /*账号详情-基础信息*/
 export const u_base_info = url + '/api/manage/v1/user_details/{id}/base_info'
 /*账号详情-连接请求*/
@@ -23,9 +45,10 @@ export const u_access_logs = url + '/api/manage/v1/user_details/{id}/access_logs
 export const u_transaction_logs = url + '/api/manage/v1/user_details/{id}/transaction_logs'
 /*账号详情-信息管理*/
 export const u_profile = url + '/api/manage/v1/user_details/{id}/profile'
+/*账号详情-消费信息*/
+export const u_consumption_logs = url + '/api/manage/v1/user_details/{id}/consumption_logs'
 /*账号详情-修改信息管理*/
 export const u_up_profile = url + '/api/manage/v1/user_details/{id}/update_profile'
-
 
 /*硬件统计*/
 export const hardware_stat = url + '/api/manage/v1/users/hardware_stat'
@@ -137,8 +160,10 @@ export const t_users_count_collects = url + '/api/manage/v1/transaction_logs/use
 export const transaction_logs_chart = url + '/api/manage/v1/transaction_logs/details_chart';
 /*充值详情*/
 export const transaction_logs_details = url + '/api/manage/v1/transaction_logs/details';
-/*充值金额信息详情-充值人数信息详情*/
+/*充值金额信息详情*/
 export const t_recharge_amount_details = url + '/api/manage/v1/transaction_logs/recharge_amount_details';
+/*充值人数信息详情*/
+export const t_recharge_user_details = url + '/api/manage/v1/transaction_logs/recharge_user_details';
 /*消费钻石信息详情*/
 export const t_consume_coins_details = url + '/api/manage/v1/transaction_logs/consume_coins_details';
 /*充值金额汇总/消费钻石汇总/充值人数汇总*/
@@ -146,6 +171,8 @@ export const consume_coins_details = url + '/api/manage/v1/transaction_logs/coll
 
 /*充值记录*/
 export const recharge_list_get = url + '/api/manage/v1/transaction_logs';
+/*充值记录-支付方式统计*/
+export const recharge_payment_method_collects = url + '/api/manage/v1/transaction_logs/payment_method_collects';
 
 /*新增用户*/
 /*日新增用户-列表*/
@@ -194,6 +221,22 @@ export const online_detail_get = url + '/api/manage/v1/nodes/online_details';
 export const server_region_details = url + '/api/manage/v1/nodes/region_details';
 /*当前在线人数-地域连接人数详情 - 在线人数详情*/
 export const server_region_user_details = url + '/api/manage/v1/nodes/region_user_details';
+/*当前在线人数-历史记录*/
+export const server_online_users_stat = url + '/api/manage/v1/nodes/online_users_stat';
+/*当前在线人数-历史记录-图表*/
+export const server_online_users_stat_chart = url + '/api/manage/v1/nodes/online_users_stat_chart';
+/*当前在线人数-历史记录-日期详情*/
+export const server_online_users_stat_details = url + '/api/manage/v1/nodes/online_users_stat_details';
+/*当前在线人数-历史记录-总计在线详情*/
+export const server_online_users_stat_second_details = url + '/api/manage/v1/nodes/online_users_stat_second_details';
+/*服务器信息-历史记录/列表*/
+export const server_proxy_list = url + '/api/manage/v1/nodes/proxy_server_status_stat';
+/*服务器信息-图表*/
+export const server_proxy_char = url + '/api/manage/v1/nodes/proxy_server_status_stat_chart';
+/*服务器信息-日期详情*/
+export const server_proxy_details = url + '/api/manage/v1/nodes/proxy_server_status_stat_details';
+
+
 /*服务器详情信息表*/
 export const server_details_info = url + '/api/manage/v1/nodes/details'
 /*动态IP状态*/
@@ -202,12 +245,20 @@ export const dynamic_status = url + '/api/manage/v1/dynamic_servers/status';
 /*详情*/
 export const dynamic_status_details = url + '/api/manage/v1/dynamic_servers/{id}/status_details';
 
+/*登录IP-地域分析*/
+export const loginip_region_stat = url + '/api/manage/v1/user_signin_logs/region_stat'
+/*登录IP-时间段分析*/
+export const loginip_period_stat = url + '/api/manage/v1/user_signin_logs/period_stat'
+/*登录IP-时间段分析*/
+export const loginip_period_stat_char = url + '/api/manage/v1/user_signin_logs/period_stat_chart'
 /*登录IP*/
 export const loginip = url + '/api/manage/v1/user_signin_logs'
 
 /*去向IP*/
 /*去向IP列表*/
 export const dstip_list = url + '/api/manage/v1/user_connection_logs'
+/*域名描述配置 - 快捷更新*/
+export const dstip_quick_update = url + '/api/manage/v1/domain_enums/quick_update'
 /*去向IP-地域分析详情*/
 //查看每个国家访问指定域名的人数
 export const dstip_domain_country_details = url + '/api/manage/v1/user_connection_logs/domain_country_details'
@@ -255,6 +306,12 @@ export const server_list_update = url + '/api/manage/v1/nodes/{id}';
 export const system_settings = url + '/api/manage/v1/system_settings'
 /*删除-更新*/
 export const system_settings_up = url + '/api/manage/v1/system_settings/{id}'
+/*系统参数配置*/
+/*列表*/
+export const system_service = url + '/api/manage/v1/service_settings'
+/*更新*/
+export const system_service_up = url + '/api/manage/v1/service_settings/update_multiple'
+
 
 /*权限组管理*/
 /*管理权限组管理-列表-创建*/
@@ -263,6 +320,9 @@ export const admin_roles = url + '/api/manage/v1/admin_roles'
 export const admin_roles_up = url + '/api/manage/v1/admin_roles/{id}'
 /*管理员操作日志*/
 export const operation_logs = url + '/api/manage/v1/admins/operation_logs'
+/*管理员钻石操作日志*/
+export const coin_operation_logs = url + '/api/manage/v1/admins/coin_operation_logs'
+
 
 /*管理员管理*/
 /*管理员管理-列表-创建*/
@@ -271,3 +331,16 @@ export const admins = url + '/api/manage/v1/admins'
 export const admins_disable = url + '/api/manage/v1/admins/{id}/disable'
 /*管理员管理-更新*/
 export const admins_up = url + '/api/manage/v1/admins/{id}'
+
+/*帮助问答*/
+/*列表*/
+export const help_list = url + '/api/manage/v1/help_manuals'
+/*创建*/
+export const help_create = url + '/api/manage/v1/help_manuals'
+/*删除*/
+export const help_del = url + '/api/manage/v1/help_manuals/{id}'
+/*更新*/
+export const help_up = url + '/api/manage/v1/help_manuals/{id}'
+
+/*客户端去向日志*/
+export const client_connection_logs = url + '/api/manage/v1/client_connection_logs'

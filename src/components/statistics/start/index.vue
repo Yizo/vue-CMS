@@ -12,17 +12,8 @@
       <el-alert
         title="数据说明"
         type="info"
-        description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
+        description="本页面的统计数字为每天凌晨统计一次,当天产生的新数据将于第二天凌晨统计，但由于用户状态的特殊性，点击数量之后的详情是实时的。" style="margin-bottom: 10px">
       </el-alert>
-      <template>
-        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
-          <el-option
-            v-for="(item,index) in versions.app_versions"
-            :label="item.name"
-            :value="item.name" :key="index">
-          </el-option>
-        </el-select>
-      </template>
       <template>
         <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange">
           <el-option
@@ -30,6 +21,15 @@
             :label="item.name"
             :value="item.name" :key="index"
           >
+          </el-option>
+        </el-select>
+      </template>
+      <template>
+        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
           </el-option>
         </el-select>
       </template>
@@ -53,13 +53,13 @@
             <tr>
               <td>正常</td>
               <td>{{tableData[0]?tableData[0].total:0}}</td>
-              <td>{{tableData[0]?tableData[0].percent:0}}</td>
+              <td>{{tableData[0]?tableData[0].percent:0}}%</td>
             </tr>
             <tr>
               <td>封号</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
                         @click="details">{{tableData[1]?tableData[1].total:0}}</span></td>
-              <td>{{tableData[1]?tableData[1].percent:0}}</td>
+              <td>{{tableData[1]?tableData[1].percent:0}}%</td>
             </tr>
             </tbody>
           </table>
@@ -68,8 +68,18 @@
 
       <!--数量弹窗-->
       <el-dialog v-model="dialogTableVisible" :title="pageInfo.is.is_enabled">
+        <el-alert
+          title="数据说明"
+          type="info"
+          description="封号详情的数据是实时的，与封号数量对应不上属正常情况。" style="margin-bottom: 10px">
+        </el-alert>
         <el-table :data="dialogData" style="text-align: center">
-          <el-table-column property="username" label="被封账号" width="150"></el-table-column>
+          <el-table-column label="被封账号" width="150">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column property="admin_username" label="封号人"></el-table-column>
           <el-table-column label="封号时间" width="200">
             <template scope="scope">
@@ -91,11 +101,14 @@
 
     </div>
 
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
+
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
@@ -110,13 +123,17 @@
           title: {
             text: null
           },
+          tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
           plotOptions: {
             pie: {
               allowPointSelect: true,
               cursor: 'pointer',
               dataLabels: {
                 enabled: true,
-              }
+              },
+              showInLegend: true
             }
           },
           series: [{
@@ -142,7 +159,8 @@
           page: '',
           device_model: ''
         },
-
+        dialogVisible: false,
+        username: '姓名',
         /*分页*/
         val: {},
         currentPage: 1,
@@ -154,25 +172,21 @@
     computed: {
       ...mapGetters(['versions']),
     },
+    components: {
+      userDetail
+    },
     methods: {
-
-      //时间戳
-      Timestamp(row){
-
-        if (row) {
-          const now = new Date(row * 1000);
-          var year = now.getFullYear();
-          var month = now.getMonth() + 1;
-          var date = now.getDate();
-          var hour = now.getHours();
-          var minute = now.getMinutes();
-          var second = now.getSeconds();
-
-          return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
-        } else {
-          return false
-        }
-
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
       },
       //图表数据转为数组
       line(json){
@@ -190,13 +204,6 @@
 
       /*筛选*/
       valueChange(){
-        if (this.filter.channels == '全部渠道') {
-          this.filter.channels = ''
-        }
-        if (this.filter.versions == '全部版本') {
-          this.filter.versions = ''
-        }
-
         this.getInfo({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
@@ -237,8 +244,10 @@
         this.dialogTableVisible = true;
         var options = {
           page: 1,
-          limit: 15,
-          is_enabled: false
+          limit: this.pageSize,
+          is_enabled: false,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.getDetails(options).then(res => {
           if (res.status == 200) {
@@ -271,7 +280,10 @@
       /*分页*/
       handleCurrentChange(val){
         this.currentPage = val;
-        this.getDetails({page: val, limit: this.pageSize})
+        this.getDetails({
+          page: val, limit: this.pageSize, app_version: this.filter.versions,
+          app_channel: this.filter.channels
+        })
       }
 
     },

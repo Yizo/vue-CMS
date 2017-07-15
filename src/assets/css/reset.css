@@ -124,6 +124,16 @@ a, a:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #333;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#serverdetailed .bbb {
+  background-color: #fff;
+}
+
+#serverdetailed .aaa {
+  background-color: #f5f5f5;
 }
 
 .dot_tips > .el-form-item__label {
@@ -207,6 +217,18 @@ h1, h2, h3 {
   background-color: #f5fafe;
 }
 
+.dialog_w {
+  width: 70%;
+}
+
+.global_loading {
+  color: #000;
+}
+
+.filex_dialog .el-dialog--small {
+  width: 500px;
+}
+
 @media screen and (max-width: 320px) {
 
 }
@@ -220,20 +242,36 @@ h1, h2, h3 {
 }
 
 @media screen and (max-width: 992px) {
+  .dialog_w {
+    width: 90%;
+  }
+
+  .el-select {
+    margin: 5px 0;
+  }
+
   .el-dialog--small {
-    width: 70%;
+    width: 480px;
   }
-
-  .el-dialog--tiny {
-    width: 40%;
-  }
-
 }
 
 @media screen and (max-width: 1200px) {
-
+  .dialog_w {
+    width: 85%;
+  }
 }
 
 @media screen and (min-width: 1200px) {
+}
 
+@media screen and (min-device-width: 1200px) and (max-device-width: 1600px) {
+  .dialog_w {
+    width: 75%;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .dialog_w {
+    width: 70%;
+  }
 }

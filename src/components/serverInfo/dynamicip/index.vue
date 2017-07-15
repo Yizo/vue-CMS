@@ -5,7 +5,21 @@
       <el-breadcrumb-item>服务器信息</el-breadcrumb-item>
       <el-breadcrumb-item>动态IP状态</el-breadcrumb-item>
     </el-breadcrumb>
-
+    <div style="margin-top: 10px;text-align: left">
+      <el-date-picker
+        v-model="filter.start"
+        type="date"
+        @change="start_date"
+        placeholder="开始日期">
+      </el-date-picker>
+      <el-date-picker
+        v-model="filter.end"
+        type="date"
+        @change="end_date"
+        placeholder="结束日期">
+      </el-date-picker>
+      <el-button @click="filtration">筛选</el-button>
+    </div>
     <div class="wrap_filter">
       <el-table
         :data="data"
@@ -47,18 +61,23 @@
         </el-pagination>
       </div>
     </div>
-    <el-dialog title="失败详情" v-model="dialogFormVisible" size="small">
+    <el-dialog title="失败详情" v-model="dialogFormVisible" custom-class="dialog_w">
       <el-table :data="dialogData" border>
-        <el-table-column property="username" label="账号"></el-table-column>
-        <el-table-column label="当前版本信息">
+        <el-table-column label="账号" width="110">
+          <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="当前版本信息" min-width="160">
           <template scope="scope">{{scope.row.app_channel}}_{{scope.row.app_version}}_{{scope.row.app_version_number}}
           </template>
         </el-table-column>
-        <el-table-column label="时间">
+        <el-table-column label="时间" width="180">
           <template scope="scope">{{scope.row.created_at | Time}}</template>
         </el-table-column>
-        <el-table-column property="ip" label="用户IP"></el-table-column>
-        <el-table-column label="IP解析">
+        <el-table-column property="ip" label="用户IP" width="150"></el-table-column>
+        <el-table-column label="IP解析" width="150">
           <template scope="scope">{{scope.row.ip_country}}_{{scope.row.ip_province}}_{{scope.row.ip_city}}</template>
         </el-table-column>
         <el-table-column property="device_model" label="硬件"></el-table-column>
@@ -75,6 +94,8 @@
         </el-pagination>
       </div>
     </el-dialog>
+
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
@@ -82,6 +103,8 @@
 <script>
   import {mapGetters, mapActions} from 'vuex'
   import * as API from '../../../api/api'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
+  import * as JS from '../../../assets/js/js'
   export default {
     name: 'dynamicipStar',
     data() {
@@ -95,14 +118,59 @@
         dlalog_id: 0,
         d_currentPage: 1,
         d_total: 1,
+        dialogVisible: false,
+        username: '姓名'
       }
     },
-
+    components: {
+      userDetail
+    },
+    computed: {
+      ...mapGetters(['initDate']),
+      filter(){
+        return this.initDate
+      }
+    },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+      start_date(val){
+        this.filter.start = val
+      },
+      end_date(val){
+        this.filter.end = val
+      },
+      filtration(){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.Timestamp(this.filter.start)
+          alert(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.Timestamp(this.filter.end)
+        }
+        this.getDncIpData(1);
+      },
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       detail(data){
         this.dlalog_id = data.id;
         this.dialogFormVisible = true;
-        this.getDetail({id: data.id, limit: this.pageSize}).then(res => {
+        let options = {
+          page: 1,
+          id: data.id,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }
+        this.getDetail(options).then(res => {
           var data = res.data.data;
           this.dialogData = data.logs;
           this.d_currentPage = data.current_page;
@@ -148,7 +216,22 @@
       },
       //获取数据
       getDncIpData(val){
-        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+        let options = {
+          page: val,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
+        }
+        this.getInfo(options).then(res => {
           let data = res.data.data;
           this.data = data.dynamic_servers;
           this.currentPage = data.current_page;
@@ -160,7 +243,14 @@
         this.$store.dispatch('getChannelData', {page: this.currentPage, limit: this.limit})
       },
       d_handleCurrentChange(val){
-        this.getDetail({id: this.dlalog_id, page: val, limit: this.pageSize}).then(res => {
+        let options = {
+          page: val,
+          id: this.dlalog_id,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }
+        this.getDetail(options).then(res => {
           var data = res.data.data;
           this.dialogData = data.logs;
           this.d_currentPage = data.current_page;
@@ -174,7 +264,7 @@
   }
 </script>
 
-<style lang="less" scope>
+<style scoped>
   #dynamicIp {
     padding: 10px;
   }
@@ -198,6 +288,10 @@
 
   .el-table .cell {
     text-align: center;
+  }
+
+  .el-dialog--small {
+    width: 80%;
   }
 </style>
 

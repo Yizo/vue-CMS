@@ -42,7 +42,7 @@
       </el-pagination>
 
       <!--详情-->
-      <el-dialog v-model="dialogVisible" title="月活跃详情" size="tiny">
+      <el-dialog v-model="dialogVisible" title="月活跃详情" size="tiny" custom-class="dialog">
         <table class="table">
           <tbody>
           <tr style="background-color: #EEF1F6">
@@ -52,7 +52,8 @@
             <th style="padding: 10px 0">暂无数据</th>
           </tr>
           <tr v-else v-for="item in get_month_detail.logs">
-            <th>{{item.username}}</th>
+            <th><span class="dialog_num" @click="userInfo(item)">{{item.username}}</span>
+            </th>
           </tr>
           </tbody>
         </table>
@@ -68,11 +69,13 @@
         </div>
       </el-dialog>
     </div>
+    <user-detail :visab="user_dialog" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import {mapActions, mapGetters}  from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default{
     data: () => ({
       pageSize: 10,
@@ -106,9 +109,14 @@
           valueSuffix: '次'
         },
         series: [],
-        credits: false
+        credits: false,
       },
+      user_dialog: false,
+      username: '姓名'
     }),
+    components: {
+      userDetail
+    },
     computed: {
       ...mapGetters({
         get_month: 'ACTIVEDAY_month_data',
@@ -126,8 +134,18 @@
       ...mapActions({
         month: 'ACTIVEDAY_MONTH',
         monthChart: 'ACTIVEDAY_MONTH_CHART',
-        month_details: 'ACTIVEDAY_MONTH_DETAILS'
+        month_details: 'ACTIVEDAY_MONTH_DETAILS',
+        ud_base: 'UD_base_info'
       }),
+      cdialog(){
+        this.user_dialog = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.user_dialog = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       //表格数据
       AnalysisJSON(parm) {
         var result = []

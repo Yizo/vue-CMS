@@ -51,7 +51,9 @@
       //分页action
       handleSizeChange(val){
       },
-
+      userInfo(row){
+        this.$emit('AreaUser', row);
+      },
       handleCurrentChange(val){
         this.$emit('changePage1', val);
         this.$store.dispatch('getPersonDetails', {
@@ -64,7 +66,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   .el-dialog__header {
     text-align: left;
   }

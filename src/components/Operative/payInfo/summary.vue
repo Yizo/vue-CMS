@@ -8,7 +8,8 @@
           </div>
           <div class="text item">
             <p>
-              {{s_data.total_recharge_amount_today}}/{{s_data.total_recharge_amount_month}}/{{s_data.total_recharge_amount_year}}</p>
+              {{s_data.data.total_recharge_amount_today}}/{{s_data.data.total_recharge_amount_month}}/{{s_data.data.total_recharge_amount_year}}
+            </p>
             <p>今日充值金额/本月充值金额/本年充值金额</p>
           </div>
         </el-card>
@@ -20,8 +21,8 @@
           </div>
           <div class="text item">
             <p>
-              {{s_data.total_recharge_users_count_today}}/{{s_data.total_recharge_users_count_month}}/{{s_data.total_recharge_users_count_year
-              }}</p>
+              {{s_data.data.total_recharge_users_count_today}}/{{s_data.data.total_recharge_users_count_month}}/{{s_data.data.total_recharge_users_count_year}}
+            </p>
             <p>今日充值总人数/本月充值总人数/本年充值总人数</p>
           </div>
         </el-card>
@@ -33,7 +34,8 @@
           </div>
           <div class="text item">
             <p>
-              {{s_data.total_consume_coins_today}}/{{s_data.total_consume_coins_month}}/{{s_data.total_consume_coins_year}}</p>
+              {{s_data.data.total_consume_coins_today}}/{{s_data.data.total_consume_coins_month}}/{{s_data.data.total_consume_coins_year}}
+            </p>
             <p>今日消费钻石/本月消费钻石/本年消费钻石</p>
           </div>
         </el-card>
@@ -41,10 +43,11 @@
       <div class="warp">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>ARUP值</span>
+            <p>ARUP值<span style="font-size:10px;color: #333">(ARUP = 当月充值总数 / 当月充值人数)</span></p>
           </div>
           <div class="text item">
-            <p style="padding: 8px 0;">{{s_data.total_recharge_amount_month/s_data.total_recharge_users_count_month |
+            <p style="padding: 8px 0;">
+              {{s_data.data.total_recharge_amount_month/s_data.data.total_recharge_users_count_month |
               zero | format_number}}(元)</p>
           </div>
         </el-card>
@@ -70,7 +73,6 @@
     },
     data(){
       return {
-
         /*折线图*/
         options: {
           title: {
@@ -136,16 +138,10 @@
       setXAxis(parm){
         var arry = []
         for (var i in parm) {
-          arry.push(parm[i].stat_date);
+          let list = parm[i].stat_year + '-' + parm[i].stat_month;
+          arry.push(parm[i].stat_date || list);
         }
         return arry
-      },
-    },
-    watch: {
-      charData: function (newData) {
-        this.options.series = [...this.AnalysisJSON(newData.data.logs)]
-        this.options.xAxis.categories = [...this.setXAxis(newData.data.logs)]
-        this.$HighCharts.chart('main', this.options)
       },
     },
     mounted(){
@@ -162,7 +158,7 @@
         this.options.xAxis.categories = [...this.setXAxis(res.data.data.logs)]
         this.$HighCharts.chart('main', this.options)
       });
-    },
+    }
   }
 </script>
 

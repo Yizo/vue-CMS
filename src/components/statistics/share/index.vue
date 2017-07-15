@@ -15,21 +15,21 @@
         description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
       </el-alert>
       <template>
-        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange" style="width: 200px;">
-          <el-option
-            v-for="(item,index) in versions.app_versions"
-            :label="item.name"
-            :value="item.name" :key="index">
-          </el-option>
-        </el-select>
-      </template>
-      <template>
         <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange" style="width: 200px;">
           <el-option
             v-for="(item,index) in versions.app_channels"
             :label="item.name"
             :value="item.name" :key="index"
           >
+          </el-option>
+        </el-select>
+      </template>
+      <template>
+        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
           </el-option>
         </el-select>
       </template>
@@ -62,7 +62,7 @@
               <th>分享次数</th>
               <th>人均分享</th>
             </tr>
-            <tr v-for="(item,index) in tableData">
+            <tr v-for="(item,index) in tableData" v-if="index < 50">
               <td>{{item.share_type}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
                         @click="details_users(index,item)">{{item.total_users}}</span></td>
@@ -80,7 +80,12 @@
       <el-dialog v-model="dialogTableVisible_sn">
         <h2 class="dh2">分享人数详情</span></h2>
         <el-table :data="dialogData_sn" style="text-align: center">
-          <el-table-column property="username" label="账号名" width="150"></el-table-column>
+          <el-table-column label="账号名" width="150">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column property="share_count" label="分享次数">
             <template scope="scope">
               <span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
@@ -103,7 +108,12 @@
       <el-dialog v-model="dialogTableVisible_nv">
         <h2 class="dh2">分享次数详情</span></h2>
         <el-table :data="dialogData_nv" style="text-align: center">
-          <el-table-column property="username" label="账号名" width="150"></el-table-column>
+          <el-table-column label="账号名" width="150">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="版本信息">
             <template scope="scope">
               <span>{{ scope.row.app_channel+"_"+scope.row.app_version+"_"+scope.row.app_version_number}}</span>
@@ -129,11 +139,14 @@
 
     </div>
 
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
+
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   import {mapGetters, mapActions} from 'vuex'
   export default {
     data(){
@@ -154,7 +167,8 @@
               cursor: 'pointer',
               dataLabels: {
                 enabled: true,
-              }
+              },
+              showInLegend: true
             }
           },
           series: [{
@@ -179,7 +193,8 @@
               cursor: 'pointer',
               dataLabels: {
                 enabled: true,
-              }
+              },
+              showInLegend: true
             }
           },
           series: [{
@@ -204,6 +219,8 @@
         dialogData_nv: [],//分享次数数据
         pageInfo: {
           index: '',
+          user_id: 0,
+          type: false, //true：正常的点击次数,false表示点击人数中的点击次数
           id: 0,
           page: '',
           device_model: ''
@@ -212,38 +229,39 @@
         /*分页*/
         currentPage: 1,
         totalSize: 0,
-        pageSize: 15
+        pageSize: 15,
+        dialogVisible: false,
+        username: '姓名'
 
       }
     },
     computed: {
       ...mapGetters(['versions'])
     },
+    components: {
+      userDetail
+    },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
 
-      //时间戳
-      Timestamp(row){
-
-        if (row) {
-          const now = new Date(row * 1000);
-          var year = now.getFullYear();
-          var month = now.getMonth() + 1;
-          var date = now.getDate();
-          var hour = now.getHours();
-          var minute = now.getMinutes();
-          var second = now.getSeconds();
-
-          return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
-        } else {
-          return false
-        }
-
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
       },
       //图表数据转为数组
       line(json){
         var arr = [];
         for (var i = 0; i < json.length; i++) {
-          arr.push([json[i]['share_type'], parseFloat(json[i].total_users)])
+          if (i < 50) {
+            arr.push([json[i]['share_type'], parseFloat(json[i].total_users)])
+          }
         }
         return arr
       },
@@ -257,14 +275,6 @@
 
       /*筛选*/
       valueChange(val){
-
-        if (this.filter.channels == '全部渠道') {
-          this.filter.channels = ''
-        }
-        if (this.filter.versions == '全部版本') {
-          this.filter.versions = ''
-        }
-
         this.getInfo({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
@@ -299,13 +309,17 @@
 
       /*弹窗*/
       /*查看分享人数*/
-      details_users(index){
+      details_users(index, item){
         this.dialogTableVisible_sn = true;
         this.pageInfo.index = index;
+        this.pageInfo.id = item.share_type_id,
+          this.currentPage = 1
         var options = {
           page: 1,
-          type: index,
-          limit: this.pageSize
+          type: item.share_type_id,
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.getDetails_users(options).then(res => {
           let data = res.data.data
@@ -317,11 +331,16 @@
       //分享人数中的分享次数
       details_users_times(parm){
         this.dialogTableVisible_nv = true;
+        this.pageInfo.user_id = parm.user_id;
+        this.pageInfo.type = false,
+          this.currentPage = 1
         this.getDetails_times({
           page: 1,
-          type: this.pageInfo.index,
+          type: this.pageInfo.id,
           limit: this.pageSize,
-          user_id: parm.user_id
+          user_id: parm.user_id,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }).then(res => {
           let data = res.data.data;
           this.dialogData_nv = data.logs;
@@ -351,11 +370,15 @@
       details_times(index, data){
         this.dialogTableVisible_nv = true;
         this.pageInfo.index = index;
-        this.pageInfo.id = data.user_id;
+        this.pageInfo.id = data.share_type_id;
+        this.pageInfo.type = true;
+        this.currentPage = 1
         var options = {
-          type: this.pageInfo.index,
+          type: this.pageInfo.id,
           page: 1,
-          limit: this.pageSize
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.getDetails_times(options).then(res => {
           let data = res.data.data
@@ -389,8 +412,10 @@
       user(val){
         var options = {
           page: val,
-          type: this.pageInfo.index,
-          limit: this.pageSize
+          type: this.pageInfo.id,
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.getDetails_users(options).then(res => {
           let data = res.data.data
@@ -399,10 +424,24 @@
       },
       //分享次数详情分页
       count(val){
-        let options = {
-          type: this.pageInfo.index,
-          page: val,
-          limit: this.pageSize
+        let options = null;
+        if (this.pageInfo.type) {
+          options = {
+            type: this.pageInfo.id,
+            page: val,
+            limit: this.pageSize,
+            app_version: this.filter.versions,
+            app_channel: this.filter.channels
+          }
+        } else {
+          options = {
+            type: this.pageInfo.id,
+            page: val,
+            limit: this.pageSize,
+            user_id: this.pageInfo.user_id,
+            app_version: this.filter.versions,
+            app_channel: this.filter.channels
+          }
         }
         this.getDetails_times(options).then(res => {
           let data = res.data.data
@@ -423,7 +462,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   #start {
     padding: 10px;
   }

@@ -18,4 +18,5 @@ export const u_transaction_logs = 'u_transaction_logs'
 /*账号详情-信息管理*/
 export const u_profile = 'u_profile'
 
+export const u_consumption_logs = 'u_consumption_logs'
 

@@ -76,7 +76,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   .el-dialog__header {
     text-align: left;
   }

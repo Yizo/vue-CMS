@@ -24,6 +24,25 @@
           @change="end_date">
         </el-date-picker>
       </div>
+      <template>
+        <el-select v-model="filter2.versions" placeholder="版本筛选" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
+          </el-option>
+        </el-select>
+      </template>
+      <template>
+        <el-select v-model="filter2.channels" placeholder="切换渠道" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_channels"
+            :label="item.name"
+            :value="item.name" :key="index"
+          >
+          </el-option>
+        </el-select>
+      </template>
       <el-button style="margin-left: 40px" @click="filtration">筛选</el-button>
     </el-row>
     <div class="warp">
@@ -68,9 +87,14 @@
       </template>
     </div>
     <!--弹窗-点击次数-->
-    <el-dialog :title="dialog.name" v-model="dialog.visable">
-      <el-table :data="dialog.data">
-        <el-table-column property="username" label="账号名"></el-table-column>
+    <el-dialog :title="visits.name" v-model="visits.visable">
+      <el-table :data="visits.data">
+        <el-table-column label="账号名">
+          <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="点击时间">
           <template scope="scope">{{scope.row.created_at | Time}}</template>
         </el-table-column>
@@ -80,7 +104,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
-        @current-change="d_handleSizeChange1"
+        @current-change="pagingVisitis"
         :current-page="d_currentPage"
         :page-size="d_pageSize"
         layout="total, prev, pager, next, jumper"
@@ -89,22 +113,24 @@
       </el-pagination>
     </el-dialog>
     <!--弹窗-点击人数-->
-    <el-dialog :title="dialog2.name" v-model="dialog2.visable" size="tiny">
+    <el-dialog :title="user.name" v-model="user.visable" size="tiny">
       <table class="table">
         <tbody>
         <tr style="background-color: #EEF1F6">
           <th>账号名</th>
         </tr>
-        <tr v-if="dialog2.data == ''">
+        <tr v-if="user.data == ''">
           <th style="padding: 10px 0">暂无数据</th>
         </tr>
-        <tr v-else v-for="item in dialog2.data">
-          <th>{{item.username}}</th>
+        <tr v-else v-for="item in user.data">
+          <th>
+            <span class="dialog_num" @click="userInfo(item)">{{item.username}}</span>
+          </th>
         </tr>
         </tbody>
       </table>
       <el-pagination
-        @current-change="d_handleSizeChange2"
+        @current-change="pagingUser"
         :current-page="d_currentPage"
         :page-size="d_pageSize"
         layout="total, prev, pager, next, jumper"
@@ -112,15 +138,21 @@
         class="page">
       </el-pagination>
     </el-dialog>
+
+
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default{
-    components: {},
+    components: {
+      userDetail
+    },
     props: {
       contList: {
         type: Boolean,
@@ -164,16 +196,22 @@
         d_pageSize: 15,
         d_totalSize: 0,
         curentInfo: {},//分页信息
-        dialog: {
+        visits: {
           visable: false,
           name: '点击次数',
           data: [],
         },
-        dialog2: {
+        user: {
           visable: false,
           name: '点击人数',
           data: []
-        }
+        },
+        filter2: {
+          versions: '',
+          channels: '',
+        },
+        dialogVisible: false,
+        username: '姓名'
       }
     },
     watch: {
@@ -182,12 +220,25 @@
       }
     },
     computed: {
-      ...mapGetters(['initDate']),
+      ...mapGetters(['initDate', 'versions']),
       filter(){
         return this.initDate
       }
     },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       getInfo(parm){
         return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
@@ -302,26 +353,39 @@
           page: 1,
           limit: this.pageSize,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
+        }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
         }
         this.getData(options);
       },
       //点击次数详情
       visits_detail(data){
-        let is = this.filter.start && this.filter.end
+        let is = this.filter.start && this.filter.end;
+        this.d_currentPage = 1
+        this.visits.visable = true
         if (is) {
-          this.curentInfo = data
+          this.curentInfo = Object.assign({}, data)
           let options = {
             page: 1,
             limit: this.d_pageSize,
             start_at: this.filter.start,
             end_at: this.filter.end,
+            app_version: this.filter2.versions,
+            app_channel: this.filter2.channels,
             interface_id: data.interface_id
           }
-          this.dialog.visable = true
           this.get_visit_details(options).then(res => {
-            this.dialog.data = res.data.data.logs
-            this.d_currentPage = res.data.data.current_page
+            this.visits.data = [...res.data.data.logs]
             this.d_totalSize = res.data.data.total_count
           })
         } else {
@@ -331,36 +395,39 @@
           });
         }
       },
-      d_handleSizeChange1(val){
+      pagingVisitis(val){
         let options = {
           page: val,
           limit: this.d_pageSize,
           start_at: this.filter.start || null,
           end_at: this.filter.end || null,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels,
           interface_id: this.curentInfo.interface_id
         }
+        this.d_currentPage = val
         this.get_visit_details(options).then(res => {
-          this.dialog.data = res.data.data.logs
-          this.d_currentPage = res.data.data.current_page
-          this.d_totalSize = res.data.data.total_count
+          this.visits.data = [...res.data.data.logs]
         })
       },
       //点击人数详情
       users_detail(data){
         let is = this.filter.start && this.filter.end
+        this.user.visable = true
+        this.d_currentPage = 1
         if (is) {
-          this.curentInfo = data
+          this.curentInfo = Object.assign({}, data)
           let options = {
             page: 1,
             limit: this.d_pageSize,
             start_at: this.filter.start || null,
             end_at: this.filter.end || null,
+            app_version: this.filter2.versions,
+            app_channel: this.filter2.channels,
             interface_id: data.interface_id
           }
-          this.dialog2.visable = true
           this.get_user_details(options).then(res => {
-            this.dialog2.data = res.data.data.logs
-            this.d_currentPage = res.data.data.current_page
+            this.user.data = [...res.data.data.logs]
             this.d_totalSize = res.data.data.total_count
           })
         } else {
@@ -371,18 +438,19 @@
         }
 
       },
-      d_handleSizeChange2(val){
+      pagingUser(val){
         let options = {
           page: val,
           limit: this.d_pageSize,
           start_at: this.filter.start,
           end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels,
           interface_id: this.curentInfo.interface_id
         }
+        this.d_currentPage = val
         this.get_user_details(options).then(res => {
-          this.dialog2.data = res.data.data.logs
-          this.d_currentPage = res.data.data.current_page
-          this.d_totalSize = res.data.data.total_count
+          this.user.data = [...res.data.data.logs]
         })
       },
 
@@ -392,7 +460,9 @@
         page: 1,
         limit: this.pageSize,
         start_at: this.filter.start,
-        end_at: this.filter.end
+        end_at: this.filter.end,
+        app_version: this.filter2.versions,
+        app_channel: this.filter2.channels
       }
       this.getData(options).then(res => {
         this.draw()

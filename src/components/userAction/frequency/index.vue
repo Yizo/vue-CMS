@@ -4,6 +4,11 @@
       <el-breadcrumb-item>用户行为</el-breadcrumb-item>
       <el-breadcrumb-item>用户使用频率</el-breadcrumb-item>
     </el-breadcrumb>
+    <el-alert
+      title="数据说明"
+      type="info"
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+    </el-alert>
     <el-row style="text-align: left;margin-bottom: 10px;margin-top: 20px">
       <div style="display: inline-block">
         <el-date-picker
@@ -17,6 +22,25 @@
           placeholder="结束日期">
         </el-date-picker>
       </div>
+      <template>
+        <template>
+          <el-select v-model="filter2.channels" placeholder="切换渠道" style="width: 200px;">
+            <el-option
+              v-for="(item,index) in versions.app_channels"
+              :label="item.name"
+              :value="item.name" :key="index"
+            >
+            </el-option>
+          </el-select>
+        </template>
+        <el-select v-model="filter2.versions" placeholder="版本筛选" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
+          </el-option>
+        </el-select>
+      </template>
       <el-button style="margin-left: 40px" @click="filtration">筛选</el-button>
     </el-row>
     <div class="warp">
@@ -76,7 +100,9 @@
             <th style="padding: 10px 0">暂无数据</th>
           </tr>
           <tr v-else v-for="item in dialog.data">
-            <th>{{item.username}}</th>
+            <th>
+              <span class="dialog_num" @click="userInfo(item)">{{item.username}}</span>
+            </th>
           </tr>
           </tbody>
         </table>
@@ -92,13 +118,17 @@
         </div>
       </el-dialog>
     </div>
+
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
+
   export default{
     data: () => ({
       data: [],
@@ -145,9 +175,18 @@
         total: 0,
         data: []
       },
+      filter2: {
+        versions: '',
+        channels: '',
+      },
+      dialogVisible: false,
+      username: '姓名'
     }),
+    components: {
+      userDetail
+    },
     computed: {
-      ...mapGetters(['initDate']),
+      ...mapGetters(['initDate', 'versions']),
       filter(){
         return this.initDate
       }
@@ -158,6 +197,19 @@
       }
     },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       getInfo(parm){
         return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
@@ -270,19 +322,33 @@
           page: 1,
           limit: this.pageSize,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
+        }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
         }
         this.getData(options);
       },
       detail(index){
         this.dialog.visable = true;
         this.dialog.name = this.pagename[index];
+        this.dialog.currentPage = 1;
         let options = {
           page: 1,
           limit: this.pageSize,
           times_scope: this.pagename[index].replace('次', ''),
           start_at: this.filter.start || '',
-          end_at: this.filter.end || ''
+          end_at: this.filter.end || '',
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         };
         if (index == 5) {
           options.times_scope = '50'
@@ -290,7 +356,6 @@
         this.getDetails(options).then(res => {
           let data = res.data.data
           this.dialog.data = data.logs;
-          this.dialog.currentPage = data.current_page;
           this.dialog.total = data.total_count;
         })
       },
@@ -300,18 +365,23 @@
           limit: this.pageSize,
           times_scope: this.pagename[index].replace('次', ''),
           start_at: this.filter.start || '',
-          end_at: this.filter.end || ''
+          end_at: this.filter.end || '',
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         };
+        this.dialog.currentPage = val;
         this.getDetails(options).then(res => {
           let data = res.data.data
           this.dialog.data = data.logs;
-          this.dialog.currentPage = data.current_page;
           this.dialog.total = data.total_count;
         })
       }
     },
     mounted(){
-      this.getData({page: 1, limit: this.pageSize}).then(res => {
+      this.getData({
+        page: 1, limit: this.pageSize, app_version: this.filter2.versions,
+        app_channel: this.filter2.channels
+      }).then(res => {
         this.draw()
       })
     }

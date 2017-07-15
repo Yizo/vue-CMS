@@ -14,25 +14,25 @@
           <el-table-column
             prop="name"
             label="权限组名"
-            width="120px">
+            width="80">
           </el-table-column>
           <el-table-column
             prop="username"
-            label="新增权限组">
+            label="新增权限组" width="80">
             <template scope="scope">
               <i class="iconfont">{{ scope.row.manage_role_create ? '&#xe649;' : '' }}</i>
             </template>
           </el-table-column>
           <el-table-column
             prop="operation_type"
-            label="删除权限组">
+            label="删除权限组" width="80">
             <template scope="scope">
               <i class="iconfont">{{ scope.row.manage_role_delete ? '&#xe649;' : '' }}</i>
             </template>
           </el-table-column>
           <el-table-column
             prop="admin_name"
-            label="修改权限组">
+            label="修改权限组" width="80">
             <template scope="scope">
               <i class="iconfont">{{ scope.row.manage_role_update ? '&#xe649;' : '' }}</i>
             </template>
@@ -126,7 +126,7 @@
             label="操作"
             width="150px">
             <template scope="scope">
-              <el-button size="small" @click="upRole(scope.row)">修改</el-button>
+              <el-button size="small" @click="upRole(scope.$index,scope.row)">修改</el-button>
               <el-button type="warning" size="small" @click="delRole(scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -144,7 +144,7 @@
     </el-pagination>
 
     <!--增加权限组-->
-    <el-dialog title="增加权限组" v-model="add_role.visable" size="tiny">
+    <el-dialog title="增加权限组" v-model="add_role.visable" class="filex_dialog">
       <el-form label-position="left" label-width="150px" class="demo-ruleForm">
         <el-form-item label="权限组名">
           <el-input v-model="roles.name" style="width: 250px"></el-input>
@@ -220,6 +220,10 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
+          <el-col :span="12">
+            <span class="r_lable">帮助问答</span>
+            <el-checkbox v-model="roles.help_manual"></el-checkbox>
+          </el-col>
           <el-col :span="12">
             <span class="r_lable">渠道版本配置</span>
             <el-checkbox v-model="roles.system_enum"></el-checkbox>
@@ -232,7 +236,7 @@
       </div>
     </el-dialog>
     <!--修改权限组-->
-    <el-dialog title="修改权限组" v-model="up_role.visable" size="tiny">
+    <el-dialog title="修改权限组" v-model="up_role.visable" class="filex_dialog">
       <el-form label-position="left" label-width="150px" class="demo-ruleForm">
         <el-form-item label="权限组名">
           <el-input v-model="roles.name" style="width: 250px"></el-input>
@@ -308,6 +312,10 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
+          <el-col :span="12">
+            <span class="r_lable">帮助问答</span>
+            <el-checkbox v-model="roles.help_manual"></el-checkbox>
+          </el-col>
           <el-col :span="12">
             <span class="r_lable">渠道版本配置</span>
             <el-checkbox v-model="roles.system_enum"></el-checkbox>
@@ -348,8 +356,9 @@
           back_stage_manage: false, //后台管理
           user_manage: false, //用户管理
           node_manage: false, //服务器群组管理
-          system_setting: false, //系统配置
+          system_setting: false, //参数配置
           system_enum: false, //渠道版本配置
+          help_manual: false
         },
         add_role: {
           visable: false,
@@ -502,7 +511,7 @@
         }
       },
       /*修改权限组*/
-      upRole(data){
+      upRole(index, data){
         this.up_role.visable = true
         this.roles = data
         this.up_role.id = data.id
@@ -572,7 +581,7 @@
   }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
   .lock {
     padding: 10px;
   }
@@ -615,6 +624,10 @@
 
   .el-form-item {
     text-align: left;
+  }
+
+  th > .cell {
+    color: red;
   }
 </style>
 

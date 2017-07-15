@@ -8,10 +8,10 @@
     <div class="feedback-wrapper">
       <div class="feedback-filter">
         <template>
-          <el-select v-model="appVersionValue" placeholder="版本选择" size="small" @change="feedbackFilter"
+          <el-select v-model="appChannelValue" placeholder="切换渠道" size="small" @change="feedbackFilter"
                      style="width: 200px">
             <el-option
-              v-for="item in versions.app_versions"
+              v-for="item in versions.app_channels"
               :label="item.name"
               :key="item.id"
               :value="item.id">
@@ -19,10 +19,10 @@
           </el-select>
         </template>
         <template>
-          <el-select v-model="appChannelValue" placeholder="切换渠道" size="small" @change="feedbackFilter"
+          <el-select v-model="appVersionValue" placeholder="版本选择" size="small" @change="feedbackFilter"
                      style="width: 200px">
             <el-option
-              v-for="item in versions.app_channels"
+              v-for="item in versions.app_versions"
               :label="item.name"
               :key="item.id"
               :value="item.id">
@@ -74,15 +74,15 @@
         </el-table-column>
 
         <el-table-column
-          property="has_read"
           label="处理状态">
           <template scope="scope">
-            <span>{{scope.row.has_read?'是':'否'}}</span>
+            <el-tag
+              :type="scope.row.reply_content ? 'success' : 'primary'"
+              close-transition>{{scope.row.reply_content ? '是': '否'}}
+            </el-tag>
           </template>
         </el-table-column>
-
         <el-table-column
-          property="has_read"
           label="用户阅读"
           width="100">
           <template scope="scope">
@@ -92,7 +92,6 @@
             </el-tag>
           </template>
         </el-table-column>
-
         <el-table-column
           property="reply_content"
           label="客服回复">
@@ -120,19 +119,19 @@
         </el-pagination>
       </div>
     </div>
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" class="filex_dialog">
       <el-form :model="feedback">
         <el-form-item label="账号名称" :label-width="formLabelWidth">
-          <el-input v-model="feedback.user_name" auto-complete="off" readonly style="width:400px"></el-input>
+          <el-input v-model="feedback.user_name" auto-complete="off" readonly style="width:300px"></el-input>
         </el-form-item>
         <el-form-item label="问题类型" :label-width="formLabelWidth">
-          <el-input v-model="feedback.feedback_type" auto-complete="off" readonly style="width:400px"></el-input>
+          <el-input v-model="feedback.feedback_type" auto-complete="off" readonly style="width:300px"></el-input>
         </el-form-item>
         <el-form-item label="问题内容" :label-width="formLabelWidth">
-          <el-input v-model="feedback.content" auto-complete="off" readonly style="width:400px"></el-input>
+          <el-input v-model="feedback.content" auto-complete="off" readonly style="width:300px"></el-input>
         </el-form-item>
         <el-form-item label="处理结果答复" :label-width="formLabelWidth">
-          <el-input type="textarea" v-model="feedback.reply_content" auto-complete="off" style="width:400px"
+          <el-input type="textarea" v-model="feedback.reply_content" auto-complete="off" style="width:300px"
                     :autosize="{ minRows: 2, maxRows: 6}"></el-input>
         </el-form-item>
       </el-form>
@@ -278,7 +277,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   #feedback {
     padding: 10px;
   }

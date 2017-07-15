@@ -35,6 +35,39 @@ export function Timestamp(row) {
   return year + "-" + month + "-" + date + " ";
 }
 
+export function TimeHour(data) {
+  const now = new Date(data * 1000);
+
+  if (!data) {
+    return ''
+  }
+
+  var year = now.getFullYear();
+  var month = now.getMonth() + 1;
+  var date = now.getDate();
+  var hour = now.getHours();
+  var minute = now.getMinutes();
+  var second = now.getSeconds();
+
+  if (month <= 9) {
+    month = '0' + month
+  }
+  if (date <= 9) {
+    date = '0' + date
+  }
+  if (hour <= 9) {
+    hour = '0' + hour
+  }
+  if (minute <= 9) {
+    minute = '0' + minute
+  }
+  if (second <= 9) {
+    second = '0' + second
+  }
+
+  return hour + ":" + minute;
+}
+
 export function Time(data) {
   const now = new Date(data * 1000);
 
@@ -69,7 +102,7 @@ export function Time(data) {
 }
 
 export function transfer(value) {
-  let num = value / (1024 * 1024)
+  let num = value / (1024 * 1024 * 1024)
   return Math.round(num * 100) / 100
 }
 

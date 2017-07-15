@@ -22,9 +22,13 @@ const state = {
   LoginStatus: {
     star: false,//未登录
     data: null
-  }
+  },
+  channerVerion: {}
 
 }
+let s = JSON.parse(window.sessionStorage.getItem('loginInfo'));
+
+state.channerVerion = Object.assign({}, s)
 
 export default {
   state,

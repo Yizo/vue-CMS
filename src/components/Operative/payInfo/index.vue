@@ -15,7 +15,7 @@
     <!--汇总图-->
     <smy></smy>
     <!--充值详情-->
-    <detail></detail>
+    <detail :parm="parm"></detail>
   </div>
 </template>
 
@@ -33,6 +33,7 @@
     data(){
       return {
         tableData: [],
+        parm: {}
       }
     },
     computed: {
@@ -44,25 +45,36 @@
         coins_details: 'PAYINFO_consume_coins_details',
         chart: 'PAYINFO_pay_char'
       }),
-      change(){
+      change(data){
+        this.parm = Object.assign({}, data);
+        if (data.app_version == '') {
+          data.app_version = ''
+        }
+        if (data.app_channel == '') {
+          data.app_channel = ''
+        }
         this.pay_details({
           year: this.time.year,
           month: this.time.month,
+          app_version: data.app_version,
+          app_channel: data.app_channel,
           page: 1,
           limit: 15
         })
         this.coins_details({
           year: this.time.year,
-          month: this.time.month
+          month: this.time.month,
+          app_version: data.app_version,
+          app_channel: data.app_channel,
         });
         this.chart({
           year: this.time.year,
-          month: this.time.month
+          month: this.time.month,
+          app_version: data.app_version,
+          app_channel: data.app_channel,
         });
       }
     },
-    mounted(){
-    }
   }
 </script>
 

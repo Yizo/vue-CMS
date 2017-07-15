@@ -13,6 +13,7 @@ export default {
   [type.u_devices]: (state, parm) => state.UD_devices = parm,
   /*账号详情-操作路径*/
   [type.u_operation_logs]: (state, parm) => state.UD_operation_logs = parm,
+
   u_current: (state, parms) => {
     let logs = state.UD_operation_logs.data.logs;
     let data = [];
@@ -21,7 +22,6 @@ export default {
       current: parms.current,
       pageSize: parms.pageSize
     }
-
     if (parm.total == 0) {
       state.UD_current = data
       return data
@@ -47,4 +47,6 @@ export default {
   [type.u_transaction_logs]: (state, parm) => state.UD_transaction_logs = parm,
   /*账号详情-信息管理*/
   [type.u_profile]: (state, parm) => state.UD_profile = parm,
+
+  [type.u_consumption_logs]: (state, parm) => state.UD_consumption_logs = parm
 }

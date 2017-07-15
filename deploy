@@ -1,0 +1,6 @@
+#/bin/bash
+
+# dev
+rsync -rz --delete scms/dev_dist/ hk01web:/home/deploy/zeus/www/
+# staging
+rsync -rz --delete scms/dist/ hk91web:/home/deploy/zeus/www/

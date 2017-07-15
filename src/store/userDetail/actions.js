@@ -135,6 +135,27 @@ export default {
       })
     })
   },
+  /*账号详情-消费信息*/
+  UD_consumption_logs(store, parm){
+    let id = window.sessionStorage.getItem('userId');
+    let address = API.u_consumption_logs.replace(/{id}/g, id);
+    return new Promise((resolve, reject) => {
+      const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+      axios({
+        method: 'GET',
+        url: address,
+        headers: {'Authorization': token},
+        params: parm
+      }).then(function (res) {
+        if (res.status == 200) {
+          store.commit('u_consumption_logs', res.data);
+          resolve(res)
+        }
+      }).catch(function (err) {
+        reject(err)
+      })
+    })
+  },
   /*账号详情-信息管理*/
   UD_profile(store, parm){
     let id = window.sessionStorage.getItem('userId');
@@ -174,7 +195,6 @@ export default {
         }
       }).catch(function (err) {
         reject(err)
-        console.log(err)
       })
     })
   }

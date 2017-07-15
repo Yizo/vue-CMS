@@ -13,15 +13,6 @@
         description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
       </el-alert>
       <template>
-        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange" style="width: 200px;">
-          <el-option
-            v-for="(item,index) in versions.app_versions"
-            :label="item.name"
-            :value="item.name" :key="index">
-          </el-option>
-        </el-select>
-      </template>
-      <template>
         <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange" style="width: 200px;">
           <el-option
             v-for="(item,index) in versions.app_channels"
@@ -31,8 +22,34 @@
           </el-option>
         </el-select>
       </template>
+      <template>
+        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
+          </el-option>
+        </el-select>
+      </template>
       <el-row :gutter="20">
         <el-col :span="12">
+          <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>设备系统统计</span>
+          <div>
+            <table class="t1">
+              <tbody class="table">
+              <tr>
+                <th>系统</th>
+                <th>数量</th>
+                <th>占比</th>
+              </tr>
+              <tr v-for="(item,index) in platforms" v-if="index < 50">
+                <td>{{item.platform}}</td>
+                <td><span>{{item.total}}</span></td>
+                <td>{{item.percent}}%</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
           <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>硬件统计饼图</span>
           <div id="main" style="width: 99%;height: 500px;border: 1px solid #D3DCE6">
 
@@ -48,12 +65,12 @@
               <th>数量</th>
               <th>占比</th>
             </tr>
-            <tr v-for="(item,index) in tableData">
+            <tr v-for="(item,index) in tableData" v-if="index < 50">
               <td>{{item.device_model}}</td>
               <td>{{item.platform}}</td>
-              <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
+              <td><span class="dialog_num"
                         @click="detail(index,item)">{{item.total}}</span></td>
-              <td>{{item.percent}}</td>
+              <td>{{item.percent}}%</td>
             </tr>
             </tbody>
           </table>
@@ -65,13 +82,18 @@
     <el-dialog v-model="dialogTableVisible">
       <h2 class="dh2">硬件信息详情:<span v-text="pageInfo.device_model"></span></h2>
       <el-table :data="dialogData" style="text-align: center">
-        <el-table-column property="username" label="账号" width="150"></el-table-column>
-        <el-table-column label="登录时间" width="200">
+        <el-table-column label="账号" width="120">
           <template scope="scope">
-            <span>{{ Timestamp(scope.row.last_signin_at) }}</span>
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
           </template>
         </el-table-column>
-        <el-table-column property="ip" label="用户IP"></el-table-column>
+        <el-table-column label="登录时间" width="200">
+          <template scope="scope">
+            <span>{{ scope.row.last_signin_at | Time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column property="ip" label="用户IP" width="160"></el-table-column>
         <el-table-column property="address" label="IP解析"></el-table-column>
       </el-table>
       <div slot="footer">
@@ -86,10 +108,13 @@
         </el-pagination>
       </div>
     </el-dialog>
+
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 <script>
   import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   import * as API from '../../../api/api'
   export default {
     data() {
@@ -105,13 +130,17 @@
           title: {
             text: null
           },
+          tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
           plotOptions: {
             pie: {
               allowPointSelect: true,
               cursor: 'pointer',
               dataLabels: {
                 enabled: true,
-              }
+              },
+              showInLegend: true
             }
           },
           series: [{
@@ -132,30 +161,36 @@
           channels: '',
         },
         tableData: [],
+        platforms: [],
         //弹窗
         dialogTableVisible: false,
         dialogData: [],
         val: {},
         currentPage: 1,
         totalSize: 0,
-        pageSize: 15
+        pageSize: 15,
+        dialogVisible: false,
+        username: '姓名'
       }
+    },
+    components: {
+      userDetail
     },
     computed: {
       ...mapGetters(['versions']),
     },
     methods: {
-      //时间戳
-      Timestamp(row){
-        const now = new Date(row * 1000);
-        var year = now.getFullYear();
-        var month = now.getMonth() + 1;
-        var date = now.getDate();
-        var hour = now.getHours();
-        var minute = now.getMinutes();
-        var second = now.getSeconds();
-
-        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.id)
+        this.ud_base({limit: 10})
       },
       //获取硬件统计信息
       gethardware(parm){
@@ -210,7 +245,9 @@
           device_model: val.device_model,
           platform: val.platform,
           page: 1,
-          limit: this.pageSize
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.dialogTableVisible = true
         this.getDatails(options).then(res => {
@@ -227,7 +264,9 @@
           device_model: this.val.device_model,
           platform: this.val.platform,
           page: val,
-          limit: this.pageSize
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.getDatails(options).then(res => {
           var data = res.data.data;
@@ -240,22 +279,18 @@
       line(json){
         var arr = [];
         for (var i = 0; i < json.length; i++) {
-          arr.push([json[i]['device_model'], parseFloat(json[i].percent)])
+          if (i < 50) {
+            arr.push([json[i]['device_model'], parseFloat(json[i].percent)])
+          }
         }
         return arr
       },
       //筛选
       valueChange(val){
-
-        if (this.filter.channels == '全部渠道') {
-          this.filter.channels = ''
-        }
-        if (this.filter.versions == '全部版本') {
-          this.filter.versions = ''
-        }
-
-        this.gethardware({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
+        let options = {app_version: this.filter.versions, app_channel: this.filter.channels}
+        this.gethardware(options).then(res => {
           this.tableData = res.data.data.items;
+          this.platforms = res.data.data.platforms;
           this.options.series[0].data = this.line(res.data.data.items);
           this.$HighCharts.chart('main', this.options);
         })
@@ -263,8 +298,10 @@
     },
     mounted(){
       //绘制图形
-      this.gethardware({app_version: null, app_channel: null}).then(res => {
+      let options = {app_version: this.filter.versions, app_channel: this.filter.channels}
+      this.gethardware(options).then(res => {
         this.tableData = res.data.data.items;
+        this.platforms = res.data.data.platforms;
         this.options.series[0].data = this.line(res.data.data.items);
         this.$HighCharts.chart('main', this.options);
       })
@@ -272,7 +309,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   #hardware {
     padding: 10px;
   }

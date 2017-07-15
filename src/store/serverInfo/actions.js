@@ -19,7 +19,7 @@ export default {
     }).then((res) => {
       store.commit('GET_DNCIP_DATA', res.data)
     }).catch((err) => {
-      console.log(err)
+
     })
   },
   addDncIpItem(store, params){

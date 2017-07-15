@@ -1,8 +1,12 @@
 <template>
   <div>
     <el-table :data="regionLineDetails.users">
-      <el-table-column property="id" label="账号" width="150"></el-table-column>
-      <el-table-column property="username" label="账户名" width="200"></el-table-column>
+      <el-table-column label="账户名" width="200">
+        <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+        </template>
+      </el-table-column>
       <el-table-column property="ip" label="用户IP"></el-table-column>
       <el-table-column property="" label="IP解析">
         <template scope="scope">
@@ -25,6 +29,7 @@
         :total="regionLineDetails.total_pages" class="page">
       </el-pagination>
     </div>
+
   </div>
 </template>
 
@@ -33,24 +38,25 @@
   import {formatDate} from '../../../utils/filters'
   import * as API from '../../../api/api'
   import {mapGetters, mapActions} from 'vuex'
-
   export default{
     props: ['nodeId'],
     data(){
       return {
         users: [],
         limit: 25,
-        pageSize: 1
+        pageSize: 1,
       }
     },
     computed: {
       ...mapGetters(['regionLineDetails'])
     },
     methods: {
+      userInfo(row){
+        this.$emit('AreaUser', row);
+      },
       //分页action
       handleSizeChange(val){
       },
-
       handleCurrentChange(val){
         this.$emit('changePage3', val);
         this.$store.dispatch('getRegionLineDetails', {
@@ -63,7 +69,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   .el-dialog__header {
     text-align: left;
   }

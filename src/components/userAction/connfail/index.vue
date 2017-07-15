@@ -25,6 +25,25 @@
             placeholder="结束日期">
           </el-date-picker>
         </div>
+        <template>
+          <el-select v-model="filter2.channels" placeholder="切换渠道" style="width: 200px;">
+            <el-option
+              v-for="(item,index) in versions.app_channels"
+              :label="item.name"
+              :value="item.name" :key="index"
+            >
+            </el-option>
+          </el-select>
+        </template>
+        <template>
+          <el-select v-model="filter2.versions" placeholder="版本筛选" style="width: 200px;">
+            <el-option
+              v-for="(item,index) in versions.app_versions"
+              :label="item.name"
+              :value="item.name" :key="index">
+            </el-option>
+          </el-select>
+        </template>
         <el-button style="margin-left: 40px" @click="filtration">筛选</el-button>
       </el-row>
     </div>
@@ -84,21 +103,22 @@
       <el-dialog v-model="dialogTableVisible">
         <h2 class="dh2">{{pageInfo.device_model}}</span></h2>
         <el-table :data="dialogData" style="text-align: center">
-          <el-table-column property="username" label="账号名" width="150"></el-table-column>
+          <el-table-column label="账号名" width="120">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="时间点" width="150">
             <template scope="scope">
-              <span>{{ Timestamp(scope.row.created_at)}}</span>
+              <span>{{ scope.row.created_at | Time}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="线路名称" width="200">
-            <template scope="scope">
-              <span>{{ scope.row.node_type+"_"+scope.row.node_region+"_"+scope.row.node_name}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column property="ip" label="用户IP" width="100"></el-table-column>
-          <el-table-column property="ip_region" label="IP解析" width="100"></el-table-column>
-          <el-table-column property="device_model" label="硬件型号" width="100"></el-table-column>
-          <el-table-column property="operator" label="运营商" width="100"></el-table-column>
+          <el-table-column property="node_type" label="服务名称" width="100"></el-table-column>
+          <el-table-column property="ip" label="用户IP"></el-table-column>
+          <el-table-column property="ip_region" label="IP解析"></el-table-column>
+          <el-table-column property="device_model" label="硬件型号" width="80"></el-table-column>
+          <el-table-column property="operator" label="运营商" width="80"></el-table-column>
         </el-table>
         <div slot="footer">
           <el-pagination
@@ -115,7 +135,12 @@
       <el-dialog v-model="dialogTableVisible1">
         <h2 class="dh2">{{pageInfo.device_model}}</span></h2>
         <el-table :data="dialogData" style="text-align: center">
-          <el-table-column property="username" label="账号名" width="150"></el-table-column>
+          <el-table-column label="账号名" width="150">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column property="device_uuid" label="UUID" width="150"></el-table-column>
           <el-table-column label="时间点" width="150">
             <template scope="scope">
@@ -140,7 +165,7 @@
       </el-dialog>
 
     </div>
-
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
@@ -148,6 +173,7 @@
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
   import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default {
     data(){
       return {
@@ -195,7 +221,13 @@
         currentPage: 1,
         pageSize: 10,
         totalSize: 0,
-        d_total: 0
+        d_total: 0,
+        filter2: {
+          versions: '',
+          channels: '',
+        },
+        dialogVisible: false,
+        username: '姓名'
       }
     },
     computed: {
@@ -203,6 +235,9 @@
       filter(){
         return this.initDate
       }
+    },
+    components: {
+      userDetail
     },
     methods: {
       //时间戳
@@ -216,6 +251,19 @@
         var second = now.getSeconds();
 
         return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+      },
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
       },
       //表格数据
       AnalysisJSON(parm) {
@@ -235,7 +283,6 @@
           var item = {name: keyList[names[i]], data: data}
           result.push(item)
         }
-
         return result
       },
       //设置Y轴
@@ -254,22 +301,29 @@
         if (typeof this.filter.end == 'object') {
           this.filter.end = JS.Timestamp(this.filter.end)
         }
-        var options = {
+        let options = {
+          limit: this.pageSize,
           page: 1,
-          is_enabled: this.filter.status === null ? null : this.filter.status,
-          date_type: this.filter.time === null ? null : this.filter.time,
           start_at: this.filter.start,
           end_at: this.filter.end,
-          limit: this.pageSize
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
 
-        this.getInfo(options).then(res => {
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
+        }
+        this.getAllInfo(options).then(res => {
           this.tableData = res.data.data.logs;
           this.currentPage = res.data.data.current_page
           this.totalSize = res.data.data.total_count;
-
           this.rendering()
-        });
+        })
       },
 
       details_users(parm){
@@ -286,6 +340,8 @@
         var options = {
           type: parm.index,
           stat_at: parm.stat_at,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels,
           page: 1,
           limit: this.pageSize
         }
@@ -294,8 +350,8 @@
           this.dialogData = res.data.data.logs;
         })
       },
-      /*连接失败信息*/
-      getInfo(parm){
+      /*失败信息*/
+      getAllInfo(parm){
         return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
@@ -319,7 +375,9 @@
           limit: this.pageSize,
           page: 1,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         }).then(res => {
           this.chartData = res.data.data.logs
           //设置数据
@@ -369,13 +427,15 @@
 
       /*分页*/
       handleCurrentChange(val){
-        this.getInfo({
+        this.getAllInfo({
           limit: this.pageSize,
           page: val,
           start_at: this.filter.start,
-          end_at: this.filter.end
+          end_at: this.filter.end,
+          app_version: this.filter2.versions,
+          app_channel: this.filter2.channels
         }).then(res => {
-          this.tableData = res.data.data.logs;
+          this.tableData = [...res.data.data.logs];
           this.currentPage = res.data.data.current_page
           this.totalSize = res.data.data.total_count;
         })
@@ -383,6 +443,8 @@
       /*连接失败/软件崩溃/未联网*/
       lianjie(val){
         let options = this.parm;
+        options.app_version = this.filter2.versions;
+        options.app_channel = this.filter2.channels;
         options.page = val
         this.errInfo(options).then(res => {
           this.dialogData = res.data.data.logs;
@@ -391,8 +453,15 @@
 
     },
     mounted(){
-
-      this.getInfo({limit: this.pageSize, page: 1, start_at: this.filter.start, end_at: this.filter.end}).then(res => {
+      let options = {
+        limit: this.pageSize,
+        page: 1,
+        start_at: this.filter.start,
+        end_at: this.filter.end,
+        app_version: this.filter2.versions,
+        app_channel: this.filter2.channels
+      }
+      this.getAllInfo(options).then(res => {
         this.tableData = res.data.data.logs;
         this.currentPage = res.data.data.current_page
         this.totalSize = res.data.data.total_count;

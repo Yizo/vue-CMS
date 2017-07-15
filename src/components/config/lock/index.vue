@@ -14,8 +14,11 @@
             label="编号">
           </el-table-column>
           <el-table-column
-            prop="username"
             label="账号">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="operation_type"
@@ -29,7 +32,7 @@
             label="操作时间">
             <template scope="scope">
             <span>
-              {{Timestamp(scope.row.created_at)}}
+              {{scope.row.created_at | Time}}
             </span>
             </template>
           </el-table-column>
@@ -45,21 +48,41 @@
       :total="totalSize"
       class="page">
     </el-pagination>
+    <user-detail :visab="user_dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
+  import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default {
     data(){
       return {
         tableData: [],
         currentPage: 1,
         totalSize: 0,
-        pageSize: 20
+        pageSize: 20,
+        user_dialogVisible: false,
+        username: '姓名',
       }
     },
+    components: {
+      userDetail
+    },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.user_dialogVisible = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.user_dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       /*封号日志*/
       getInfo(parm){
         return new Promise((resolve, reject) => {
@@ -88,19 +111,7 @@
           this.currentPage = data.current_page;
           this.tableData = [...data.logs];
         })
-      },
-      //时间戳
-      Timestamp(row){
-        const now = new Date(row * 1000);
-        var year = now.getFullYear();
-        var month = now.getMonth() + 1;
-        var date = now.getDate();
-        var hour = now.getHours();
-        var minute = now.getMinutes();
-        var second = now.getSeconds();
-
-        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
-      },
+      }
     },
     mounted(){
       this.getInfo({page: 1, limit: this.pageSize}).then(res => {

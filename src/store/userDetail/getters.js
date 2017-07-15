@@ -18,6 +18,8 @@ export default {
   UD_transaction_logs: (state) => state.UD_transaction_logs.data,
   /*账号详情-信息管理*/
   UD_profile: (state) => state.UD_profile.data,
-
+  /*消费信息*/
+  UD_consumption_logs: (state) => state.UD_consumption_logs.data,
   UD_current: (state) => state.UD_current
+
 }

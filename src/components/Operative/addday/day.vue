@@ -39,9 +39,14 @@
       </el-pagination>
 
       <!--详情-->
-      <el-dialog v-model="dialogVisible" title="日增详情" size="small">
+      <el-dialog v-model="dialogVisible" title="日增详情" custom-class="dialog_w">
         <el-table :data="get_day_detail.users" border style="text-align: center">
-          <el-table-column property="username" label="账号名" width="150"></el-table-column>
+          <el-table-column label="账号名" width="150">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column property="coins" label="注册时间点">
             <template scope="scope">
               {{scope.row.created_at | Time}}
@@ -70,11 +75,14 @@
         </div>
       </el-dialog>
     </div>
+    <user-detail :visab="user_dialog" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import {mapActions, mapGetters}  from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
+  import * as JS from '../../../assets/js/js'
   export default{
     data: () => ({
       pageSize: 10,
@@ -108,7 +116,12 @@
         series: [],
         credits: false
       },
+      user_dialog: false,
+      username: '姓名'
     }),
+    components: {
+      userDetail
+    },
     props: ['filter'],
     computed: {
       ...mapGetters({
@@ -127,8 +140,19 @@
       ...mapActions({
         day: 'ADDDAY_DAY',
         dayChart: 'ADDDAY_DAY_CHART',
-        day_details: 'ADDDAY_DAY_DETAILS'
+        day_details: 'ADDDAY_DAY_DETAILS',
+        ud_base: 'UD_base_info',
       }),
+      cdialog(){
+        this.user_dialog = false
+      },
+
+      userInfo(row){
+        this.username = row.username
+        this.user_dialog = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       //表格数据
       AnalysisJSON(parm) {
         var result = []
@@ -153,6 +177,12 @@
         return arry
       },
       handleCurrentChange(val){
+        if (typeof this.filter.start == 'object') {
+          this.filter.start = JS.month(this.filter.start)
+        }
+        if (typeof this.filter.end == 'object') {
+          this.filter.end = JS.month(this.filter.end)
+        }
         let options = {
           page: val,
           limit: this.pageSize2,
@@ -167,17 +197,21 @@
         let options = {
           page: val,
           limit: this.pageSize2,
-          app_version: this.filter.versions,
-          app_channel: this.filter.channels,
-          start_at: this.filter.start,
-          end_at: this.filter.end
+          stat_date: this.detail.stat_date
         }
         this.day_details(options)
       },
       num(data){
-        this.detail = data
+        let options = {
+          page: 1,
+          limit: this.pageSize2,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels,
+          stat_date: data.stat_date
+        }
+        this.detail = Object.assign({}, data)
         this.dialogVisible = true
-        this.day_details({limit: this.pageSize2, stat_date: data.stat_date})
+        this.day_details(options)
       },
       //绘图
       draw(){
@@ -210,5 +244,9 @@
   .page {
     text-align: right;
     margin-top: 20px;
+  }
+
+  dialog_w {
+    width: 60%;
   }
 </style>

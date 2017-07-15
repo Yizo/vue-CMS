@@ -10,6 +10,9 @@ export default {
   areaTypeName(state){
     return state.area_type_name
   },
+  getLoading(state){
+    return state.vue_loading
+  },
   token(state){
     return state.token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
   },

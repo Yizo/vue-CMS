@@ -10,6 +10,8 @@ export default {
   AREATYPENAME: (state, param) => {
     state.area_type_name = param.data.regions
   },
-
+  submitLoading: (state, parm) => {
+    state.vue_loading = parm
+  }
 }
 

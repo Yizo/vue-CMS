@@ -13,18 +13,18 @@
         description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-bottom: 10px">
       </el-alert>
       <template>
-        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
+        <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange">
           <el-option
-            v-for="(item,index) in versions.app_versions"
+            v-for="(item,index) in versions.app_channels"
             :label="item.name"
             :value="item.name" :key="index">
           </el-option>
         </el-select>
       </template>
       <template>
-        <el-select v-model="filter.channels" placeholder="切换渠道" @change="valueChange">
+        <el-select v-model="filter.versions" placeholder="版本筛选" @change="valueChange">
           <el-option
-            v-for="(item,index) in versions.app_channels"
+            v-for="(item,index) in versions.app_versions"
             :label="item.name"
             :value="item.name" :key="index">
           </el-option>
@@ -46,11 +46,11 @@
               <th>数量</th>
               <th>占比</th>
             </tr>
-            <tr v-for="(item,index) in tableData">
+            <tr v-for="(item,index) in tableData" v-if="index < 50">
               <td>{{item.operator}}</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
                         @click="detail(index,item)">{{item.total}}</span></td>
-              <td>{{item.percent}}</td>
+              <td>{{item.percent}}%</td>
             </tr>
             </tbody>
           </table>
@@ -62,10 +62,15 @@
     <el-dialog v-model="dialogTableVisible">
       <h2 class="dh2">运营商<span v-text="pageInfo.operator"></span>详情</h2>
       <el-table :data="dialogData" style="text-align: center">
-        <el-table-column property="username" label="账号" width="150"></el-table-column>
+        <el-table-column label="账号" width="110">
+          <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="登录时间" width="200">
           <template scope="scope">
-            <span>{{ Timestamp(scope.row.last_signin_at) }}</span>
+            <span>{{ scope.row.last_signin_at | Time }}</span>
           </template>
         </el-table-column>
         <el-table-column property="ip" label="用户IP"></el-table-column>
@@ -82,11 +87,15 @@
         </el-pagination>
       </div>
     </el-dialog>
+
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
+
   </div>
 </template>
 
 <script>
   import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   import * as API from '../../../api/api'
   export default {
     data() {
@@ -109,8 +118,7 @@
             text: null
           },
           tooltip: {
-            /*            headerFormat: '浏览器访问量占比<br>',
-             pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'*/
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
           },
           plotOptions: {
             pie: {
@@ -118,7 +126,8 @@
               cursor: 'pointer',
               dataLabels: {
                 enabled: true,
-              }
+              },
+              showInLegend: true
             }
           },
           series: [{
@@ -141,28 +150,32 @@
         val: {},
         currentPage: 1,
         totalSize: 0,
-        pageSize: 15
+        pageSize: 15,
+        dialogVisible: false,
+        username: '姓名'
       }
+    },
+    components: {
+      userDetail
     },
     computed: {
       ...mapGetters(['versions']),
     },
     methods: {
-      //时间戳
-      Timestamp(row){
-        const now = new Date(row * 1000);
-        var year = now.getFullYear();
-        var month = now.getMonth() + 1;
-        var date = now.getDate();
-        var hour = now.getHours();
-        var minute = now.getMinutes();
-        var second = now.getSeconds();
-
-        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.id)
+        this.ud_base({limit: 10})
       },
       //筛选
       filter(row){
-        console.log(row)
       },
 
       //获取运营商信息
@@ -216,7 +229,9 @@
         var options = {
           operator: val.operator,
           page: 1,
-          limit: this.pageSize
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.dialogTableVisible = true
         this.getDatails(options).then(res => {
@@ -230,7 +245,9 @@
       line(json){
         var arr = [];
         for (var i = 0; i < json.length; i++) {
-          arr.push([json[i]['operator'], parseFloat(json[i].percent)])
+          if (i < 50) {
+            arr.push([json[i]['operator'], parseFloat(json[i].percent)])
+          }
         }
         return arr
       },
@@ -254,7 +271,9 @@
         var options = {
           operator: this.val.operator,
           page: val,
-          limit: this.pageSize
+          limit: this.pageSize,
+          app_version: this.filter.versions,
+          app_channel: this.filter.channels
         }
         this.getDatails(options).then(res => {
           var data = res.data.data;
@@ -265,15 +284,8 @@
       },
       //筛选
       valueChange(val){
-
-        if (this.filter.channels == '全部渠道') {
-          this.filter.channels = ''
-        }
-        if (this.filter.versions == '全部版本') {
-          this.filter.versions = ''
-        }
-
-        this.gethardware({app_version: this.filter.versions, app_channel: this.filter.channels}).then(res => {
+        let options = {app_version: this.filter.versions, app_channel: this.filter.channels}
+        this.gethardware(options).then(res => {
           this.tableData = res.data.data.items;
           this.options.series[0].data = this.line(res.data.data.items);
           this.$HighCharts.chart('main', this.options);
@@ -281,7 +293,8 @@
       }
     },
     mounted(){
-      this.gethardware({app_version: null, app_channel: null}).then(res => {
+      let options = {app_version: this.filter.versions, app_channel: this.filter.channels}
+      this.gethardware(options).then(res => {
         this.tableData = res.data.data.items;
         this.options.series[0].data = this.line(res.data.data.items);
         this.$HighCharts.chart('main', this.options);

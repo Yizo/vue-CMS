@@ -6,6 +6,10 @@
       <el-table-column
         prop="username"
         label="账号名">
+        <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="ip"
@@ -59,6 +63,9 @@
       formatDate: formatDate
     },
     methods: {
+      userInfo(row){
+        this.$emit('AreaUser', row);
+      },
       showDialog(){
         this.dialog = true
       },
@@ -91,7 +98,7 @@
   }
 </script>
 
-<style scope>
+<style scoped>
   .el-dialog__header {
     text-align: left;
   }

@@ -44,7 +44,12 @@
       <!--详情-->
       <el-dialog v-model="dialogVisible" title="月增详情" size="small">
         <el-table :data="get_month_detail.users" border style="text-align: center">
-          <el-table-column property="username" label="账号名" width="150"></el-table-column>
+          <el-table-column property="username" label="账号名" width="150">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column property="coins" label="注册时间点">
             <template scope="scope">
               {{scope.row.created_at | Time}}
@@ -73,11 +78,14 @@
         </div>
       </el-dialog>
     </div>
+    <user-detail :visab="user_dialog" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import {mapActions, mapGetters}  from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
+  import * as JS from '../../../assets/js/js'
   export default{
     data: () => ({
       pageSize: 10,
@@ -113,7 +121,10 @@
         series: [],
         credits: false
       },
+      user_dialog: false,
+      username: '姓名'
     }),
+
     watch: {
       month_chart(){
         this.draw()
@@ -124,15 +135,28 @@
       ...mapGetters({
         get_month: 'month_data',
         get_month_detail: 'month_details_data',
-        month_chart: 'month_chart'
+        month_chart: 'month_chart',
       }),
+    },
+    components: {
+      userDetail
     },
     methods: {
       ...mapActions({
         month: 'ADDDAY_MONTH',
         month_details: 'ADDDAY_MONTH_DETAILS',
-        monthChart: 'ADDDAY_MONTH_CHART'
+        monthChart: 'ADDDAY_MONTH_CHART',
+        ud_base: 'UD_base_info'
       }),
+      cdialog(){
+        this.user_dialog = false
+      },
+      userInfo(row){
+        this.username = row.username
+        this.user_dialog = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       //表格数据
       AnalysisJSON(parm) {
         var result = []

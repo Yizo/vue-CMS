@@ -19,12 +19,6 @@
             label="服务器类型">
           </el-table-column>
           <el-table-column
-            label="是否启用">
-            <template scope="scope">
-              {{scope.row.is_enabled?'启用':'禁用'}}
-            </template>
-          </el-table-column>
-          <el-table-column
             prop="name"
             label="地域名称">
           </el-table-column>
@@ -32,6 +26,15 @@
             label="国旗图标">
             <template scope="scope">
               <img :src="url+'/flags/'+scope.row.abbr+'.png'" alt="">
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="是否启用">
+            <template scope="scope">
+              <el-tag
+                :type="scope.row.is_enabled ? 'success' : 'primary'"
+                close-transition>{{scope.row.is_enabled ? '是': '否'}}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -48,7 +51,7 @@
       </template>
     </div>
     <!--新增-->
-    <el-dialog title="新增地域" v-model="dialogVisible" size="tiny" @close="closeBlock_add">
+    <el-dialog title="新增地域" v-model="dialogVisible" @close="closeBlock_add" class="filex_dialog">
       <el-form :model="form" label-width="150px" label-position="left" :rules="add_rules" ref="add">
         <el-form-item label="服务器类型" prop="node_type_id">
           <el-select v-model="form.node_type_id" style="width: 100%" class="dot_tips">
@@ -81,7 +84,7 @@
       </div>
     </el-dialog>
     <!--修改-->
-    <el-dialog title="修改地域" v-model="dialogVisible_update" size="tiny" @close="closeBlock_up">
+    <el-dialog title="修改地域" v-model="dialogVisible_update" @close="closeBlock_up" class="filex_dialog">
       <el-form :model="form2" label-width="120px" label-position="left" :rules="up_rules" ref="up">
         <el-form-item label="地域编号">
           <el-input v-model="form2.id" auto-complete="off" :disabled="true"></el-input>
@@ -411,6 +414,7 @@
   }
 
   .iso {
+    display: block;
     font-size: 10px;
     text-decoration: underline;
     color: #20A0FF;

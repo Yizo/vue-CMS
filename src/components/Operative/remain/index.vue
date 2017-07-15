@@ -24,19 +24,19 @@
           placeholder="结束日期"
           @change="end_date">
         </el-date-picker>
-        <el-select v-model="filter.versions" placeholder="版本筛选">
-          <el-option
-            v-for="(item,index) in versions.app_versions"
-            :label="item.name"
-            :value="item.name" :key="index">
-          </el-option>
-        </el-select>
         <el-select v-model="filter.channels" placeholder="切换渠道">
           <el-option
             v-for="(item,index) in versions.app_channels"
             :label="item.name"
             :value="item.name" :key="index"
           >
+          </el-option>
+        </el-select>
+        <el-select v-model="filter.versions" placeholder="版本筛选">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
           </el-option>
         </el-select>
       </div>
@@ -66,7 +66,8 @@
       <!--图表展示-->
       <el-row class="">
         <el-col :span="24">
-          <span style="margin: 10px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>页面点击</span>
+          <span style="margin: 10px 0;display: inline-block"><i class="el-icon-menu"
+                                                                style="margin-right: 10px"></i>留存</span>
           <div id="main" style="height: 400px;border: 1px solid #D3DCE6;margin-bottom: 10px">
 
           </div>
@@ -91,7 +92,7 @@
         <el-table-column
           label="次日留存用户">
           <template scope="scope">
-            <span @click="details(2,scope.row)" style="cursor: pointer">{{scope.row.second_day}}</span>
+            <span @click="other(2,scope.row)" style="cursor: pointer">{{scope.row.second_day}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -103,7 +104,7 @@
         <el-table-column
           label="7日留存用户">
           <template scope="scope">
-            <span @click="details(3,scope.row)" style="cursor: pointer">{{scope.row.seventh_day}}</span>
+            <span @click="other(3,scope.row)" style="cursor: pointer">{{scope.row.seventh_day}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -115,7 +116,7 @@
         <el-table-column
           label="30日留存用户">
           <template scope="scope">
-            <span @click="details(4,scope.row)" style="cursor: pointer">{{scope.row.thirtieth_day}}</span>
+            <span @click="other(4,scope.row)" style="cursor: pointer">{{scope.row.thirtieth_day}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -137,8 +138,13 @@
 
     <el-dialog :title="dialog.name" v-model="dialog.visable">
       <el-table :data="dialog.data">
-        <el-table-column property="username" label="账号名"></el-table-column>
-        <el-table-column property="user_id" label="姓名"></el-table-column>
+        <el-table-column label="账号名">
+          <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column property="created_version_info" label="注册版本信息"></el-table-column>
         <el-table-column label="注册时间点">
           <template scope="scope">{{scope.row.created_at | Time}}</template>
         </el-table-column>
@@ -156,22 +162,23 @@
         class="page">
       </el-pagination>
     </el-dialog>
+
     <el-dialog :title="dialog2.name" v-model="dialog2.visable" size="tiny">
       <table class="table">
         <tbody>
         <tr style="background-color: #EEF1F6">
           <th>账号名</th>
         </tr>
-        <tr v-if="!dialog2.data">
+        <tr v-if="dialog2.data == ''">
           <th style="padding: 10px 0">暂无数据</th>
         </tr>
         <tr v-else v-for="item in dialog2.data">
-          <th>{{item.username}}</th>
+          <th><span class="dialog_num" @click="userInfo(item)">{{item.username}}</span></th>
         </tr>
         </tbody>
       </table>
       <el-pagination
-        @current-change="d_handleSizeChange2"
+        @current-change="d_handleSizeChange_other"
         :current-page="d_currentPage"
         :page-size="d_pageSize"
         layout="total, prev, pager, next, jumper"
@@ -179,6 +186,7 @@
         class="page">
       </el-pagination>
     </el-dialog>
+    <user-detail :visab="user_dialog" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
@@ -186,6 +194,7 @@
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
   import {mapActions, mapGetters}  from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default{
     data: () => ({
       filter: {
@@ -196,7 +205,7 @@
       },
       data: [],
       chartData: [],
-      pageSize: 10,
+      pageSize: 15,
       currentPage: 0,
       totalSize: 0,
       /*折线图*/
@@ -226,6 +235,8 @@
         series: [],
         credits: false
       },
+      pageParm: {},
+      id: 1,
       dialog: {
         visable: false,
         index: 0,
@@ -241,11 +252,30 @@
       d_pageSize: 15,
       d_currentPage: 0,
       d_totalSize: 0,
+      user_dialog: false,
+      username: '姓名'
     }),
     computed: {
       ...mapGetters(['versions', 'initDate']),
     },
+
+    components: {
+      userDetail
+    },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.user_dialog = false
+      },
+
+      userInfo(row){
+        this.username = row.username
+        this.user_dialog = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       //获取列表信息
       getInfo(parm){
         return new Promise((resolve, reject) => {
@@ -304,11 +334,18 @@
         })
       },
       getData(val){
+        if (this.filter.channels == '全部渠道') {
+          this.filter.channels = ''
+        }
+        if (this.filter.versions == '全部版本') {
+          this.filter.versions = ''
+        }
         let options = {
           limit: this.pageSize, page: val, start_at: this.filter.start, end_at: this.filter.end,
           app_version: this.filter.versions,
           app_channel: this.filter.channels,
         }
+
         return new Promise((resolve, reject) => {
           this.getInfo(options).then(res => {
             let data = res.data.data
@@ -392,12 +429,6 @@
         this.filter.end = val
       },
       filtration(){
-        if (this.filter.channels == '全部渠道') {
-          this.filter.channels = ''
-        }
-        if (this.filter.versions == '全部版本') {
-          this.filter.versions = ''
-        }
         if (typeof this.filter.start == 'object') {
           this.filter.start = JS.Timestamp(this.filter.start)
         }
@@ -412,6 +443,15 @@
           start_at: this.filter.start,
           end_at: this.filter.end
         }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
+        }
         this.getInfo(options).then(res => {
           let data = res.data.data
           this.currentPage = data.current_page
@@ -423,11 +463,37 @@
       handleSizeChange(val){
         this.getData(val)
       },
-      d_handleSizeChange1(){
-
+      d_handleSizeChange1(val){
+        let options = Object.assign({}, this.pageParm);
+        options.page = val;
+        this.getDetails(options).then(res => {
+          this.d_currentPage = val;
+          this.dialog.data = res.data.data.users
+        })
       },
-      d_handleSizeChange2(){
-
+      d_handleSizeChange_other(val){
+        this.d_currentPage = val
+        let options = Object.assign({}, this.pageParm);
+        options.page = val;
+        if (this.id === 2) {
+          options.stat_type = 1;
+          this.pageParm = Object.assign({}, options)
+          this.getRemain(options).then(res => {
+            this.dialog2.data = [...res.data.data.logs]
+          })
+        } else if (this.id === 3) {
+          options.stat_type = 7;
+          this.pageParm = Object.assign({}, options)
+          this.getRemain(options).then(res => {
+            this.dialog2.data = [...res.data.data.logs]
+          })
+        } else {
+          options.stat_type = 30;
+          this.pageParm = Object.assign({}, options)
+          this.getRemain(options).then(res => {
+            this.dialog2.data = [...res.data.data.logs]
+          })
+        }
       },
       /*详情*/
       /*当日*/
@@ -445,6 +511,9 @@
           app_version: this.filter.versions,
           app_channel: this.filter.channels,
         }
+
+        this.pageParm = Object.assign({}, options)
+
         this.dialog.name = '当日新增用户'
         this.dialog.visable = true
         this.getDetails(options).then(res => {
@@ -454,7 +523,8 @@
         })
       },
       /*次日-7日-30日*/
-      details(id, data){
+      other(id, data){
+        this.id = id
         if (this.filter.channels == '全部渠道') {
           this.filter.channels = ''
         }
@@ -468,10 +538,12 @@
           app_version: this.filter.versions || null,
           app_channel: this.filter.channels || null,
         }
+
         this.dialog2.visable = true
         if (id === 2) {
           this.dialog2.name = '次日留存用户'
-          options.stat_type = 1
+          options.stat_type = 1;
+          this.pageParm = Object.assign({}, options)
           this.getRemain(options).then(res => {
             this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
@@ -479,7 +551,8 @@
           })
         } else if (id === 3) {
           this.dialog2.name = '7日留存用户'
-          options.stat_type = 7
+          options.stat_type = 7;
+          this.pageParm = Object.assign({}, options)
           this.getRemain(options).then(res => {
             this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page
@@ -487,7 +560,8 @@
           })
         } else {
           this.dialog2.name = '30日留存用户'
-          options.stat_type = 30
+          options.stat_type = 30;
+          this.pageParm = Object.assign({}, options)
           this.getRemain(options).then(res => {
             this.dialog2.data = res.data.data.logs
             this.d_currentPage = res.data.data.current_page

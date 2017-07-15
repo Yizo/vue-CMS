@@ -13,8 +13,8 @@ const state = {
   },
   payChart: [],
   ff_data: [],//付费数据
-  pay_details_data: [],//详情数据
-  summary_data: [],//汇总数据
+  pay_details_data: null,//详情数据
+  summary_data: null,//汇总数据
 }
 
 export default {

@@ -1,5 +1,5 @@
 <template>
-  <div class="dstip">
+  <div class="dstip" v-loading.body="loading">
     <el-breadcrumb separator="/" class="breadcrumb">
       <el-breadcrumb-item>用户行为</el-breadcrumb-item>
       <el-breadcrumb-item>去向IP</el-breadcrumb-item>
@@ -7,12 +7,11 @@
     <el-alert
       title="数据说明"
       type="info"
-      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计" style="margin-top: 10px;text-align: left">
+      description="本页面每天凌晨统计一次,当天的新内容将于第二天凌晨统计;本月只能查询上个月以上的数据" style="margin-top: 10px;text-align: left">
     </el-alert>
     <el-row style="text-align: left;margin-top: 20px">
       <span>筛选方式</span>
       <el-select v-model="select" placeholder="筛选方式">
-        <el-option label="年" value="year"></el-option>
         <el-option label="月" value="month"></el-option>
         <el-option label="日" value="date" checked></el-option>
       </el-select>
@@ -34,19 +33,38 @@
       <template>
         <el-table
           :data="data"
-          style="width: 100%">
+          style="width: 100%"
+          id="table"
+          editable>
           <el-table-column
-            type="index"
-            label="编号"
-            width="80px">
+            label="编号" width="50">
+            <template scope="scope">{{(currentPage - 1)*pageSize+scope.$index+1}}</template>
           </el-table-column>
           <el-table-column
-            prop="domain"
             label="去向IP">
+            <template scope="scope">
+              <span class="edit">{{scope.row.domain}}</span>
+            </template>
           </el-table-column>
           <el-table-column
-            prop="domain_description"
             label="中文解析">
+            <template scope="scope">
+              <div :class="'editSpanClass' + scope.$index">
+                <span class="edit">{{scope.row.domain_description}}</span>
+                <i class="el-icon el-icon-edit" style="color: #1c8de0;cursor: pointer"
+                   @click="edit(scope.$index,scope.row)"></i>
+              </div>
+              <div :class="'editInputClass' + scope.$index" style="display: none">
+                <el-input type="text" v-model="scope.row.domain_description"
+                          @keyup.enter.native="inputBlur(scope.$index,scope.row)"
+                          @blur="loseBlur(scope.$index)"></el-input>
+                <i class="iconfont icon-gouxuan"
+                   style="color: green;font-size:20px;cursor: pointer;display: inline-block;"
+                   @click.stop="inputBlur(scope.$index,scope.row)"></i>
+                <i class="el-icon el-icon-circle-cross" style="color: red;cursor: pointer;display: inline-block;"
+                   @click.stop="cancel(scope.$index,scope.row)"></i>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column
             label="访问用户数">
@@ -78,7 +96,12 @@
       <!--访问用户详情-->
       <el-dialog :title="user.row_data.domain" v-model="user.visable" size="tiny">
         <el-table :data="user.data">
-          <el-table-column property="username" label="账号名"></el-table-column>
+          <el-table-column label="账号名">
+            <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.username}}</span>
+            </template>
+          </el-table-column>
           <el-table-column property="visits_count" label="访问次数"></el-table-column>
         </el-table>
         <el-pagination
@@ -96,12 +119,12 @@
           <el-table-column type="index" label="编号" width="80px"></el-table-column>
           <el-table-column label="地域">
             <template scope="scope">
-              {{scope.row.ip_country}}{{scope.row.ip_province?"_":''}}{{scope.row.ip_province}}{{scope.row.ip_city?"_":''}}{{scope.row.ip_city}}
+              {{scope.row.ip_country}}{{scope.row.ip_province}}{{scope.row.ip_city}}
             </template>
           </el-table-column>
           <el-table-column property="users_count" label="人数"></el-table-column>
           <el-table-column property="visits_count" label="占比">
-            <template scope="scope">{{scope.row.percent}}</template>
+            <template scope="scope">{{scope.row.percent}}%</template>
           </el-table-column>
         </el-table>
         <div id="main" style="width: 400px;height: 300px;margin-top: 10px;">
@@ -109,13 +132,15 @@
         </div>
       </el-dialog>
     </div>
+    <user-detail :visab="dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 <script>
   import * as API from '../../../api/api'
   import * as JS from '../../../assets/js/js'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   export default{
     components: {},
     data(){
@@ -148,8 +173,7 @@
             text: null
           },
           tooltip: {
-            /*            headerFormat: '浏览器访问量占比<br>',
-             pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'*/
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
           },
           plotOptions: {
             pie: {
@@ -172,17 +196,75 @@
           }],
           credits: false
         },
+        row: {
+          index: 0,
+          data: null
+        },
+        loading: false,
+        dialogVisible: false,
+        username: '姓名'
       }
+    },
+    components: {
+      userDetail
     },
     computed: {
       ...mapGetters(['initDate']),
       filter(){
         return this.initDate
-      }
+      },
     },
     methods: {
-      percentage(num1, num2){
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.dialogVisible = false
+      },
 
+      userInfo(row){
+        this.username = row.username
+        this.dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
+      edit(index, data){
+        this.row.index = index;
+        this.row.data = Object.assign({}, data);
+        this.$el.querySelector(`.editSpanClass${index}`).style.display = 'none',
+          this.$el.querySelector(`.editInputClass${index}`).style.display = 'block',
+          this.$el.querySelector(`.editInputClass${index} input`).focus()
+      },
+      loseBlur(index){
+        setTimeout(() => {
+          this.$el.querySelector(`.editSpanClass${index}`).style.display = 'block'
+          this.$el.querySelector(`.editInputClass${index}`).style.display = 'none'
+        }, 200)
+      },
+      inputBlur(index, data){
+        this.$el.querySelector(`.editSpanClass${index}`).style.display = 'block'
+        this.$el.querySelector(`.editInputClass${index}`).style.display = 'none'
+        this.loading = true
+        setTimeout(() => {
+          this.quick_update({
+            domain: this.data[index].domain,
+            description: this.data[index].domain_description
+          }).then(res => {
+            if (res.data.success) {
+              this.loading = false
+            } else {
+              this.data[index].domain_description = this.row.data.domain_description
+            }
+          }).catch(err => {
+            this.loading = false
+            this.data[index].domain_description = this.row.data.domain_description
+          })
+        }, 800)
+      },
+      cancel(index, data){
+        this.data[index].domain_description = this.row.data.domain_description
+        this.$el.querySelector(`.editSpanClass${index}`).style.display = 'block'
+        this.$el.querySelector(`.editInputClass${index}`).style.display = 'none'
       },
       //图表数据转为数组
       line(json){
@@ -221,6 +303,24 @@
           this.$http({
             method: 'GET',
             url: API.dstip_user_details,
+            headers: {'Authorization': token},
+            params: parm
+          }).then(function (res) {
+            if (res.status == 200) {
+              resolve(res)
+            }
+          }).catch(function (err) {
+            reject(err)
+          })
+        })
+      },
+      //修改中文解析
+      quick_update(parm){
+        return new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          this.$http({
+            method: 'POST',
+            url: API.dstip_quick_update,
             headers: {'Authorization': token},
             params: parm
           }).then(function (res) {
@@ -289,7 +389,14 @@
         })
       },
       getData(val){
-        this.getInfo({page: val, limit: this.pageSize}).then(res => {
+        let options = {
+          page: val,
+          limit: this.pageSize,
+          start_at: this.filter.start,
+          end_at: this.filter.end,
+          stat_type: this.select
+        }
+        this.getInfo(options).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.current_page
           this.total = res.data.data.total_count
@@ -316,6 +423,15 @@
           end_at: this.filter.end,
           stat_type: this.select
         }
+        if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
+
+        } else {
+          this.$message({
+            message: '日期必需同时选或同时不选',
+            type: 'warning'
+          });
+          return false
+        }
         this.getInfo(options).then(res => {
           this.data = res.data.data.logs
           this.currentPage = res.data.data.current_page
@@ -325,6 +441,7 @@
       //查看用户详情
       user_details(data){
         this.user.row_data = data;
+        this.user.currentPage = 1;
         let options = {
           domain: this.user.row_data.domain,
           start_at: this.filter.start,
@@ -360,7 +477,7 @@
       },
       //查看用户详情-分页
       user_details_PageChange(val){
-        this.user.row_data = data;
+        this.user.currentPage = val;
         let options = {
           domain: this.user.row_data.domain,
           start_at: this.filter.start,
@@ -489,8 +606,8 @@
             this.domain.visable = true
             let data = res.data.data;
             this.domain.Country_data = data.logs
-            this.draw(data.logs)
             this.getDomainCountryDetails(options).then(res => {
+              this.draw(data.logs)
               this.domain.Region_data = res.data.data.logs;
             })
           } else {
@@ -533,6 +650,21 @@
 
   .el-input {
     width: 200px;
+  }
+
+  #table .el-table_1_column_2 {
+    padding: 0;
+  }
+
+  .edit {
+    display: inline-block;
+    border: transparent;
+    width: 150px;
+    height: 35px;
+  }
+
+  .el-input__inner {
+    width: 150px;
   }
 </style>
 

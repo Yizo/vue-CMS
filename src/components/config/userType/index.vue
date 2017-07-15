@@ -62,7 +62,7 @@
       class="page">
     </el-pagination>
 
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny" @close="closeBlock">
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" @close="closeBlock" class="filex_dialog">
       <el-form :model="form" label-position="left" label-width="150px" :rules="rules" ref="userType">
         <el-form-item label="级别" class="dot_tips" prop="level">
           <el-input v-model="form.level" auto-complete="off"></el-input>
@@ -121,10 +121,14 @@
             return callback(new Error('累计钻石不能为空'));
           }
           setTimeout(() => {
-            if (/^\d+$/.test(value) == false) {
-              callback(new Error('请输入数字值'));
+            if (/^\d+$/.test(String(value)) == false) {
+              callback(new Error('请输入数字'));
             } else {
-              callback()
+              if (parseInt(value) >= 1000) {
+                callback(new Error('钻石不能超过1000'));
+              } else {
+                callback()
+              }
             }
           }, 1000);
         };
@@ -289,7 +293,7 @@
   }
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
   #configUserType {
     padding: 10px;
   }

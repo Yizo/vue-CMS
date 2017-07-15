@@ -25,6 +25,16 @@ export function isDigit(value) {
   }
 }
 
+/*请求前参数配置*/
+export function paramsConfig(options) {
+  for (var i in options) {
+    if (options[i] === undefined || options[i] === '' || options[i] === null || options[i] === '全部版本' || options[i] === '全部渠道') {
+      delete options[i]
+    }
+  }
+  return options
+}
+
 export function year(row) {
   const now = new Date(row);
   var year = now.getFullYear();
@@ -56,7 +66,6 @@ export function Timestamp(row) {
   if (date <= 9) {
     date = '0' + date
   }
-
   return year + "-" + month + "-" + date;
 }
 
@@ -94,14 +103,13 @@ export function monthTime() {
   var month = now.getMonth() + 1;
   var date = now.getDate();
 
-  if (month < 9) {
+  if (month <= 9) {
     month = '0' + month
   }
-  if (date < 9) {
+  if (date <= 9) {
     date = '0' + date
   }
-
-  return {start: year + "-" + month + "-" + 1, end: year + "-" + month + "-" + date}
+  return {start: year + "-" + month + "-" + '01', end: year + "-" + month + "-" + date}
 }
 
 /*金额逗号间隔*/
@@ -146,6 +154,24 @@ export function getArea(parm) {
       params: parm,
     }).then(function (res) {
 
+      if (res.status == 200) {
+        resolve(res)
+      } else {
+        reject(res)
+      }
+    })
+  })
+}
+
+/*获取渠道和版本*/
+export function getChannelVerion(parm) {
+  return new Promise((resolve, reject) => {
+    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+    axios({
+      method: 'GET',
+      url: API.group_index,
+      headers: {'Authorization': token}
+    }).then(function (res) {
       if (res.status == 200) {
         resolve(res)
       } else {

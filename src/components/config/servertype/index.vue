@@ -38,7 +38,7 @@
           label="转为包月次数">
         </el-table-column>
         <el-table-column
-          label="是否转化包月">
+          label="是否可转包月">
           <template scope="scope">
             <el-tag
               :type="scope.row.is_enabled ? 'success' : 'primary'"
@@ -81,31 +81,31 @@
       </el-pagination>
 
       <!--新增弹窗-->
-      <el-dialog :title="pageInfo.name" v-model="dialogTableVisible_add" size="tiny" @close="closeBlcok">
+      <el-dialog :title="pageInfo.name" v-model="dialogTableVisible_add" @close="closeBlcok" class="filex_dialog">
         <el-form :model="form" label-width="200px" label-position="left" ref="serverType" :rules="rules">
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="服务类型名称" prop="name" class="dot_tips">
                 <el-input v-model="form.name" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="服务类型描述" prop="description">
-                <el-input v-model="form.description" auto-complete="off"></el-input>
+                <el-input type="textarea" v-model="form.description" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="级别" prop="level" class="dot_tips">
                 <el-input v-model="form.level" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="最低账号类型" prop="user_group_id" class="dot_tips">
                 <el-select v-model="form.user_group_id">
                   <el-option
@@ -119,35 +119,35 @@
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="所需钻石" prop="expense_coins" class="dot_tips">
                 <el-input v-model="form.expense_coins" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="转为包月次数" prop="times_for_monthly">
                 <el-input v-model="form.times_for_monthly" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="上行限速" prop="limit_speed_up">
                 <el-input v-model="form.limit_speed_up" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="下行限速" prop="limit_speed_down">
                 <el-input v-model="form.limit_speed_down" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="是否启用此类型">
                 <el-radio class="radio" v-model="form.is_enabled" label="true">是</el-radio>
                 <el-radio class="radio" v-model="form.is_enabled" label="false">否</el-radio>
@@ -155,7 +155,7 @@
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="20">
+            <el-col :span="24">
               <el-form-item label="是否可以转为包月状态">
                 <el-radio class="radio" v-model="form.can_be_monthly" label="true">是</el-radio>
                 <el-radio class="radio" v-model="form.can_be_monthly" label="false">否</el-radio>
@@ -172,7 +172,7 @@
         </div>
       </el-dialog>
       <!--删除弹窗-->
-      <el-dialog title="删除" v-model="dialogVisible_del" size="tiny">
+      <el-dialog title="删除" v-model="dialogVisible_del">
         <span>您确定要删除{{pageInfo.name}}吗？</span>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible_del = false">取 消</el-button>
@@ -208,7 +208,11 @@
             if (/^\d+$/.test(String(value)) == false) {
               callback(new Error('请输入数字'));
             } else {
-              callback()
+              if (parseInt(value) >= 1000) {
+                callback(new Error('钻石不能超过1000'));
+              } else {
+                callback()
+              }
             }
           }, 1000);
         },
@@ -388,11 +392,7 @@
                   message: '添加成功',
                   type: 'success'
                 })
-                this.getInfo({null}).then(res => {
-                  this.tableData = res.data.data.node_types
-                  this.currentPage = res.data.data.current_page
-                  this.total = res.data.data.total_pages
-                })
+                this.tableData.push(res.data.data)
               }
             })
           }
@@ -438,6 +438,7 @@
         this.pageInfo.name = '修改'
         this.is = '修改';
         this.dialogTableVisible_add = true;
+        this.pageInfo.index = index;
         this.GradeInfo({is_enabled: 'true'}).then(res => {
           this.group = res.data.data.user_groups
         })
@@ -446,13 +447,15 @@
         var options = {
           id: this.pageInfo.data.id,
           name: this.form.name,
-          description: this.form.description,
           level: this.form.level,
           user_group_id: this.form.user_group_id,
           expense_coins: this.form.expense_coins,
           can_be_monthly: this.form.can_be_monthly,
           times_for_monthly: this.form.times_for_monthly,
-          is_enabled: this.form.is_enabled
+          limit_speed_up: this.form.limit_speed_up,
+          limit_speed_down: this.form.limit_speed_down,
+          is_enabled: this.form.is_enabled,
+          description: this.form.description,
         }
         this.$refs.serverType.validate((valid) => {
           if (valid) {
@@ -469,11 +472,7 @@
                   message: '修改成功',
                   type: 'success'
                 })
-                this.getInfo({null}).then(res => {
-                  this.tableData = res.data.data.node_types
-                  this.currentPage = res.data.data.current_page
-                  this.total = res.data.data.total_pages
-                })
+                this.tableData.splice(this.pageInfo.index, 1, res.data.data);
               }
             })
           }
@@ -518,7 +517,7 @@
               message: '删除成功',
               type: 'success'
             })
-            this.getInfo({null}).then(res => {
+            this.getInfo({page: 1, limit: this.pageSize}).then(res => {
               this.tableData = res.data.data.node_types
               this.currentPage = res.data.data.current_page
               this.total = res.data.data.total_pages
