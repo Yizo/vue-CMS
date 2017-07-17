@@ -411,7 +411,6 @@
         this.form['is_enabled'] = currPlan['is_enabled'] ? 'enabled1' : 'enabled2';
         this.form['is_iap'] = currPlan['is_iap'] ? 'iap1' : 'iap2';
         this.form['is_audit'] = currPlan['is_audit'] ? 'true' : 'false';
-        console.log(currPlan)
         if (currPlan['platform'] != 'all') {
           this.form['platform'] = currPlan['platform']
         } else {
@@ -449,7 +448,6 @@
           method = 'POST';
           delete params['id'];
         }
-        console.log(params)
         return this.$http({
           method: method,
           url: url,
@@ -555,7 +553,6 @@
         if (params.app_version == '通用') {
           params.app_version = 'all'
         }
-        console.log(params)
         this.$http({
           methods: 'GET',
           url: API.set_meal_get,

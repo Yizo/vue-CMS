@@ -47,14 +47,17 @@
             </el-table-column>
             <el-table-column
               prop="users_count"
+              sortable
               label="人数">
             </el-table-column>
             <el-table-column
               prop="times_count"
+              sortable
               label="次数">
             </el-table-column>
             <el-table-column
               prop="average_times"
+              sortable
               label="平均数">
             </el-table-column>
           </el-table>

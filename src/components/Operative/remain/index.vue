@@ -90,6 +90,12 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="筛选结果占比">
+          <template scope="scope">
+            <span>{{scope.row.users_percent}}%</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="次日留存用户">
           <template scope="scope">
             <span @click="other(2,scope.row)" style="cursor: pointer">{{scope.row.second_day}}</span>

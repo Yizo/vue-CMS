@@ -1,5 +1,5 @@
 <template>
-  <div class="dstip">
+  <div class="dstip" :filter="filter">
     <div class="warp">
       <!--图表展示-->
       <el-row class="">
@@ -27,6 +27,12 @@
             label="月新增用户">
             <template scope="scope">
               <span @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="筛选结果占比">
+            <template scope="scope">
+              <span>{{scope.row.users_percent}}%</span>
             </template>
           </el-table-column>
         </el-table>
@@ -87,6 +93,11 @@
   import userDetail from '../../publicView/accoutInfo/index.vue'
   import * as JS from '../../../assets/js/js'
   export default{
+    props: {
+      filter: {
+        type: Object
+      }
+    },
     data: () => ({
       pageSize: 10,
       pageSize2: 15,
@@ -184,13 +195,19 @@
         this.month({page: val, limit: this.pageSize})
       },
       handleCurrentChange2(val){
-        this.month_details({page: val, limit: this.pageSize2, stat_month: this.detail.stat_month})
+        this.month_details({
+          page: val, limit: this.pageSize2, stat_month: this.detail.stat_month, app_version: this.filter.versions,
+          app_channel: this.filter.channels
+        })
       },
       num(data){
         var date = String(data.stat_year + "-" + data.stat_month);
         this.detail.stat_month = date;
         this.dialogVisible = true
-        this.month_details({limit: this.pageSize2, stat_month: date})
+        this.month_details({
+          limit: this.pageSize2, stat_month: date, app_version: this.filter.versions,
+          app_channel: this.filter.channels
+        })
       },
       //绘图
       draw(){

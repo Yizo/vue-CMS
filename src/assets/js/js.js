@@ -26,10 +26,13 @@ export function isDigit(value) {
 }
 
 /*请求前参数配置*/
-export function paramsConfig(options) {
-  for (var i in options) {
-    if (options[i] === undefined || options[i] === '' || options[i] === null || options[i] === '全部版本' || options[i] === '全部渠道') {
-      delete options[i]
+export function paramsConfig(config) {
+  let options = config.params
+  if(config.method === 'GET'){
+    for (var i in options) {
+      if (options[i] === undefined || options[i] === '' || options[i] === null || options[i] === '全部版本' || options[i] === '全部渠道') {
+        delete options[i]
+      }
     }
   }
   return options

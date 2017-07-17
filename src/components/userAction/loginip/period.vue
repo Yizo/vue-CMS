@@ -25,7 +25,7 @@
           <tr style="background-color: #EEF1F6">
             <th class="first">
               <span class="f_bottom">日期</span>
-              <span class="f_top">时间段</span>
+              <span class="f_top">登录次数</span>
             </th>
             <th v-for="(init,index) in 24" :key="index">
               {{init - 1}}
@@ -226,6 +226,7 @@
         this.getInfo(options).then(res => {
           this.tableData = [...res.data.data.logs];
           this.totalSize = res.data.data.total_count;
+          this.loadData()
         })
       },
       loadData() {

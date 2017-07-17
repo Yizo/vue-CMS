@@ -439,6 +439,9 @@
           if (options.platform == '全部平台') {
             options.platform = 'all'
           }
+          if(options.app_version == '全部版本'){
+              options.app_version = 'all'
+          }
           if (options.app_version == '通用') {
             options.app_version = 'all'
           }

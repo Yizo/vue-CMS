@@ -26,6 +26,12 @@
               <span @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
             </template>
           </el-table-column>
+          <el-table-column
+            label="筛选结果占比">
+            <template scope="scope">
+              <span>{{scope.row.users_percent}}%</span>
+            </template>
+          </el-table-column>
         </el-table>
       </template>
       <!--分页-->

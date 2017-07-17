@@ -18,11 +18,11 @@
         placeholder="结束日期">
       </el-date-picker>
       <div style="display: inline-block">
-        <el-input placeholder="请输入内容" v-model="qurey">
-          <el-select v-model="qurey_type" slot="prepend" placeholder="请选择" style="width: 100px">
+        <el-input placeholder="请输入内容" v-model="query">
+          <el-select v-model="query_type" slot="prepend" placeholder="请选择" style="width: 100px">
             <el-option label="取消" value=""></el-option>
-            <el-option label="账号ID" value="1"></el-option>
-            <el-option label="账号名" value="2"></el-option>
+            <el-option label="账号名" value="1"></el-option>
+            <el-option label="账号ID" value="2"></el-option>
           </el-select>
         </el-input>
       </div>
@@ -112,8 +112,8 @@
       return {
         tableData: [],
         proxy_type: null,
-        qurey_type: '1',
-        qurey: '',
+        query_type: '1',
+        query: '',
         input5: '',
         currentPage: 1,
         totalSize: 0,
@@ -176,9 +176,8 @@
           start_at: this.filter.start,
           end_at: this.filter.end,
           is_proxy: this.proxy_type,
-          qurey_type: parseInt(this.qurey_type),
-          q: this.qurey
-
+          query_type: parseInt(this.query_type),
+          q: this.query
         }
         if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
 

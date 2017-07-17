@@ -1,5 +1,5 @@
 <template>
-  <div class="dstip">
+  <div class="dstip" :filter="filter">
     <div class="warp">
       <!--图表展示-->
       <el-row class="">
@@ -24,6 +24,12 @@
             label="日新增用户">
             <template scope="scope">
               <span @click="num(scope.row)" class="dialog_num">{{scope.row.users_count}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="筛选结果占比">
+            <template scope="scope">
+              <span>{{scope.row.users_percent}}%</span>
             </template>
           </el-table-column>
         </el-table>
@@ -84,6 +90,11 @@
   import userDetail from '../../publicView/accoutInfo/index.vue'
   import * as JS from '../../../assets/js/js'
   export default{
+    props: {
+      filter: {
+        type: Object
+      }
+    },
     data: () => ({
       pageSize: 10,
       pageSize2: 15,

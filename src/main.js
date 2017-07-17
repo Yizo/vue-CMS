@@ -31,7 +31,7 @@ axios.defaults.validateStatus = function (status) {
 //请求拦截器
   axios.interceptors.request.use(function (config) {
     /*请求前参数配置*/
-    config.params = JS.paramsConfig(config.params)
+    config.params = JS.paramsConfig(config)
     //全局loading
     date1 = new Date().getTime();
     store.commit('submitLoading', true)
