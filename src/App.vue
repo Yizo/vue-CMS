@@ -2,7 +2,9 @@
   <div id="app">
     <circle2 class="loading2" v-show="getLoading"></circle2>
     <transition name="el-fade-in-linear">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </transition>
   </div>
 </template>

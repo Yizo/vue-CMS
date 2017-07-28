@@ -60,7 +60,7 @@
         <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>每日登录失败次数</span>
         <el-table
           :data="data"
-          style="width: 100%">
+          style="width: 100%;height: 500px;overflow-y: auto">
           <el-table-column
             prop="stat_date"
             label="时间">
@@ -75,14 +75,16 @@
           <el-table-column
             label="密码错误">
             <template scope="scope">
-              <span class="dialog_num" @click="detail({type:1,stat_at:scope.row.stat_date})">{{scope.row.wrong_password_count}}</span>
+              <span class="dialog_num"
+                    @click="detail({type:1,stat_at:scope.row.stat_date})">{{scope.row.wrong_password_count}}</span>
             </template>
           </el-table-column>
           <el-table-column
             prop="connection_failed_total"
             label="连接失败">
             <template scope="scope">
-              <span class="dialog_num" @click="detail({type:2,stat_at:scope.row.stat_date})">{{scope.row.failed_connection_count}}</span>
+              <span class="dialog_num"
+                    @click="detail({type:2,stat_at:scope.row.stat_date})">{{scope.row.failed_connection_count}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -94,15 +96,6 @@
           </el-table-column>
         </el-table>
       </template>
-      <!--分页-->
-      <el-pagination
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        layout="total, prev, pager, next, jumper"
-        :total="total"
-        :page-size="pageSize"
-        class="page">
-      </el-pagination>
     </div>
     <!--弹窗-->
     <el-dialog v-model="dialog" :title="title_name" size="tiny" class="dialog">
@@ -433,7 +426,6 @@
     border: 1px solid #D3DCE6;
     margin-top: 20px;
   }
-
   .page {
     text-align: right;
     margin-top: 20px;

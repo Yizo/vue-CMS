@@ -52,14 +52,14 @@
             </tr>
             <tr>
               <td>正常</td>
-              <td>{{tableData[0]?tableData[0].total:0}}</td>
-              <td>{{tableData[0]?tableData[0].percent:0}}%</td>
+              <td>{{tableData[0] ? tableData[0].total : 0}}</td>
+              <td>{{tableData[0] ? tableData[0].percent : 0}}%</td>
             </tr>
             <tr>
               <td>封号</td>
               <td><span style="cursor: pointer;background-color: #333;padding: 1px 3px;color: #fff"
-                        @click="details">{{tableData[1]?tableData[1].total:0}}</span></td>
-              <td>{{tableData[1]?tableData[1].percent:0}}%</td>
+                        @click="details">{{tableData[1] ? tableData[1].total : 0}}</span></td>
+              <td>{{tableData[1] ? tableData[1].percent : 0}}%</td>
             </tr>
             </tbody>
           </table>

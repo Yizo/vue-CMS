@@ -59,7 +59,7 @@
         <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>每日用户未连接次数</span>
         <el-table
           :data="data"
-          style="width: 100%">
+          style="width: 100%;height: 500px;overflow-y: auto">
           <el-table-column
             prop="stat_date"
             label="时间">
@@ -74,15 +74,6 @@
         </el-table>
       </template>
     </div>
-    <!--分页-->
-    <el-pagination
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      layout="total, prev, pager, next, jumper"
-      :total="total"
-      :page-size="pageSize"
-      class="page">
-    </el-pagination>
     <!--弹窗-->
     <el-dialog v-model="dialog" title="未连接详情" class="dialog">
       <el-table
@@ -116,7 +107,7 @@
         <el-table-column
           label="IP解析">
           <template scope="scope">
-            {{scope.row.ip_country}}{{scope.row.ip_province?"_":''}}{{scope.row.ip_province}}{{scope.row.ip_city?"_":''}}{{scope.row.ip_city}}
+            {{scope.row.ip_country}}{{scope.row.ip_province ? "_" : ''}}{{scope.row.ip_province}}{{scope.row.ip_city ? "_" : ''}}{{scope.row.ip_city}}
           </template>
         </el-table-column>
       </el-table>

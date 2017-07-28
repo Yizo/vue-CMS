@@ -329,6 +329,8 @@ export const coin_operation_logs = url + '/api/manage/v1/admins/coin_operation_l
 export const admins = url + '/api/manage/v1/admins'
 /*管理员管理-禁用*/
 export const admins_disable = url + '/api/manage/v1/admins/{id}/disable'
+/*管理员管理-启用*/
+export const admins_enable = url + '/api/manage/v1/admins/{id}/enable'
 /*管理员管理-更新*/
 export const admins_up = url + '/api/manage/v1/admins/{id}'
 
@@ -341,6 +343,16 @@ export const help_create = url + '/api/manage/v1/help_manuals'
 export const help_del = url + '/api/manage/v1/help_manuals/{id}'
 /*更新*/
 export const help_up = url + '/api/manage/v1/help_manuals/{id}'
+/*导航设置*/
+/*列表*/
+export const help_navigations_list = url + '/api/manage/v1/website_navigations'
+/*创建*/
+export const help_navigations_create = url + '/api/manage/v1/website_navigations'
+/*删除*/
+export const help_navigations_del = url + '/api/manage/v1/website_navigations/{id}'
+/*更新*/
+export const help_navigations_up = url + '/api/manage/v1/website_navigations/{id}'
+
 
 /*客户端去向日志*/
 export const client_connection_logs = url + '/api/manage/v1/client_connection_logs'

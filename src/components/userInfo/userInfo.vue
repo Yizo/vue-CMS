@@ -102,7 +102,8 @@
       <!--列表-->
       <el-row style="line-height: 36px">
         <el-col :span="12">
-          <p style="text-align: left;margin-left: 5px">用户列表:<span style="font-size: 16px;color: red">{{USERINFO_base.data.total_count}}</span>条结果
+          <p style="text-align: left;margin-left: 5px">用户列表:<span
+            style="font-size: 16px;color: red">{{USERINFO_base.data.total_count}}</span>条结果
           </p>
         </el-col>
         <el-col :span="12">
@@ -140,7 +141,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_enabled ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_enabled?'正常':'封号'}}
+              close-transition>{{scope.row.is_enabled ? '正常' : '封号'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -399,58 +400,59 @@
     background-color: #fff;
     border: 1px solid #D3DCE6;
 
-  h2 {
-    font-size: 14px;
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-    font-weight: 400;
-    text-align: left;
+    h2 {
+      font-size: 14px;
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+      font-weight: 400;
+      text-align: left;
 
-  span {
-    margin-right: 10px;
-    font-size: 18px;
-    color: #666666;
+      span {
+        margin-right: 10px;
+        font-size: 18px;
+        color: #666666;
+      }
+
+    }
+    ul {
+      display: flex;
+      margin: 10px 0;
+
+      li {
+        width: 25%;
+        height: 80px;
+        margin-right: 10px;
+        color: #fff;
+        position: relative;
+
+        div {
+          top: 20px;
+          right: 10px;
+          position: absolute;
+          height: 30px;
+          text-align: center;
+
+          p {
+            margin-bottom: 10px;
+            font-size: 25px;
+          }
+
+        }
+      }
+      li:nth-child(1) {
+        background-color: #3598DC;
+      }
+
+      li:nth-child(2) {
+        background-color: #E7505A;
+      }
+
+      li:nth-child(3) {
+        background-color: #32C5D2;
+      }
+
+    }
   }
 
-  }
-  ul {
-    display: flex;
-    margin: 10px 0;
-
-  li {
-    width: 25%;
-    height: 80px;
-    margin-right: 10px;
-    color: #fff;
-    position: relative;
-
-  div {
-    top: 20px;
-    right: 10px;
-    position: absolute;
-    height: 30px;
-    text-align: center;
-
-  p {
-    margin-bottom: 10px;
-    font-size: 25px;
-  }
-
-  }
-  }
-  li:nth-child(1) {
-    background-color: #3598DC;
-  }
-
-  li:nth-child(2) {
-    background-color: #E7505A;
-  }
-
-  li:nth-child(3) {
-    background-color: #32C5D2;
-  }
-
-  }
-  }
   .warp_list {
     width: 100%;
     overflow: auto;
@@ -466,20 +468,22 @@
     background-color: #fff;
     border: 1px solid #D3DCE6;
 
-  span {
-    font-size: 14px;
-    color: #475669;
-  }
+    span {
+      font-size: 14px;
+      color: #475669;
+    }
 
   }
+
   .filter {
 
-  .f {
-    display: inline-block;
-    line-height: 50px;
-  }
+    .f {
+      display: inline-block;
+      line-height: 50px;
+    }
 
   }
+
   .filter .el-select {
     width: 150px;
   }

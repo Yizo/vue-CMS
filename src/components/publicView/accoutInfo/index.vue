@@ -7,7 +7,7 @@
           <b>充值总额:</b><span style="color: red">{{rechargeInfo.total_payment_amount}}</span>
         </div>
         <div v-if="type == 5" style="display: inline-block">
-          <b>消费总额:</b><span style="color: red">{{consumeInfo.consump_coins?consumeInfo.consump_coins:'0'}}</span>
+          <b>消费总额:</b><span style="color: red">{{consumeInfo.consump_coins ? consumeInfo.consump_coins : '0'}}</span>
         </div>
       </div>
       <el-tabs type="border-card" v-model="activeName" @tab-click="handleClick">

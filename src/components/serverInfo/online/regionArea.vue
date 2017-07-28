@@ -20,7 +20,7 @@
         :current-page="regionAreaDetails.current_page"
         :page-size="pageSize"
         layout="total, prev, pager, next"
-        :total="regionAreaDetails.total_pages" class="page">
+        :total="regionAreaDetails.total_count" class="page">
       </el-pagination>
     </div>
   </div>
@@ -66,7 +66,7 @@
         this.$store.dispatch('getRegionDetails', {
           page: val,
           limit: this.pageSize,
-          node_id: this.node - id
+          node_id: this.nodeId
         })
       },
       areaUser(data){

@@ -55,13 +55,13 @@
           <el-table-column
             label="上行速度(kb/s)">
             <template scope="scope">
-              <span v-show="scope.row.status">{{Math.round(scope.row.network_speed_up/1024)}}</span>
+              <span v-show="scope.row.status">{{Math.round(scope.row.network_speed_up / 1024)}}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="下行速度(kb/s)">
             <template scope="scope">
-              <span v-show="scope.row.status">{{Math.round(scope.row.network_speed_down/1024)}}</span>
+              <span v-show="scope.row.status">{{Math.round(scope.row.network_speed_down / 1024)}}</span>
             </template>
           </el-table-column>
         </el-table>

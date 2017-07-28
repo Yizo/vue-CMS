@@ -91,7 +91,7 @@
         <el-table-column
           label="国外标识">
           <template scope="scope">
-            <span>{{scope.row.is_domestic?'国内':'国外'}}</span>
+            <span>{{scope.row.is_domestic ? '国内' : '国外'}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -100,7 +100,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_enabled ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_enabled ? '是': '否'}}
+              close-transition>{{scope.row.is_enabled ? '是' : '否'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -115,7 +115,7 @@
             <el-button
               size="small"
               :type="scope.row.is_enabled?'warning':'success'"
-              @click="handleEnabled(scope.$index, scope.row)">{{scope.row.is_enabled?'停用':'启用'}}
+              @click="handleEnabled(scope.$index, scope.row)">{{scope.row.is_enabled ? '停用' : '启用'}}
             </el-button>
           </template>
         </el-table-column>

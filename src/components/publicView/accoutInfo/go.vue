@@ -20,11 +20,11 @@
       style="width: 100%">
       <el-table-column
         prop="id"
-        label="编号" min-width="280">
+        label="编号" width="80">
       </el-table-column>
       <el-table-column
         prop="created_at"
-        label="时间点" min-width="180">
+        label="时间点" width="160">
         <template scope="scope">
           {{scope.row.created_at | Time}}
         </template>

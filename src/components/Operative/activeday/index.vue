@@ -11,17 +11,21 @@
     </el-alert>
     <!--筛选-->
     <el-row style="text-align: left;margin-top: 20px">
+      <el-radio-group v-model="radio" style="margin-right: 10px" @change="typeChange">
+        <el-radio-button label="日"></el-radio-button>
+        <el-radio-button label="月"></el-radio-button>
+      </el-radio-group>
       <div style="display: inline-block">
         <el-date-picker
           v-model="filter.start"
-          type="month"
-          placeholder="开始年月"
+          :type="type"
+          :placeholder="starValue"
           @change="start_date">
         </el-date-picker>
         <el-date-picker
           v-model="filter.end"
-          type="month"
-          placeholder="结束年月"
+          :type="type"
+          :placeholder="endValue"
           @change="end_date">
         </el-date-picker>
         <el-select v-model="filter.channels" placeholder="切换渠道">
@@ -61,6 +65,10 @@
   import {mapActions, mapGetters}  from 'vuex'
   export default{
     data: () => ({
+      radio: '日',
+      type: 'date',
+      starValue: '开始日期',
+      endValue: '结束日期',
       filter: {
         start: '',
         end: '',
@@ -82,6 +90,43 @@
         dayChart: 'ACTIVEDAY_DAY_CHART',
         monthChart: 'ACTIVEDAY_MONTH_CHART'
       }),
+      starMonth (){
+        let now = new Date()
+        var year = now.getFullYear();
+        var month = now.getMonth();
+
+        if (month <= 9) {
+          month = '0' + month
+        }
+
+        return year + '-' + month
+      },
+      endMonth (){
+        let now = new Date()
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;
+
+        if (month <= 9) {
+          month = '0' + month
+        }
+        return year + '-' + month
+      },
+      typeChange(){
+        if (this.radio == '日') {
+          this.type = 'date'
+          this.starValue = '开始日期'
+          this.endValue = '结束日期'
+          this.filter.start = JS.monthTime().start
+          this.filter.end = JS.monthTime().end
+        }
+        if (this.radio == '月') {
+          this.type = 'month'
+          this.starValue = '开始月份'
+          this.endValue = '结束结束'
+          this.filter.start = this.starMonth()
+          this.filter.end = this.endMonth()
+        }
+      },
       //筛选
       start_date(val){
         this.filter.start = val
@@ -113,10 +158,14 @@
           });
           return false
         }
-        this.day(options);
-        this.month(options);
-        this.dayChart(options);
-        this.monthChart(options);
+        if (this.radio == '日') {
+          this.dayChart(options);
+          this.day(options);
+        }
+        if (this.radio == '月') {
+          this.monthChart(options);
+          this.month(options);
+        }
       }
     },
     mounted(){

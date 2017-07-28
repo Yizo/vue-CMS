@@ -12,7 +12,7 @@
             {{scope.row.stat_date}}
           </span>
           <span v-else>
-              {{scope.row.stat_year}}-{{scope.row.stat_month < 10?'0'+scope.row.stat_month:scope.row.stat_month}}
+              {{scope.row.stat_year}}-{{scope.row.stat_month < 10 ? '0' + scope.row.stat_month : scope.row.stat_month}}
           </span>
         </template>
       </el-table-column>
@@ -90,7 +90,7 @@
         </el-table-column>
         <el-table-column property="coins" label="使用服务器名">
           <template scope="scope">
-            {{scope.row.node_type}}{{scope.row.node_region?"-":''}}{{scope.row.node_region}}{{scope.row.node_name?"-":''}}{{scope.row.node_name}}
+            {{scope.row.node_type}}{{scope.row.node_region ? "-" : ''}}{{scope.row.node_region}}{{scope.row.node_name ? "-" : ''}}{{scope.row.node_name}}
           </template>
         </el-table-column>
         <el-table-column property="coins" label="消费钻石数量" width="150"></el-table-column>

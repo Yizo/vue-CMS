@@ -36,7 +36,7 @@
             <template scope="scope">
               <el-tag
                 :type="scope.row.is_enabled ? 'success' : 'primary'"
-                close-transition>{{scope.row.is_enabled ? '是': '否'}}
+                close-transition>{{scope.row.is_enabled ? '是' : '否'}}
               </el-tag>
             </template>
           </el-table-column>
@@ -45,9 +45,9 @@
             <template scope="scope">
               <el-button size="small" @click="upPass(scope.row)">修改密码</el-button>
               <el-button size="small" @click="upRole(scope.row)">修改权限组</el-button>
-              <el-button size="small" :disabled="!scope.row.is_enabled"
-                         :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="del(scope.row)">
-                {{scope.row.is_enabled?'禁用':'启用'}}
+              <el-button size="small"
+                         :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="del(scope.row,scope.$index)">
+                {{scope.row.is_enabled ? '禁用' : '启用'}}
               </el-button>
             </template>
           </el-table-column>
@@ -253,7 +253,26 @@
             method: 'POST',
             url: address,
             headers: {'Authorization': token},
-            params: parm
+            data: parm
+          }).then(function (res) {
+            if (res.status == 200) {
+              resolve(res)
+            }
+          }).catch(function (err) {
+            reject(err)
+          })
+        })
+      },
+      /*管理员管理-启用*/
+      admin_enable(parm){
+        let address = API.admins_enable.replace(/{id}/g, parm.id);
+        return new Promise((resolve, reject) => {
+          const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+          axios({
+            method: 'POST',
+            url: address,
+            headers: {'Authorization': token},
+            data: parm
           }).then(function (res) {
             if (res.status == 200) {
               resolve(res)
@@ -271,7 +290,7 @@
             method: 'POST',
             url: API.admins,
             headers: {'Authorization': token},
-            params: parm
+            data: parm
           }).then(function (res) {
             if (res.status == 200) {
               resolve(res)
@@ -290,7 +309,7 @@
             method: 'PATCH',
             url: address,
             headers: {'Authorization': token},
-            params: parm
+            data: parm
           }).then(function (res) {
             if (res.status == 200) {
               resolve(res)
@@ -363,7 +382,7 @@
         });
       },
       //启用或禁用
-      del(data){
+      del(data, index){
         let star = '';
         if (data.is_enabled) {
           star = '禁用'
@@ -375,20 +394,37 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.admin_disable({id: data.id}).then(res => {
-            if (res.data.success) {
-              this.$message({
-                type: 'success',
-                message: star + '成功!'
-              });
-              this.data[this.data.indexOf(data)].is_enabled = false;
-            } else {
-              this.$message({
-                type: 'error',
-                message: star + '失败'
-              });
-            }
-          })
+          if (star == '禁用') {
+            this.admin_disable({id: data.id}).then(res => {
+              if (res.data.success) {
+                this.$message({
+                  type: 'success',
+                  message: star + '成功!'
+                });
+                this.data[this.data.indexOf(data)].is_enabled = false;
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: star + '失败'
+                });
+              }
+            })
+          } else {
+            this.admin_enable({id: data.id}).then(res => {
+              if (res.data.success) {
+                this.$message({
+                  type: 'success',
+                  message: star + '成功!'
+                });
+                this.data[index].is_enabled = true;
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: star + '失败'
+                });
+              }
+            })
+          }
         }).catch(() => {
           this.$message({
             type: 'info',

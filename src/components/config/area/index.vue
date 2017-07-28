@@ -33,7 +33,7 @@
             <template scope="scope">
               <el-tag
                 :type="scope.row.is_enabled ? 'success' : 'primary'"
-                close-transition>{{scope.row.is_enabled ? '是': '否'}}
+                close-transition>{{scope.row.is_enabled ? '是' : '否'}}
               </el-tag>
             </template>
           </el-table-column>

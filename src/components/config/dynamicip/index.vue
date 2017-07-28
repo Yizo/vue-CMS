@@ -33,7 +33,7 @@
             <template scope="scope">
               <el-tag
                 :type="scope.row.is_enabled ? 'success' : 'primary'"
-                close-transition>{{scope.row.is_enabled ? '是': '否'}}
+                close-transition>{{scope.row.is_enabled ? '是' : '否'}}
               </el-tag>
             </template>
           </el-table-column>
@@ -81,7 +81,7 @@
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible_del = false">取 消</el-button>
     <el-button type="primary" @click="del">确 定</el-button>
-  </span>
+    </span>
     </el-dialog>
     <!--分页-->
     <el-pagination

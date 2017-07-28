@@ -1,21 +1,9 @@
 <template>
-  <div id="login">
-    <!--<div class="content">
-      <el-form ref="form" label-width="130px" :model="UserForm" :rules="rules" label-position="left">
-        <el-form-item label="管理员账号" prop="name">
-          <el-input v-model="UserForm.name" class="input"></el-input>
-        </el-form-item>
-        <el-form-item label="管理员密码" prop="psw">
-          <el-input v-model="UserForm.psw" type="password" class="input"
-                    @keyup.enter.native="onSubmit(UserForm)"></el-input>
-        </el-form-item>
-        <el-button type="primary" @click="onSubmit(UserForm)">登录</el-button>
-      </el-form>
-    </div>-->
+  <div id="login" ref="login">
     <div class="bg" :style="bg">
 
     </div>
-    <div class="userLogin">
+    <div class="userLogin" ref="userLogin">
       <p class="userLogin_logo" :style="note"></p>
       <p class="userLogin_topic">欢迎回来</p>
       <div class="userLogin_content">
@@ -94,19 +82,8 @@
           }
         }.bind(this));
       },
-      centent(){
-        const login = document.getElementById("login");
-        const height = document.documentElement.clientHeight || document.body.clientHeight;
-        const content = document.querySelector('.content');
-        login.style.height = height + 'px';
-        content.style.marginTop = -content.getBoundingClientRect().height / 2 + 'px';
-        content.style.marginLeft = -content.getBoundingClientRect().width / 2 + 'px';
-      }
     },
     mounted(){
-      this.$nextTick(() => {
-        this.centent();
-      })
     },
   }
 </script>
@@ -167,83 +144,84 @@
     border-radius: 6px;
     background-color: #3b454c;
 
-  .userLogin_logo {
-    margin-top: -48px;
-    width: 103px;
-    height: 103px;
-    border-radius: 50%;
+    .userLogin_logo {
+      margin-top: -48px;
+      width: 103px;
+      height: 103px;
+      border-radius: 50%;
+    }
+
+    .userLogin_topic {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      line-height: 24px;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .userLogin_content {
+      align-self: stretch;
+      padding: 0 40px;
+
+      .login_login {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .login_login-btn {
+          width: 100%;
+          height: 44px;
+          line-height: 44px;
+          text-align: center;
+          font-size: 16px;
+          color: #fff;
+          cursor: pointer;
+          border-radius: 6px;
+          margin-top: 30px;
+          background: linear-gradient(90deg, #01acf3, #30E3CA);
+        }
+
+        .login_input-area {
+          align-self: stretch;
+          padding: 4px 12px;
+          height: 122px;
+          border-radius: 6px;
+          background-color: #fff;
+
+          .login_phone {
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 50%;
+
+            input {
+              flex-grow: 1;
+              line-height: 20px;
+              font-size: 14px;
+            }
+
+          }
+          .login_password {
+            border-top: 1px solid #dee4e7;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 50%;
+
+            input {
+              flex-grow: 1;
+              line-height: 20px;
+              font-size: 14px;
+            }
+
+          }
+        }
+      }
+    }
   }
 
-  .userLogin_topic {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    line-height: 24px;
-    font-size: 20px;
-    color: #fff;
-  }
-
-  .userLogin_content {
-    align-self: stretch;
-    padding: 0 40px;
-
-  .login_login {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-  .login_login-btn {
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    text-align: center;
-    font-size: 16px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-top: 30px;
-    background: linear-gradient(90deg, #01acf3, #30E3CA);
-  }
-
-  .login_input-area {
-    align-self: stretch;
-    padding: 4px 12px;
-    height: 122px;
-    border-radius: 6px;
-    background-color: #fff;
-
-  .login_phone {
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 50%;
-
-  input {
-    flex-grow: 1;
-    line-height: 20px;
-    font-size: 14px;
-  }
-
-  }
-  .login_password {
-    border-top: 1px solid #dee4e7;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 50%;
-
-  input {
-    flex-grow: 1;
-    line-height: 20px;
-    font-size: 14px;
-  }
-
-  }
-  }
-  }
-  }
-  }
   a, button, input {
     border: 0;
     outline: none;

@@ -52,7 +52,7 @@
             </li>
             <li><strong>IOS_VERSION / ANDROID_VERSION / PC_VERSION / MAC_VERSION</strong>: 客户端根据此配置值来决定指定版本的更新动作:
               0:不更新/1:更新/2:强制更新<br>
-              比如: <strong>1.0.3|1</strong>则表示1.0.3版提示更新<br>
+              比如: <strong>1.0.3|1</strong>则表示客户端版本号小于1.0.3，则提示更新<br>
               客户端在下次打开app登录时出现<strong>UPDATE_CONTENT</strong>更新内容<br>
               如果设置为2:强制更新，则只有客户端更新后才能正常使用
             </li>
@@ -90,14 +90,14 @@
           label="平台"
           width="80">
           <template scope="scope">
-            {{scope.row.platform === 'all' ? '通用':scope.row.platform}}
+            {{scope.row.platform === 'all' ? '通用' : scope.row.platform}}
           </template>
         </el-table-column>
         <el-table-column
           label="版本"
           width="80">
           <template scope="scope">
-            {{scope.row.app_version === 'all' ? '通用':scope.row.app_version}}
+            {{scope.row.app_version === 'all' ? '通用' : scope.row.app_version}}
           </template>
         </el-table-column>
         <el-table-column
@@ -116,7 +116,7 @@
         <el-table-column
           label="是否客户端显示" width="120">
           <template scope="scope">
-            {{scope.row.is_client?'是':'否'}}
+            {{scope.row.is_client ? '是' : '否'}}
           </template>
         </el-table-column>
         <el-table-column
@@ -209,6 +209,7 @@
           {label: 'Android', value: 'android'},
           {label: 'PC', value: 'pc'},
           {label: 'MAC', value: 'mac'},
+          {label: 'ROBOT', value: 'robot'},
         ],
         /*弹窗*/
         platform: [
@@ -217,6 +218,7 @@
           {label: 'Android', value: 'android'},
           {label: 'PC', value: 'pc'},
           {label: 'MAC', value: 'mac'},
+          {label: 'ROBOT', value: 'robot'},
         ],
         pageInfo: {
           id: 0,
@@ -439,8 +441,8 @@
           if (options.platform == '全部平台') {
             options.platform = 'all'
           }
-          if(options.app_version == '全部版本'){
-              options.app_version = 'all'
+          if (options.app_version == '全部版本') {
+            options.app_version = 'all'
           }
           if (options.app_version == '通用') {
             options.app_version = 'all'

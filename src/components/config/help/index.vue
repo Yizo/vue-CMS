@@ -43,14 +43,14 @@
           label="平台"
           width="120">
           <template scope="scope">
-            {{scope.row.platform == 'all'?'全部':scope.row.platform}}
+            {{scope.row.platform == 'all' ? '全部' : scope.row.platform}}
           </template>
         </el-table-column>
         <el-table-column
           label="版本"
           width="120">
           <template scope="scope">
-            {{scope.row.app_version == "all" ?'全部' : scope.row.app_version}}
+            {{scope.row.app_version == "all" ? '全部' : scope.row.app_version}}
           </template>
         </el-table-column>
         <el-table-column
@@ -150,7 +150,7 @@
         totalSize: 0,
         /*弹窗*/
         platform: [
-          {label: '全部平台', value: 'all'},
+          {label: '全部平台', value: ''},
           {label: 'IOS', value: 'ios'},
           {label: 'Android', value: 'android'},
           {label: 'PC', value: 'pc'},
@@ -265,12 +265,6 @@
           platform: this.filter.platform,
           app_version: this.filter.app_version,
           app_version_number: this.filter.app_version_number,
-        }
-        if (options.platform == '全部平台') {
-          options.platform = 'all'
-        }
-        if (options.app_version == '全部版本') {
-          options.app_version = 'all'
         }
         this.getList(options).then((res) => {
           let data = Object.assign({}, res.data.data);

@@ -26,7 +26,7 @@
         :current-page="regionLineDetails.current_page"
         :page-size="pageSize"
         layout="total, prev, pager, next"
-        :total="regionLineDetails.total_pages" class="page">
+        :total="regionLineDetails.total_count" class="page">
       </el-pagination>
     </div>
 
@@ -43,8 +43,7 @@
     data(){
       return {
         users: [],
-        limit: 25,
-        pageSize: 1,
+        pageSize: 15,
       }
     },
     computed: {
@@ -61,8 +60,8 @@
         this.$emit('changePage3', val);
         this.$store.dispatch('getRegionLineDetails', {
           page: val,
-          limit: 15,
-          node_id: this.node - id
+          limit: this.pageSize,
+          node_id: this.nodeId
         })
       }
     }

@@ -68,7 +68,7 @@
           <el-table-column property="ip" label="用户IP"></el-table-column>
           <el-table-column label="IP解析">
             <template scope="scope">
-              {{scope.row.ip_country+"-"+scope.row.ip_province+"-"+scope.row.ip_city}}
+              {{scope.row.ip_country + "-" + scope.row.ip_province + "-" + scope.row.ip_city}}
             </template>
           </el-table-column>
         </el-table>

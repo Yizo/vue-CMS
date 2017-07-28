@@ -66,7 +66,7 @@
         <el-col :span="24">
           <span style="margin: 20px 0;display: inline-block"><i class="el-icon-menu" style="margin-right: 10px"></i>连接失败次数</span>
           <table class="t1">
-            <tbody class="table">
+            <tbody class="table" style="height: 500px;overflow: auto">
             <tr>
               <th>时间</th>
               <th>服务器连接失败次数</th>
@@ -89,15 +89,6 @@
           </table>
         </el-col>
       </el-row>
-      <!--分页-->
-      <el-pagination
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        layout="total, prev, pager, next, jumper"
-        :total="totalSize"
-        :page-size="pageSize"
-        class="page">
-      </el-pagination>
       <!--数量弹窗-->
       <!--服务器链接失败详情-->
       <el-dialog v-model="dialogTableVisible">
@@ -302,8 +293,6 @@
           this.filter.end = JS.Timestamp(this.filter.end)
         }
         let options = {
-          limit: this.pageSize,
-          page: 1,
           start_at: this.filter.start,
           end_at: this.filter.end,
           app_version: this.filter2.versions,
@@ -342,8 +331,6 @@
           stat_at: parm.stat_at,
           app_version: this.filter2.versions,
           app_channel: this.filter2.channels,
-          page: 1,
-          limit: this.pageSize
         }
         this.parm = options;
         this.errInfo(options).then(res => {
@@ -372,8 +359,6 @@
       //渲染图表
       rendering(){
         this.getChart({
-          limit: this.pageSize,
-          page: 1,
           start_at: this.filter.start,
           end_at: this.filter.end,
           app_version: this.filter2.versions,
@@ -424,22 +409,6 @@
           })
         })
       },
-
-      /*分页*/
-      handleCurrentChange(val){
-        this.getAllInfo({
-          limit: this.pageSize,
-          page: val,
-          start_at: this.filter.start,
-          end_at: this.filter.end,
-          app_version: this.filter2.versions,
-          app_channel: this.filter2.channels
-        }).then(res => {
-          this.tableData = [...res.data.data.logs];
-          this.currentPage = res.data.data.current_page
-          this.totalSize = res.data.data.total_count;
-        })
-      },
       /*连接失败/软件崩溃/未联网*/
       lianjie(val){
         let options = this.parm;
@@ -454,8 +423,6 @@
     },
     mounted(){
       let options = {
-        limit: this.pageSize,
-        page: 1,
         start_at: this.filter.start,
         end_at: this.filter.end,
         app_version: this.filter2.versions,

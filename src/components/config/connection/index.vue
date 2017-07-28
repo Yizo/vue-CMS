@@ -74,7 +74,7 @@
             label="代理形式" width="80">
             <template scope="scope">
             <span>
-              {{scope.row.is_proxy?'代理':'直连'}}
+              {{scope.row.is_proxy ? '代理' : '直连'}}
             </span>
             </template>
           </el-table-column>

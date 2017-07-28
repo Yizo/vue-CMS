@@ -54,7 +54,7 @@
         <template scope="scope">
           <el-tag
             :type="scope.row.is_completed === true ? 'success' : 'primary'"
-            close-transition>{{scope.row.is_completed?'成功':'失败'}}
+            close-transition>{{scope.row.is_completed ? '成功' : '失败'}}
           </el-tag>
         </template>
       </el-table-column>

@@ -39,46 +39,46 @@
 <style lang="less" scoped>
   .warp {
 
-  .spinner {
-    position: relative;
-    margin: 0 auto;
-    text: center;
-    margin-top: 25%;
+    .spinner {
+      position: relative;
+      margin: 0 auto;
+      text: center;
+      margin-top: 25%;
 
-  * {
-    line-height: 0;
-    box-sizing: border-box;
-  }
+      * {
+        line-height: 0;
+        box-sizing: border-box;
+      }
 
-  &
-  :before {
-    content: '';
-    width: 100%;
-    height: 20%;
-    min-width: 5px;
-    background: #000;
-    opacity: 0.1;
-    position: absolute;
-    bottom: 0%;
-    left: 0;
-    border-radius: 50%;
-    animation: rotate-square-2-shadow .5s linear infinite;
-  }
+      &
+      :before {
+        content: '';
+        width: 100%;
+        height: 20%;
+        min-width: 5px;
+        background: #000;
+        opacity: 0.1;
+        position: absolute;
+        bottom: 0%;
+        left: 0;
+        border-radius: 50%;
+        animation: rotate-square-2-shadow .5s linear infinite;
+      }
 
-  &
-  :after {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background: #41b883;
-    animation: rotate-square-2-animate .5s linear infinite;
-    position: absolute;
-    bottom: 40%;
-    left: 0;
-    border-radius: 3px;
-  }
+      &
+      :after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: #41b883;
+        animation: rotate-square-2-animate .5s linear infinite;
+        position: absolute;
+        bottom: 40%;
+        left: 0;
+        border-radius: 3px;
+      }
 
-  }
+    }
   }
 
   @keyframes rotate-square-2-animate {

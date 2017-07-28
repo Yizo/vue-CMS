@@ -19,7 +19,7 @@
           <el-menu-item index="1-2-4">
             <router-link :to="{name:'share'}" tag="span">分享统计</router-link>
           </el-menu-item>
-          <el-menu-item index="1-2-5">
+          <el-menu-item index="1-2-5" v-if="roles.user_base_info">
             <router-link :to="{name:'website'}" tag="span">官网统计</router-link>
           </el-menu-item>
         </el-submenu>
@@ -135,9 +135,15 @@
             <router-link :to="{name:'c_dynamicip'}" tag="span">动态IP配置</router-link>
           </el-menu-item>
         </el-submenu>
-        <el-menu-item index="4-5" v-if="roles.help_manual"><i class="iconfont icon-bangzhu"></i>
-          <router-link :to="{name:'help'}" tag="span">帮助问答</router-link>
-        </el-menu-item>
+        <el-submenu index="4-5" v-if="roles.help_manual">
+          <template slot="title"><i class="iconfont icon-bangzhu"></i>帮助问答</template>
+          <el-menu-item index="4-5-1">
+            <router-link :to="{name:'help'}" tag="span">帮助问答</router-link>
+          </el-menu-item>
+          <el-menu-item index="4-5-2">
+            <router-link :to="{path:'/config/navset/', query:{type: 'true'}}" tag="span">导航设置</router-link>
+          </el-menu-item>
+        </el-submenu>
         <el-menu-item index="4-6" v-if="roles.system_setting"><i class="iconfont icon-canshupeizhi"></i>
           <router-link :to="{name:'config'}" tag="span">参数配置</router-link>
         </el-menu-item>

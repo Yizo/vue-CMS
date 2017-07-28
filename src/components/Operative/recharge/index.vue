@@ -50,7 +50,7 @@
           </el-select>
         </template>
         <template>
-          <el-select v-model="filter2.status" placeholder="支付方式" style="width: 200px;">
+          <el-select v-model="filter2.status" placeholder="支付状态" style="width: 200px;">
             <el-option label="全部" value=""></el-option>
             <el-option label="成功" value="paid"></el-option>
             <el-option label="失败" value="pending"></el-option>
@@ -140,7 +140,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_completed ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_completed ? '成功': '失败'}}
+              close-transition>{{scope.row.is_completed ? '成功' : '失败'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -218,13 +218,14 @@
           })
         })
       },
-      get_pay_method(){
+      get_pay_method(parm){
         return new Promise((resolve, reject) => {
           const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
           this.$http({
             method: 'GET',
             url: API.recharge_payment_method_collects,
             headers: {'Authorization': token},
+            params: parm
           }).then(function (res) {
 
             if (res.status == 200) {
@@ -268,11 +269,6 @@
           payment_method: this.filter2.payment_method,
           status: this.filter2.status
         }
-        for (var i in options) {
-          if (options[i] === undefined || options[i] === '') {
-            delete options[i]
-          }
-        }
         if (options.start_at && options.end_at || !options.start_at && !options.end_at) {
 
         } else {
@@ -286,6 +282,16 @@
           this.data = res.data.data.logs
           this.currentPage = res.data.data.current_page
           this.total = res.data.data.total_count
+        })
+        this.get_pay_method({
+          app_channel: this.filter2.channels,
+          app_version: this.filter2.versions,
+          start_at: this.filter.start,
+          end_at: this.filter.end
+        }).then(res => {
+          if (res.data.success) {
+            this.pay_method = res.data.data
+          }
         })
       },
       //分页action
@@ -320,7 +326,10 @@
         this.data = res.data.data.logs;
         this.total = res.data.data.total_count;
       })
-      this.get_pay_method().then(res => {
+      this.get_pay_method({
+        start_at: this.filter.start,
+        end_at: this.filter.end,
+      }).then(res => {
         if (res.data.success) {
           this.pay_method = res.data.data
         }

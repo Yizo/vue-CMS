@@ -22,7 +22,7 @@
         :current-page="personDetails.current_page"
         :page-size="pageSize"
         layout="total, prev, pager, next"
-        :total="personDetails.total_pages" class="page">
+        :total="personDetails.total_count" class="page">
       </el-pagination>
     </div>
   </div>
@@ -59,7 +59,7 @@
         this.$store.dispatch('getPersonDetails', {
           page: val,
           limit: 15,
-          node_id: this.region - id
+          node_id: this.regionId
         })
       }
     }

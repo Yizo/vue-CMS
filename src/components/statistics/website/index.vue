@@ -14,7 +14,10 @@
       </el-alert>
       <el-row :gutter="20">
         <el-col :span="10">
-          <p style="padding: 10px 0">总访问量:<span style="color: red;font-size: 22px">{{count.sum}}</span></p>
+          <p style="display:inline-block;padding: 10px 0">总访问量:<span
+            style="color: red;font-size: 22px">{{count.sum}}</span></p>
+          <p style="display:inline-block;padding: 10px 0;margin-left: 50px;">独立IP数量:<span
+            style="color: red;font-size: 22px">{{count.ip_num}}</span></p>
           <span style="margin: 10px 0;display: block">下载量统计饼图</span>
           <div id="main" style="width: 99%;height: 300px;border: 1px solid #D3DCE6">
 
@@ -203,6 +206,21 @@
         this.options.series[0].data = this.line(this.dow_data);
         this.$HighCharts.chart('main', this.options);
       })
+    },
+    beforeRouteEnter (to, from, next) {
+      let QX = JSON.parse(window.sessionStorage.getItem('loginInfo')).role.user_base_info
+      if (QX) {
+        next()
+      } else {
+        next(vm => {
+          vm.$router.go(-1)
+          vm.$message({
+            message: '没有权限访问此页面',
+            type: 'warning'
+          });
+        })
+      }
+
     }
   }
 </script>

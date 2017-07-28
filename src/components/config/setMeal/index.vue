@@ -26,19 +26,19 @@
                   style="display: inline-block;width: 200px"></el-input>
         <el-select v-model="filter.is_enabled" placeholder="是否启用"
                    style="display: inline-block;width: 150px">
-          <el-option value="all" label="取消"></el-option>
+          <el-option value="取消" label="取消"></el-option>
           <el-option value="true" label="是"></el-option>
           <el-option value="false" label="否"></el-option>
         </el-select>
         <el-select v-model="filter.is_audit" placeholder="审核套餐"
                    style="display: inline-block;width: 150px">
-          <el-option value="all" label="取消"></el-option>
+          <el-option value="取消" label="取消"></el-option>
           <el-option value="true" label="是"></el-option>
           <el-option value="false" label="否"></el-option>
         </el-select>
         <el-select v-model="filter.is_iap" placeholder="IAP套餐"
                    style="display: inline-block;width: 150px">
-          <el-option value="all" label="取消"></el-option>
+          <el-option value="取消" label="取消"></el-option>
           <el-option value="true" label="是"></el-option>
           <el-option value="false" label="否"></el-option>
         </el-select>
@@ -78,14 +78,14 @@
           label="平台"
           width="80">
           <template scope="scope">
-            {{scope.row.platform == 'all'?'通用':scope.row.platform}}
+            {{scope.row.platform == 'all' ? '通用' : scope.row.platform}}
           </template>
         </el-table-column>
         <el-table-column
           label="版本"
           width="90">
           <template scope="scope">
-            {{scope.row.app_version == "all" ?'通用' : scope.row.app_version}}
+            {{scope.row.app_version == "all" ? '通用' : scope.row.app_version}}
           </template>
         </el-table-column>
         <el-table-column
@@ -99,7 +99,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_enabled ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_enabled ? '是': '否'}}
+              close-transition>{{scope.row.is_enabled ? '是' : '否'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -109,7 +109,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_audit ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_audit ? '是': '否'}}
+              close-transition>{{scope.row.is_audit ? '是' : '否'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -118,7 +118,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_iap ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_iap ? '是': '否'}}
+              close-transition>{{scope.row.is_iap ? '是' : '否'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -136,7 +136,7 @@
             </el-button>
 
             <el-button size="small" :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="star(scope.row)">
-              {{scope.row.is_enabled?'禁用':'启用'}}
+              {{scope.row.is_enabled ? '禁用' : '启用'}}
             </el-button>
           </template>
         </el-table-column>
@@ -305,7 +305,7 @@
         curIndex: -1,
         deleteDialogName: '',
         platform_list: [
-          {label: '取消', value: ''},
+          {label: '取消', value: '取消'},
           {label: '通用', value: 'all'},
           {label: 'IOS', value: 'ios'},
           {label: 'Android', value: 'android'},
@@ -383,6 +383,7 @@
           params: params
         })
       },
+
       /*添加配置*/
       handleAdd(form){
         this.form = {
@@ -547,12 +548,6 @@
           app_version_number: this.filter.app_version_number,
           is_audit: this.filter.is_audit,
         };
-        if (params.app_version == '取消') {
-          delete params.app_version
-        }
-        if (params.app_version == '通用') {
-          params.app_version = 'all'
-        }
         this.$http({
           methods: 'GET',
           url: API.set_meal_get,

@@ -28,9 +28,9 @@ export function isDigit(value) {
 /*请求前参数配置*/
 export function paramsConfig(config) {
   let options = config.params
-  if(config.method === 'GET'){
+  if (config.methods === 'GET' || config.method === 'get' || config.method === 'GET') {
     for (var i in options) {
-      if (options[i] === undefined || options[i] === '' || options[i] === null || options[i] === '全部版本' || options[i] === '全部渠道') {
+      if (options[i] === undefined || options[i] === '' || options[i] === null || options[i] === '全部版本' || options[i] === '全部渠道' || options[i] === '取消') {
         delete options[i]
       }
     }
@@ -129,7 +129,7 @@ export function format_number(n) {
 /*获取服务器类型*/
 export function getNodeType(parm) {
   return new Promise((resolve, reject) => {
-    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token
     axios({
       method: 'GET',
       url: API.server_node_types,
@@ -149,7 +149,7 @@ export function getNodeType(parm) {
 /*获取地域信息*/
 export function getArea(parm) {
   return new Promise((resolve, reject) => {
-    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token
     this.$http({
       method: 'GET',
       url: API.area_node_regions,
@@ -169,7 +169,7 @@ export function getArea(parm) {
 /*获取渠道和版本*/
 export function getChannelVerion(parm) {
   return new Promise((resolve, reject) => {
-    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
+    const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token
     axios({
       method: 'GET',
       url: API.group_index,

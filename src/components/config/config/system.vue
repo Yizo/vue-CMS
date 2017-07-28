@@ -1,3 +1,4 @@
+<script src="../../../../../../../git/github/src/api/api.js"></script>
 <template>
   <div class="config">
     <!--表格-->
@@ -12,10 +13,10 @@
             <el-input v-model="form.checkin_present_time" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="充值统计刷新时间（分钟)">
-            <el-input v-model="form.new_user_default_coins" style="width: 300px"></el-input>
+            <el-input v-model="form.transaction_stat_refresh_time" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="新用户默认赠送钻石数">
-            <el-input v-model="form.transaction_stat_refresh_time" style="width: 300px"></el-input>
+            <el-input v-model="form.new_user_default_coins" style="width: 300px"></el-input>
           </el-form-item>
         </el-card>
         <el-card class="box-card">
@@ -59,6 +60,19 @@
             <el-input v-model="form.test_robot_warn_trigger_sms_tpl_id" style="width: 300px"></el-input>
           </el-form-item>
         </el-card>
+
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span style="line-height: 36px;">推广钻石参数</span>
+          </div>
+          <el-form-item label="绑定推广码后，推广人奖励的钻石数">
+            <el-input v-model="form.promo_promoter_coins" style="width: 300px"></el-input>
+          </el-form-item>
+          <el-form-item label="绑定推广码后，被推广人奖励的钻石数">
+            <el-input v-model="form.promo_accepted_user_coins" style="width: 300px"></el-input>
+          </el-form-item>
+        </el-card>
+
       </el-form>
       <el-button class="btn" @click="update">修改</el-button>
     </div>
@@ -78,15 +92,17 @@
           checkin_present_time: 0,
           new_user_default_coins: 0,
           transaction_stat_refresh_time: 0,
-          proxy_conn_failed_warn_trigger_period: 1800,
-          proxy_conn_failed_warn_trigger_users: 5,
-          proxy_conn_failed_warn_trigger_times: 100,
+          proxy_conn_failed_warn_trigger_period: 0,
+          proxy_conn_failed_warn_trigger_users: 0,
+          proxy_conn_failed_warn_trigger_times: 0,
           proxy_conn_failed_warn_trigger_phones: '',
           proxy_conn_failed_warn_trigger_sms_period: 0,
-          proxy_conn_failed_warn_trigger_sms_period: 50,
+          proxy_conn_failed_warn_trigger_sms_period: 0,
           test_robot_warn_trigger_phones: '',
-          test_robot_warn_trigger_sms_period: 10,
-          test_robot_warn_trigger_sms_tpl_id: 1875262
+          test_robot_warn_trigger_sms_period: 0,
+          test_robot_warn_trigger_sms_tpl_id: '',
+          promo_promoter_coins: 0,
+          promo_accepted_user_coins: 0
         }
       }
     },
@@ -167,37 +183,43 @@
     text-align: left;
     padding: 10px;
   }
-  .form{
-    -moz-column-count:2; /* Firefox */
-    -webkit-column-count:2; /* Safari 和 Chrome */
-    column-count:2;
+
+  .form {
+    -moz-column-count: 2; /* Firefox */
+    -webkit-column-count: 2; /* Safari 和 Chrome */
+    column-count: 2;
     -moz-column-gap: 1em;
     -webkit-column-gap: 1em;
     column-gap: 1em;
   }
-  .box-card{
+
+  .box-card {
     margin: 0 0 1em 0;
     -moz-page-break-inside: avoid;
     -webkit-column-break-inside: avoid;
     break-inside: avoid;
-    border: 1px solid rgba(0,0,0,0.3);
+    border: 1px solid rgba(0, 0, 0, 0.3);
     overflow: auto;
   }
-  .box-card:hover{
+
+  .box-card:hover {
     transition: all .3s ease-in 0s;
-    box-shadow: 0 0 10px 2px rgba(0,0,0,0.3);
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
   }
-  .box-card .clearfix{
+
+  .box-card .clearfix {
     font-size: 20px;
   }
-  .btn{
+
+  .btn {
     margin-top: 10px;
   }
+
   @media screen and (max-width: 1200px) {
     .form {
-      -moz-column-count:1; /* Firefox */
-      -webkit-column-count:1; /* Safari 和 Chrome */
-      column-count:1;
+      -moz-column-count: 1; /* Firefox */
+      -webkit-column-count: 1; /* Safari 和 Chrome */
+      column-count: 1;
     }
   }
 </style>

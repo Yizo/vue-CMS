@@ -116,7 +116,7 @@
           </el-table-column>
           <el-table-column label="版本信息">
             <template scope="scope">
-              <span>{{ scope.row.app_channel+"_"+scope.row.app_version+"_"+scope.row.app_version_number}}</span>
+              <span>{{ scope.row.app_channel + "_" + scope.row.app_version + "_" + scope.row.app_version_number}}</span>
             </template>
           </el-table-column>
           <el-table-column label="分享时间点">

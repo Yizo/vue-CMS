@@ -64,27 +64,27 @@
           </tr>
           <tr>
             <td>1-2次</td>
-            <td @click="detail(0)"><span style="cursor: pointer">{{data.count_1_2?data.count_1_2:0}}</span></td>
+            <td @click="detail(0)"><span style="cursor: pointer">{{data.count_1_2 ? data.count_1_2 : 0}}</span></td>
           </tr>
           <tr>
             <td>3-5次</td>
-            <td @click="detail(1)"><span style="cursor: pointer">{{data.count_3_5?data.count_3_5:0}}</span></td>
+            <td @click="detail(1)"><span style="cursor: pointer">{{data.count_3_5 ? data.count_3_5 : 0}}</span></td>
           </tr>
           <tr>
             <td>6-9次</td>
-            <td @click="detail(2)"><span style="cursor: pointer">{{data.count_6_9?data.count_6_9:0}}</span></td>
+            <td @click="detail(2)"><span style="cursor: pointer">{{data.count_6_9 ? data.count_6_9 : 0}}</span></td>
           </tr>
           <tr>
             <td>10-19次</td>
-            <td @click="detail(3)"><span style="cursor: pointer">{{data.count_10_19?data.count_10_19:0}}</span></td>
+            <td @click="detail(3)"><span style="cursor: pointer">{{data.count_10_19 ? data.count_10_19 : 0}}</span></td>
           </tr>
           <tr>
             <td>20-49次</td>
-            <td @click="detail(4)"><span style="cursor: pointer">{{data.count_20_49?data.count_20_49:0}}</span></td>
+            <td @click="detail(4)"><span style="cursor: pointer">{{data.count_20_49 ? data.count_20_49 : 0}}</span></td>
           </tr>
           <tr>
             <td>50次以上</td>
-            <td @click="detail(5)"><span style="cursor: pointer">{{data.count_50?data.count_50:0}}</span></td>
+            <td @click="detail(5)"><span style="cursor: pointer">{{data.count_50 ? data.count_50 : 0}}</span></td>
           </tr>
           </tbody>
         </table>

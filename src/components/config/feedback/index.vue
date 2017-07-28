@@ -50,8 +50,11 @@
           label="版本信息">
         </el-table-column>
         <el-table-column
-          property="user_name"
           label="账号">
+          <template scope="scope">
+            <span class="dialog_num"
+                  @click="userInfo(scope.row)">{{scope.row.user_name}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           property="created_at"
@@ -78,7 +81,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.reply_content ? 'success' : 'primary'"
-              close-transition>{{scope.row.reply_content ? '是': '否'}}
+              close-transition>{{scope.row.reply_content ? '是' : '否'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -88,7 +91,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.has_read ? 'success' : 'primary'"
-              close-transition>{{scope.row.has_read ? '已读': '未读'}}
+              close-transition>{{scope.row.has_read ? '已读' : '未读'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -140,12 +143,14 @@
         <el-button type="primary" @click="handleDeal">确定保存</el-button>
       </div>
     </el-dialog>
+    <user-detail :visab="user_dialogVisible" :name="username" @closeDialog="cdialog"></user-detail>
   </div>
 </template>
 
 
 <script>
   import * as API from '../../../api/api'
+  import userDetail from '../../publicView/accoutInfo/index.vue'
   import {mapGetters, mapActions} from 'vuex'
 
   export default {
@@ -168,14 +173,30 @@
           reply_content: ''
         },
         currentRow: null,
-        currentRowIndex: 0
+        currentRowIndex: 0,
+        user_dialogVisible: false,
+        username: '姓名',
       }
     },
-    components: {},
+    components: {
+      userDetail
+    },
     computed: {
       ...mapGetters(['versions'])
     },
     methods: {
+      ...mapActions({
+        ud_base: 'UD_base_info',
+      }),
+      cdialog(){
+        this.user_dialogVisible = false
+      },
+      userInfo(row){
+        this.username = row.user_name
+        this.user_dialogVisible = true;
+        window.sessionStorage.setItem('userId', row.user_id)
+        this.ud_base({limit: 10})
+      },
       handleDealPromise(){
         const token = JSON.parse(window.sessionStorage.getItem('loginInfo')).token;
         const {id, reply_content} = this.feedback;

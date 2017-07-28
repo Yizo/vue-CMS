@@ -38,7 +38,7 @@
           editable>
           <el-table-column
             label="编号" width="50">
-            <template scope="scope">{{(currentPage - 1)*pageSize+scope.$index+1}}</template>
+            <template scope="scope">{{(currentPage - 1) * pageSize + scope.$index + 1}}</template>
           </el-table-column>
           <el-table-column
             label="去向IP">

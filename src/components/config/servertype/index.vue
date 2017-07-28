@@ -42,7 +42,7 @@
           <template scope="scope">
             <el-tag
               :type="scope.row.is_enabled ? 'success' : 'primary'"
-              close-transition>{{scope.row.is_enabled ? '是': '否'}}
+              close-transition>{{scope.row.is_enabled ? '是' : '否'}}
             </el-tag>
           </template>
         </el-table-column>
@@ -64,7 +64,7 @@
             <el-button type="button" size="small" @click="update(scope.$index,scope.row)">修改</el-button>
             <!--<el-button type="danger" size="small" @click="del1(scope.row)">删除</el-button>-->
             <el-button size="small" :class="{a:scope.row.is_enabled,b:!scope.row.is_enabled}" @click="star(scope.row)">
-              {{scope.row.is_enabled?'禁用':'启用'}}
+              {{scope.row.is_enabled ? '禁用' : '启用'}}
             </el-button>
           </template>
         </el-table-column>

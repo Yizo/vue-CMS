@@ -40,7 +40,7 @@
           <el-table-column
             label="新增数量">
             <template scope="scope">
-              {{scope.row.increased_coins ==0?'':scope.row.increased_coins}}
+              {{scope.row.increased_coins == 0 ? '' : scope.row.increased_coins}}
             </template>
           </el-table-column>
           <el-table-column

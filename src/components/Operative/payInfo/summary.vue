@@ -47,8 +47,8 @@
           </div>
           <div class="text item">
             <p style="padding: 8px 0;">
-              {{s_data.data.total_recharge_amount_month/s_data.data.total_recharge_users_count_month |
-              zero | format_number}}(元)</p>
+              {{s_data.data.total_recharge_amount_month / s_data.data.total_recharge_users_count_month |
+            zero | format_number}}(元)</p>
           </div>
         </el-card>
       </div>

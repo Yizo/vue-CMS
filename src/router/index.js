@@ -130,6 +130,10 @@ const connection = resolve => {
   resolve(require('../components/config/connection/index.vue'))
 }
 
+const NavSet = resolve => {
+  resolve(require('../components/config/NavSet/index.vue'))
+}
+
 Vue.use(Router)
 const router = new Router({
   routes: [
@@ -329,6 +333,23 @@ const router = new Router({
           path: '/config/help',
           name: 'help',
           component: help
+        },
+        {
+          path: '/config/navset/',
+          component: NavSet,
+          redirect: '/config/navset/domestic',
+          children: [
+            {
+              path: 'domestic',
+              name: 'domestic',
+              component: require('../components/config/NavSet/domestic.vue')
+            },
+            {
+              path: 'foreign',
+              name: 'foreign',
+              component: require('../components/config/NavSet/foreign.vue')
+            }
+          ]
         },
         {
           path: '/config/config',
