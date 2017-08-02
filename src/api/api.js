@@ -2,14 +2,14 @@
  * Created by admin on 2017/3/28.
  */
 /*开发服*/
-/*export const url = ''*/
+/*export const url = 'https://xiaoguoqi.com'*/
 
-export const phpUrl = ''
+export const phpUrl = 'https://mirror.limaojs.com'
 
 /*测试服*/
-export const url = ''
+export const url = 'https://staging.xiaoguoqi.com'
 /*正式服*/
-/*export const url = ''*/
+/*export const url = 'https://licatjsq.com'*/
 /*登录接口:成功则返回token*/
 export const login = url + '/api/manage/v1/auth'
 

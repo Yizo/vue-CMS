@@ -42,24 +42,20 @@
       <el-table-column
         sortable
         prop="created_at"
-        label="登录时间" width="200" min-width="200">
+        label="登录时间" >
         <template scope="scope">
           {{scope.row.created_at | Time}}
         </template>
       </el-table-column>
       <el-table-column
         prop="ip"
-        label="用户IP"
-        width="140"
-        min-width="140">
+        label="用户IP">
       </el-table-column>
       <el-table-column
-        prop="coord_method"
-        label="解析方式">
-      </el-table-column>
-      <el-table-column
-        prop="ip_region"
         label="IP解析">
+        <template scope="scope">
+          {{scope.row.ip_country}}{{scope.row.ip_province}}{{scope.row.ip_city}}
+        </template>
       </el-table-column>
     </el-table>
     <!--分页-->

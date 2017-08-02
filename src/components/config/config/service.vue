@@ -12,6 +12,14 @@
             :value="item.value">
           </el-option>
         </el-select>
+        <el-select v-model="filter.channels" placeholder="渠道筛选" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in app_channels_list"
+            :label="item.name"
+            :value="item.name" :key="index"
+          >
+          </el-option>
+        </el-select>
         <el-select v-model="filter.app_version" placeholder="版本筛选" style="display: inline-block;width: 200px">
           <el-option
             v-for="(item,index) in appVersions"
@@ -94,6 +102,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="渠道"
+          width="80">
+          <template scope="scope">
+            {{scope.row.app_channel === 'all' ? '通用' : scope.row.app_channel}}
+          </template>
+        </el-table-column>
+        <el-table-column
           label="版本"
           width="80">
           <template scope="scope">
@@ -163,6 +178,16 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="渠道" class="dot_tips">
+          <el-select v-model="form.app_channel" placeholder="请选择" class="dot_tips">
+            <el-option
+              v-for="(item,index) in app_channels_list"
+              v-if="item.name != '取消'"
+              :label="item.name == 'all'?'通用':item.name"
+              :value="item.name" :key="index">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="键名" class="dot_tips">
           <el-input v-model="form.key" class="dot_tips"></el-input>
         </el-form-item>
@@ -227,6 +252,7 @@
         },
         filter: {
           app_version: '',
+          channels: '',
           platform: '',
           is_client: ''
         },
@@ -234,6 +260,7 @@
         form: {
           platform: '',
           app_version: '',
+          app_channel:'',
           key: '',
           value: '',
           is_client: 'true',
@@ -247,6 +274,18 @@
       appVersions(){
         let parm = [...this.versions.app_versions];
         parm.unshift({"name": "取消"});
+        return parm
+      },
+      app_channels_list(){
+        let parm =  [...this.versions.app_channels];
+        parm.unshift({'name': "取消",enum_type:''});
+
+        for(let i in parm){
+            if(parm[i].name == '全部渠道'){
+                parm[i].name = '通用'
+            }
+        }
+
         return parm
       }
     },
@@ -337,9 +376,13 @@
         let options = {
           page: val,
           limit: this.pageSize,
+          app_channel:this.filter.channels,
           app_version: this.filter.app_version,
           platform: this.filter.platform,
           is_client: this.filter.is_client
+        }
+        if(options.app_channel == '通用'){
+            options.app_channel = 'all'
         }
         if (options.app_version == '通用') {
           options.app_version = 'all'
@@ -365,6 +408,7 @@
         this.form = {
           platform: '',
           app_version: '',
+          app_channel: '',
           key: '',
           value: '',
           description: '',
@@ -378,6 +422,9 @@
           this.form.is_client = 'true'
         } else {
           this.form.is_client = 'false'
+        }
+        if(data.app_channel == 'all'){
+          this.form.app_channel = '通用'
         }
         this.pageInfo.name = '修改配置'
         this.pageInfo.id = data.id
@@ -421,6 +468,9 @@
           if (options.app_version == '全部版本') {
             options.app_version = 'all'
           }
+          if(options.app_channel == '通用'){
+              options.app_channel = 'all'
+          }
           this.addInfo(options).then(res => {
             if (res.data.success) {
               this.dialogTableVisible_add = true;
@@ -447,6 +497,9 @@
           if (options.app_version == '通用') {
             options.app_version = 'all'
           }
+          if(options.app_channel == '通用'){
+            options.app_channel = 'all'
+          }
           this.upInfo(options).then(res => {
             if (res.data.success) {
               this.$message({
@@ -461,7 +514,7 @@
         }
       }
     },
-    mounted(){
+    created(){
       this.getData(1)
     }
   }

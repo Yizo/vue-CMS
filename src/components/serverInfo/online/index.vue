@@ -34,10 +34,7 @@
       }
     },
     components: {current, history},
-    methods: {},
-    beforeMount(){
-
-    }
+    methods: {}
   }
 
 </script>

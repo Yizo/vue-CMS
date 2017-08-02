@@ -25,21 +25,21 @@
         </el-date-picker>
       </div>
       <template>
-        <el-select v-model="filter2.versions" placeholder="版本筛选" style="width: 200px;">
-          <el-option
-            v-for="(item,index) in versions.app_versions"
-            :label="item.name"
-            :value="item.name" :key="index">
-          </el-option>
-        </el-select>
-      </template>
-      <template>
         <el-select v-model="filter2.channels" placeholder="切换渠道" style="width: 200px;">
           <el-option
             v-for="(item,index) in versions.app_channels"
             :label="item.name"
             :value="item.name" :key="index"
           >
+          </el-option>
+        </el-select>
+      </template>
+      <template>
+        <el-select v-model="filter2.versions" placeholder="版本筛选" style="width: 200px;">
+          <el-option
+            v-for="(item,index) in versions.app_versions"
+            :label="item.name"
+            :value="item.name" :key="index">
           </el-option>
         </el-select>
       </template>
